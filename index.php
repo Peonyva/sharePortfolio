@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://kit.fontawesome.com/92f0aafca7.js" crossorigin="anonymous"></script>
-  <script src="/lib/reset.css"></script>
+  <link rel="stylesheet" href="/lib/reset.css">
   <link rel="stylesheet" href="/styles/index.css">
   <title>SharePortfolio</title>
 </head>
@@ -23,9 +23,6 @@
             <li><a href="#">Login</a></li>
             <li><a href="#" class="btn-outline">Get Started</a></li>
           </ul>
-          <div class="hamburger">
-            <i class="fa-solid fa-bars"></i>
-          </div>
         </div>
       </div>
     </div>
@@ -41,7 +38,7 @@
           <div><a href="#" class="btn-info">Create a portfolio website</a></div>
         </div>
         <div class="header-image">
-          <img src="/assets/images/previewImage.jpg" alt="Portfolio Preview">
+          <img src="/assets/images/previewImage2.png" alt="Portfolio Preview">
           <!-- <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='550' height='400' viewBox='0 0 550 400' fill='none'%3E%3Crect width='550' height='400' rx='12' fill='%23f8f9fa' stroke='%23e9ecef'/%3E%3Ctext x='275' y='210' text-anchor='middle' font-family='Arial' font-size='18' fill='%23666'%3EPreview System Image%3C/text%3E%3Crect x='50' y='50' width='100' height='60' rx='8' fill='%23e9ecef'/%3E%3Crect x='50' y='130' width='200' height='20' rx='4' fill='%23e9ecef'/%3E%3Crect x='50' y='170' width='150' height='20' rx='4' fill='%23e9ecef'/%3E%3Crect x='400' y='50' width='100' height='100' rx='12' fill='%23e9ecef'/%3E%3Crect x='50' y='250' width='80' height='80' rx='8' fill='%23e9ecef'/%3E%3Crect x='150' y='250' width='80' height='80' rx='8' fill='%23e9ecef'/%3E%3Crect x='250' y='250' width='80' height='80' rx='8' fill='%23e9ecef'/%3E%3C/svg%3E" alt="Portfolio Preview"> -->
         </div>
       </div>
@@ -90,37 +87,6 @@
     </div>
   </footer>
 
-  <script>
-    // Smooth scrolling for navigation links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({
-            behavior: 'smooth'
-          });
-        }
-      });
-    });
-
-    // Add subtle navbar effect on scroll
-    window.addEventListener('scroll', function() {
-      const nav = document.querySelector('nav');
-      if (window.scrollY > 50) {
-        nav.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-      } else {
-        nav.style.boxShadow = 'none';
-      }
-    });
-
-    // Mobile menu toggle
-    const hamburger = document.querySelector('.hamburger');
-    const menu = document.querySelector('.menu');
-    
-    hamburger.addEventListener('click', function() {
-      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-    });
-  </script>
+  
 </body>
 </html>

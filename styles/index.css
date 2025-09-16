@@ -75,11 +75,11 @@ nav {
   color: white !important;
 }
 
-.hamburger {
+/* .hamburger {
   display: none;
   flex-direction: column;
   cursor: pointer;
-}
+} */
 
 header {
   padding: 120px 0 80px 0;
@@ -275,9 +275,9 @@ footer p {
     gap: 1.5rem;
   }
 
-  .hamburger {
+  /* .hamburger {
     display: flex;
-  }
+  } */
 }
 
 @media (max-width: 480px) {
