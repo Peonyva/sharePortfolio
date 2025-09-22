@@ -1,69 +1,150 @@
+:root {
+  /* color */
+
+  --color-primary: #333; /* สีตัวอักษรหลัก / ปุ่มเข้ม */
+  --color-secondary: #f8f9fa; /* สีข้อความรอง / สี navbar */
+  --color-background: #fff; /* พื้นหลัง */
+  --color-surface: #d2d5d7; /* กล่องพื้นหลังเทาอ่อน */
+  --color-border: #f0f0f0; /* เส้นขอบ ตอนนี้ใช้กับขอบ navbar */
+  --color-accent: #007bff; /* accent (ปุ่ม/ลิงก์ฟ้า) */
+  --color-muted: #666; /* ตัวอักษรจาง */
+  --color-white: #ffff; /* สีข้อความตัดกับสีดำ*/
+
+  /* Spacing */
+
+  /* Tiny / XXS */
+  --spacing-0: 0rem; /* 0px */
+  --spacing-1: 0.06rem; /* 1px */
+  --spacing-2: 0.13rem; /* 2px */
+  --spacing-4: 0.25rem; /* 4px */
+  --spacing-6: 0.38rem; /* 6px */
+
+  /* Small / S */
+  --spacing-8: 0.5rem; /* 8px */
+  --spacing-10: 0.63rem; /* 10px */
+  --spacing-12: 0.75rem; /* 12px */
+
+  /* Medium / M */
+  --spacing-16: 1rem; /* 16px */
+  --spacing-18: 1.1rem; /* 18px */
+  --spacing-20: 1.25rem; /* 20px */
+  --spacing-24: 1.5rem; /* 24px */
+
+  /* Large / L */
+  --spacing-32: 2rem; /* 32px */
+  --spacing-36: 2.25rem; /* 36px */
+  --spacing-40: 2.5rem; /* 40px */
+  --spacing-48: 3rem; /* 48px */
+  --spacing-56: 3.5rem; /* 56px */
+  --spacing-64: 4rem; /* 64px */
+
+  /* Extra Large / XL */
+  --spacing-80: 5rem; /* 80px */
+  --spacing-96: 6rem; /* 96px */
+  --spacing-128: 8rem; /* 128px */
+
+  /* Full Container / Layout */
+  --container-sm: 25rem; /* 400px */
+  --container-md: 30rem; /* 480px */
+  --container-lg: 31.25rem; /* 500px */
+  --container-xl: 34.38rem; /* 550px */
+  --container-600: 37.5rem; /* 600px */
+  --container-full: 62.5rem; /* 1000px */
+
+  /* Media Query */
+  --media-query-920: 57.5rem; /* 920px */
+  --media-query-1200: 75rem; /* 1200px */
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  line-height: 1.6;
-  color: #333;
-  background-color: #ffffff;
+  color: var(--color-primary);
+  background-color: var(--color-background);
 }
 
 .container {
-  max-width: 1200px;
+  max-width: var(--media-query-1200);
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 var(--spacing-80);
 }
+
+/* Navbar */
 
 nav {
   position: fixed;
   width: 100%;
   top: 0;
   z-index: 1000;
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
-  transition: all 0.3s ease;
+  background-color: var(--color-secondary);
+  border-bottom: var(--spacing-1) solid var(--color-border);
+  transition: background-color 0.3s ease, padding 0.3s ease,
+    box-shadow 0.3s ease;
+  will-change: background-color, padding, box-shadow; /* เพิ่มประสิทธิภาพ */
 }
 
 .nav-con {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 0;
-  min-height: 70px;
+  padding: var(--spacing-24) 0;
+  min-height: var(--spacing-64);
 }
 
 .nav-logo {
   display: flex;
   align-items: center;
   font-weight: 600;
-  font-size: 1.4rem;
-  gap: 0.75rem;
-  color: #333;
+  font-size: 1.5em;
+  gap: var(--spacing-12);
 }
 
 .nav-logo img {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
+  width: var(--spacing-40);
+  height: var(--spacing-40);
+  border-radius: var(--spacing-8);
   object-fit: cover;
+  transition: transform 0.3s ease; /* hover สมูท */
 }
+
+/* ลิงก์ในโลโก้ */
+.nav-logo a {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-10);
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.nav-logo a:hover {
+  color: var(--color-accent); /* สีเปลี่ยนเมื่อ hover */
+}
+
 .nav-menu .menu {
   display: flex;
   list-style: none;
-  gap: 2rem;
+  gap: var(--spacing-32);
   align-items: center;
 }
 .nav-con a {
-  color: #333;
+  color: var(--color-primary);
   font-weight: 500;
   text-decoration: none;
   transition: all 0.2s ease;
 }
-.nav-con a:hover {
-  color: #007bff;
+
+.btn-link:hover {
+  color: var(--color-accent);
 }
 
 .btn-outline {
-  border: 2px solid #333;
-  border-radius: 6px;
-  padding: 10px 20px;
+  border: var(--spacing-2) solid var(--color-primary);
+  border-radius: var(--spacing-6);
+  padding: var(--spacing-10) var(--spacing-20);
   font-weight: 600;
   transition: all 0.2s ease;
   text-decoration: none;
@@ -71,48 +152,41 @@ nav {
 }
 
 .btn-outline:hover {
-  background-color: #333;
-  color: white !important;
+  background-color: var(--color-primary);
+  color: var(--color-white) !important;
 }
 
-/* .hamburger {
-  display: none;
-  flex-direction: column;
-  cursor: pointer;
-} */
-
 header {
-  padding: 120px 0 80px 0;
-  background-color: #ffffff;
+  padding: var(--spacing-80) 0 var(--spacing-64) 0;
+  background-color: var(--color-background);
 }
 
 .header-con {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 60px;
-  min-height: 500px;
+  gap: var(--spacing-56);
+  min-height: var(--container-lg);
 }
 
 .header-info {
   flex: 1;
-  max-width: 500px;
+  max-width: var(--container-lg);
 }
 
 .header-info h1 {
-  font-size: 3.5rem;
+  font-size: 3.5em;
   font-weight: 700;
   line-height: 1.1;
-  margin-bottom: 1.5rem;
-  color: #1a1a1a;
+  margin-bottom: var(--spacing-24);
 }
 
 .header-info p {
-  font-size: 1.25rem;
+  font-size: 1.25em;
   line-height: 1.6;
-  margin-bottom: 2rem;
-  color: #666;
-  max-width: 480px;
+  margin-bottom: var(--spacing-32);
+  color: var(--color-muted);
+  max-width: var(--container-md);
 }
 
 .header-image {
@@ -124,11 +198,11 @@ header {
 
 .header-image img {
   width: 100%;
-  max-width: 550px;
-  height: 400px;
+  max-width: var(--container-lg);
+  height: var(--container-sm);
   object-fit: cover;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-radius: var(--spacing-12);
+  box-shadow: 0 var(--spacing-10) var(--spacing-32) rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
 }
 
@@ -138,182 +212,183 @@ header {
 
 .btn-info {
   display: inline-block;
-  background-color: #333;
-  color: white;
-  border: 2px solid #333;
-  border-radius: 6px;
-  padding: 14px 28px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--spacing-6);
+  padding: var(--spacing-12) var(--spacing-24);
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1.1em;
   transition: all 0.2s ease;
   text-decoration: none;
 }
 
 .btn-info:hover {
   background-color: transparent;
-  color: #333;
+  color: var(--color-primary);
+}
+
+main {
+  margin-bottom: var(--spacing-32);
 }
 
 .benefits {
-  background-color: #d2d5d7;
+  background-color: var(--color-surface);
   text-align: center;
-  padding: 80px 0;
+  padding: var(--spacing-56) var(--spacing-32);
 }
 
 .benefits h2 {
-  font-size: 2.5rem;
+  font-size: 2.5em;
   font-weight: 700;
-  margin-bottom: 60px;
-  color: #1a1a1a;
+  margin-bottom: var(--spacing-48);
+  color: var(--color-primary);
 }
 
 .benefits-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 30px;
-  max-width: 1000px;
+  gap: var(--spacing-32);
+  max-width: var(--container-full);
   margin: 0 auto;
 }
 
 .benefits-item {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 40px 20px 30px 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f0f0f0;
+  background: var(--color-background);
+  border-radius: var(--spacing-12);
+  padding: var(--spacing-40) var(--spacing-20) var(--spacing-32)
+    var(--spacing-20);
+  box-shadow: 0 var(--spacing-4) var(--spacing-20) rgba(0, 0, 0, 0.08);
+  border: var(--spacing-1) solid var(--color-border);
   transition: all 0.3s ease;
 }
 
 .benefits-item:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  transform: translateY(calc(-1 * var(--spacing-8)));
+  box-shadow: 0 var(--spacing-12) var(--spacing-40) rgba(0, 0, 0, 0.12);
 }
 
 .benefits-icon {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 24px;
+  width: var(--spacing-80);
+  height: var(--spacing-80);
+  margin: 0 auto var(--spacing-24);
   border-radius: 50%;
-  background: #ffffff;
+  background: var(--color-background);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
-  color: #333;
-  border: 2px solid #e9ecef;
+  font-size: 1.5em;
+  color: var(--color-primary);
+  border: var(--spacing-2) solid var();
   transition: all 0.3s ease;
 }
 
 .benefits-item:hover .benefits-icon {
-  border-color: #333;
-  background-color: #333;
-  color: white;
+  border-color: var(--color-border);
+  background-color: var(--color-primary);
+  color: var(--color-white);
 }
 
 .benefits-item h3 {
-  font-size: 1.1rem;
+  font-size: 1.1em;
   font-weight: 600;
-  color: #333;
+  color: var(--color-primary);
   line-height: 1.4;
 }
 
-
-footer {
-  border-top: 1px solid #e9ecef;
+footer { 
   text-align: center;
-  padding: 10px 0;
+}
+
+footer .container::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: var(--spacing-1); /* ความสูงเส้นคั่น */
+  background-color: var(--color-surface);
+  margin: 0 auto; /* เอา margin-bottom ออก */
 }
 
 footer p {
-  color: #666;
-  font-size: 1.2rem;
+  color: var(--color-muted);
+  font-size: 1.1em;
+  padding: var(--spacing-16);
+  margin: 0; /* กันข้อความไม่ดัน layout เกิน */
 }
 
-
-@media (max-width: 1024px) {
-  .benefits-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
-  }
-
-  .header-info h1 {
-    font-size: 3rem;
-  }
+/* footer {
+  position: relative;
+  text-align: center;
 }
 
-@media (max-width: 768px) {
-  .container {
-    padding: 0 1.5rem;
-  }
-
-  .header-con {
-    flex-direction: column;
-    text-align: center;
-    gap: 40px;
-    min-height: auto;
-  }
-
-  .header-info {
-    max-width: 100%;
-  }
-
-  .header-info h1 {
-    font-size: 2.5rem;
-  }
-
-  .header-info p {
-    font-size: 1.1rem;
-    max-width: 100%;
-  }
-
-  .benefits-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-
-  .nav-menu .menu {
-    gap: 1.5rem;
-  }
-
-  /* .hamburger {
-    display: flex;
-  } */
+footer .container::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: var(--spacing-1);
+  background-color: var(--color-surface);
+  margin: 0 auto var(--spacing-10); 
 }
 
-@media (max-width: 480px) {
-  .container {
-    padding: 0 1rem;
-  }
+footer p {
+  color: var(--color-muted);
+  font-size: 1.1em;
+  padding: var(--spacing-16);
+} */
 
-  .header-info h1 {
-    font-size: 2rem;
-  }
+/* Smooth animations */
 
-  .benefits-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .benefits h2 {
-    font-size: 2rem;
-  }
-
-  .nav-logo {
-    font-size: 1.2rem;
-  }
-
-  .nav-logo img {
-    width: 35px;
-    height: 35px;
-  }
-}
-
-/* ------------------------------
-   Smooth animations
------------------------------- */
 .benefits-item,
 .header-image img,
 .btn-info,
 .btn-outline {
   transition: all 0.3s ease;
+}
+
+/* 920px */
+@media (max-width: 57.5rem) {
+  .container {
+    padding: 0 var(--spacing-64);
+  }
+
+  .nav-con {
+    padding: var(--spacing-16);
+  }
+
+  .header-con {
+    gap: var(--spacing-40);
+  }
+
+  .header-info h1 {
+    font-size: 3em;
+  }
+
+  .header-info p {
+    font-size: 1.1em;
+  }
+
+  .btn-info {
+    font-size: 1em;
+  }
+
+  /* padding: 10px 15px; (บน-ล่าง, ซ้าย-ขวา) */
+  /* padding: 10px 15px 20px 25px; (บน, ขวา, ล่าง, ซ้าย) */
+
+  .header-image img {
+    padding: var(--spacing-20) var(--spacing-10) var(--spacing-20)
+      var(--spacing-20);
+  }
+
+  .benefits {
+    padding: var(--spacing-56) var(--spacing-32);
+  }
+
+  .benefits-grid {
+    gap: var(--spacing-18);
+  }
+
+  .benefits-item {
+    padding: var(--spacing-32) var(--spacing-20) var(--spacing-24)
+      var(--spacing-20);
+  }
 }

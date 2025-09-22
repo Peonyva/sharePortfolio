@@ -11,22 +11,28 @@
 </head>
 
 <body>
-    <!-- Navbar -->
-    <nav>
-        <div class="container">
-            <div class="nav-con">
-                <div class="nav-logo">
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40' fill='%23333'%3E%3Crect width='40' height='40' rx='8' fill='%23f8f9fa' stroke='%23333' stroke-width='2'/%3E%3Ctext x='20' y='26' text-anchor='middle' font-family='Arial' font-size='14' font-weight='bold'%3EL%3C/text%3E%3C/svg%3E" alt="logo" />
-                    SharePortfolio
+       <!-- Navbar -->
+    <header>
+        <nav>
+            <div class="container">
+                <div class="nav-con">
+                    <div class="nav-logo">
+                        <!-- ใส่ a href รอบทั้งรูปและข้อความ -->
+                        <a href="index.php"> <!-- เปลี่ยนเป็น URL ที่ต้องการ -->
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40' fill='%23333'%3E%3Crect width='40' height='40' rx='8' fill='%23f8f9fa' stroke='%23333' stroke-width='2'/%3E%3Ctext x='20' y='26' text-anchor='middle' font-family='Arial' font-size='14' font-weight='bold'%3EL%3C/text%3E%3C/svg%3E" alt="logo" />
+                            SharePortfolio
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
+
     <!-- Main -->
-    <section class="page-con">
+    <main class="page-con register">
         <div class="content-box register">
             <div class="account-text">
-                Already have an account? <a href="#" class="redirect">Login</a>
+                Already have an account? <a href="#" class="redirect-col2">Login</a>
             </div>
 
             <h2>Register to create your free portfolio.</h2>
@@ -70,7 +76,8 @@
                 <button type="submit" class="btn btn-submit">Create account</button>
             </form>
         </div>
-    </section>
+      </main>
+
     <!-- Footer -->
     <footer>
         <div class="container">

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,23 +11,31 @@
 </head>
 
 <body>
+
   <!-- Navbar -->
+   <header>
   <nav>
     <div class="container">
       <div class="nav-con">
         <div class="nav-logo">
-          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40' fill='%23333'%3E%3Crect width='40' height='40' rx='8' fill='%23f8f9fa' stroke='%23333' stroke-width='2'/%3E%3Ctext x='20' y='26' text-anchor='middle' font-family='Arial' font-size='14' font-weight='bold'%3EL%3C/text%3E%3C/svg%3E" alt="logo" />
-          SharePortfolio
+          <!-- ใส่ a href รอบทั้งรูปและข้อความ -->
+          <a href="index.php"> <!-- เปลี่ยนเป็น URL ที่ต้องการ -->
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40' fill='%23333'%3E%3Crect width='40' height='40' rx='8' fill='%23f8f9fa' stroke='%23333' stroke-width='2'/%3E%3Ctext x='20' y='26' text-anchor='middle' font-family='Arial' font-size='14' font-weight='bold'%3EL%3C/text%3E%3C/svg%3E" alt="logo" />
+            SharePortfolio
+          </a>
         </div>
+
         <div class="nav-menu">
           <ul class="menu">
-            <li><a href="#">Login</a></li>
-            <li><a href="#" class="btn-outline">Get Started</a></li>
+            <li><a href="/login.php" class="btn-link">Login</a></li>
+            <li><a href="/register.php" class="btn-outline">Get Started</a></li>
           </ul>
         </div>
       </div>
     </div>
   </nav>
+</header>
+
 
   <!-- Header Section -->
   <header>
@@ -55,22 +64,22 @@
             <div class="benefits-icon"><i class="fa-solid fa-users"></i></div>
             <h3>Free Users</h3>
           </div>
-          
+
           <div class="benefits-item">
             <div class="benefits-icon"><i class="fa-solid fa-server"></i></div>
             <h3>Free Hosting</h3>
           </div>
-          
+
           <div class="benefits-item">
             <div class="benefits-icon"><i class="fa-solid fa-mobile-screen"></i></div>
             <h3>Responsive Design</h3>
           </div>
-          
+
           <div class="benefits-item">
             <div class="benefits-icon"><i class="fa-solid fa-palette"></i></div>
             <h3>Minimal & Clean UI</h3>
           </div>
-          
+
           <div class="benefits-item">
             <div class="benefits-icon"><i class="fa-solid fa-layer-group"></i></div>
             <h3>Multiple Themes</h3>
@@ -87,6 +96,7 @@
     </div>
   </footer>
 
-  
+
 </body>
+
 </html>
