@@ -15,7 +15,7 @@
             Check your email for a link to reset your password. <br>
             If it doesn’t appear within a few minutes, check your spam folder.
         </p>
-        <a href="login.html" class="btn btn-submit">Return to sign in</a>
+        <a href="login.php" class="btn btn-submit">Return to sign in</a>
     </div>
 </main>
 
