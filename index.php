@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://kit.fontawesome.com/92f0aafca7.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="/lib/reset.css" />
+  <link rel="stylesheet" href="/styles/root-default.css" />
   <link rel="stylesheet" href="/styles/index.css" />
   <title>Share Portfolio</title>
 </head>
@@ -89,11 +90,7 @@
   </main>
 
   <!-- Footer -->
-  <footer>
-    <div class="container">
-      <p>&copy; 2025 SharePortfolio. All rights reserved.</p>
-    </div>
-  </footer>
+<?php  require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php';  ?>
 
 
 </body>

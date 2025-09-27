@@ -3,8 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<!-- Head & Navbar -->
-<?php require_once 'layout/header.php'; ?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/header.php';  ?>
 
 <!-- Main -->
 <main class="page-con register">
@@ -13,9 +12,9 @@
             Already have an account? <a href="#" class="redirect-col2">Login</a>
         </div> -->
 
-        <h2>Register to create your free portfolio.</h2>
+        <h2 class="heading">Register to create your free portfolio.</h2>
 
-        <form>
+        <form method="POST">
             <div class="grid grid-cols-2">
 
                 <div class="form-group">
@@ -57,6 +56,6 @@
 </main>
 
 <!-- Footer -->
-<?php require_once 'layout/footer.php'; ?>
+<?php  require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php';  ?>
 
 </html>

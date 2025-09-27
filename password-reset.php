@@ -4,12 +4,12 @@
 <html lang="en">
 
 <!-- Head & Navbar -->
-<?php require_once 'layout/header.php'; ?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/header.php';  ?>
 
 <!-- Main -->
 <main class="page-con">
     <div class="content-box password-reset">
-        <h2>Reset Password</h2>
+        <h2 class="heading">Reset Password</h2>
         <p>Enter your email and we will send you a link to reset your password.</p>
         <form>
             <div class="form-group">
@@ -22,6 +22,6 @@
 </main>
 
 <!-- Footer -->
-<?php require_once 'layout/footer.php'; ?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php';  ?>>
 
 </html>

@@ -2,9 +2,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://kit.fontawesome.com/92f0aafca7.js" crossorigin="anonymous"></script>
+    <script src="/lib/jquery-3.7.1.min.js"></script>
     <link rel="stylesheet" href="/lib/reset.css" />
     <link rel="stylesheet" href="/styles/root-default.css" />
-    <link rel="stylesheet" href="/styles/standard.css" />
+    <link rel="stylesheet" href="/styles/portfolio-editor.css" />
     <title><?php echo isset($title) ? $title : 'Documents'; ?></title>
 </head>
 
@@ -23,11 +24,11 @@
                         </a>
                     </div>
 
-                    <div class="nav-menu">
+                    <!-- <div class="nav-menu">
                         <ul class="menu">
                             <li><a href="/login.php" class="btn-link">Login</a></li>
                         </ul>
-                    </div>
+                    </div> -->
 
                 </div>
             </div>

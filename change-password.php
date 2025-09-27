@@ -4,12 +4,12 @@
 <html lang="en">
 
 <!-- Head & Navbar -->
-<?php require_once 'layout/header.php'; ?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/header.php';  ?>
 
 <!-- Main -->
 <main class="page-con">
   <div class="content-box change-password">
-    <h2>Change Password</h2>
+    <h2 class="heading">Change Password</h2>
 
     <form>
       <div class="form-group">
@@ -39,6 +39,6 @@
 </main>
 
 <!-- Footer -->
-<?php require_once 'layout/footer.php'; ?>
+<?php  require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php';  ?>
 
 </html>

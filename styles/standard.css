@@ -1,0 +1,227 @@
+:root {
+  /* Text */
+  --color-text-primary: #333;
+  --color-text-secondary: #666;
+
+  /* Background */
+  --color-background: #fff;
+  --color-background-navbar: #f8f9fa;
+
+  /* Button */
+  --color-btn-submit: #ddd;
+  --color-btn-submit-hover: #ccc;
+  --color-btn-green: #28a745; /* ปุ่มสีเขียว*/
+  --color-btn-green-hover: #218838;
+  --color-btn-blue: #3b82f6; /* ปุ่มสีฟ้า*/
+  --color-btn-blue-hover: #2563eb;
+
+  /* Border */
+  --color-border: #d2d5d7;
+
+  /* Hr */
+  --color-hr: #ccc;
+
+  /* Accent */
+  --color-accent: #007bff;
+  --color-required: red;
+  --color-white: #fff;
+  --color-blue: #3b82f6;
+
+}
+
+/* padding: 10px 15px; (บน-ล่าง, ซ้าย-ขวา) */
+/* padding: 10px 15px 20px 25px; (บน, ขวา, ล่าง, ซ้าย) */
+
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
+  display: flex;
+  flex-direction: column; /* ให้ main และ footer วางซ้อนในแนวตั้ง */
+  min-height: 100vh; /* สูงเต็มหน้าจอ */
+  line-height: 1.6;
+}
+
+.container {
+  max-width: var(--breakpoint-desktop);
+  margin: 0 auto;
+  padding: 0 var(--container-padding-desktop);
+}
+
+
+/* Main */
+
+main.page-con {
+  flex: 1; /* ดัน main ให้ขยายเต็มที่ระหว่าง header กับ footer */
+  display: flex;
+  justify-content: center; /* จัดให้อยู่กึ่งกลางแนวนอน */
+  align-items: center; /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+  padding: var(--spacing-20); /* กันไม่ให้ชิดขอบเกินไป */
+  box-sizing: border-box;
+}
+
+.content-box {
+  margin-top: var(--spacing-80);
+  min-width: var(--container-wide);
+  min-height: var(--container-sm);
+  padding: var(--spacing-32);
+  border: var(--spacing-1) solid var(--color-border);
+  border-radius: var(--spacing-8);
+  background: var(--color-background);
+  text-align: center;
+  box-shadow: 0 var(--spacing-4) var(--spacing-12) rgba(0, 0, 0, 0.05);
+}
+
+.heading {
+  margin-bottom: var(--spacing-20);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-medium);
+}
+
+.form-group {
+  margin-bottom: var(--spacing-16);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+.form-group label {
+  font-weight: var(--font-weight-medium);
+}
+
+.form-group .forgot {
+  display: block;
+  text-align: right;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+
+.form-group .forgot:hover {
+  color: var(--color-accent);
+}
+
+.form-group input {
+  width: 100%;
+  padding: var(--spacing-10);
+  border: var(--spacing-1) solid var(--color-border);
+  border-radius: var(--spacing-6);
+  font-size: var(--font-size-base);
+}
+
+/* Button */
+
+.btn {
+  width: 85%;
+  padding: var(--spacing-10);
+  border: none;
+  border-radius: var(--spacing-6);
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  margin-top: var(--spacing-8);
+}
+
+.btn.btn-submit {
+  background: var(--color-btn-submit);
+  color: var(--color-text-primary);
+}
+
+.btn-submit {
+  align-self: center;
+  text-decoration: none;
+}
+
+.btn.btn-submit:hover {
+  background: var(--color-btn-submit-hover);
+}
+
+.btn.btn-create {
+  background: var(--color-btn-green);
+  color: var(--color-white);
+}
+
+.btn.btn-create:hover {
+  background: var(--color-btn-green-hover);
+}
+
+hr {
+  margin: var(--spacing-24) 0;
+  border: none;
+  border-top: var(--spacing-1) solid var(--color-hr);
+}
+
+/* หน้าอื่น */
+
+/* Password Reset */
+
+.content-box.password-reset,
+.content-box.password-reset-link {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--spacing-24);
+  line-height: 1.8;
+  padding: var(--spacing-32);
+}
+
+/* Register */
+
+/* main.page-con.register {
+  padding: var(--spacing-40); 
+} */
+
+.grid {
+  display: grid;
+  gap: var(--spacing-16);
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* .content-box .account-text {
+  text-align: right;
+  font-size: var(--font-size-base);
+  margin-bottom: var(--spacing-16);
+} */
+
+.content-box .password-rules {
+  text-align: left;
+  margin-bottom: var(--spacing-16);
+}
+
+
+/* Responsive */
+
+/* 920px */
+@media (max-width: 57.5rem) {
+  .container {
+    padding: 0 var(--spacing-64);
+  }
+
+  .nav-con {
+    padding: var(--spacing-16);
+  }
+
+  main.page-con {
+    padding: var(--spacing-40);
+  }
+
+  .content-box {
+    min-width: var(--container-lg);
+  }
+
+  .content-box.register {
+    min-width: var(--container-wide);
+  }
+}
