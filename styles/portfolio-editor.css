@@ -31,7 +31,8 @@
   --color-blue: #3b82f6;
 
   /* Image Preview */
-  --height-preview-image: 10rem;
+  --height-preview-image: 10rem; /* 160px */
+  --height-uploader-image: 17.5rem; /* 280px */
 }
 
 /* padding: 10px 15px; (บน-ล่าง, ซ้าย-ขวา) */
@@ -113,7 +114,8 @@ main.page-con {
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select {
   width: 100%;
   padding: var(--spacing-10);
   border: var(--spacing-1) solid var(--color-border);
@@ -121,7 +123,6 @@ main.page-con {
   font-size: var(--font-size-base);
   resize: vertical; /* อนุญาตให้ขยายเฉพาะแนวตั้ง */
 }
-
 
 /* Button */
 
@@ -135,27 +136,23 @@ main.page-con {
   margin-top: var(--spacing-8);
 }
 
-.btn.btn-submit {
-  background: var(--color-btn-submit);
-  color: var(--color-text-primary);
-}
-
 .btn-submit {
   align-self: center;
   text-decoration: none;
+}
+
+.btn.btn-submit {
+  background: var(--color-btn-submit);
+  color: var(--color-text-primary);
 }
 
 .btn.btn-submit:hover {
   background: var(--color-btn-submit-hover);
 }
 
-.btn.btn-create {
-  background: var(--color-btn-green);
-  color: var(--color-white);
-}
-
-.btn.btn-create:hover {
-  background: var(--color-btn-green-hover);
+.btn.btn-success {
+  background: var(--color-btn-submit);
+  color: var(--color-text-primary);
 }
 
 hr {
@@ -200,6 +197,7 @@ hr {
 }
 
 .image-uploader {
+  height: var(--height-uploader-image);
   border: 2px dashed var(--color-border);
   border-radius: var(--border-radius-8);
   padding: var(--spacing-16);
@@ -209,13 +207,15 @@ hr {
 }
 
 .image-uploader p {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
 }
 
 .upload-placeholder {
+  height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   gap: var(--spacing-8);
   color: var(--color-text-secondary);
@@ -253,6 +253,70 @@ hr {
 .upload-hint {
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
+}
+
+/* Select Skills */
+
+section.skills .input-group {
+  display: grid;
+  grid-template-columns: 1fr auto; /* ซ้าย dropdown, ขวา ปุ่ม */
+  gap: var(--spacing-8);
+}
+
+.form-group.dropdown {
+  margin-bottom: 0;
+}
+
+
+.selected-skills,
+.project-skills-container {
+  border: var(--spacing-1) solid var(--color-border);
+  border-radius: var(--border-radius-8);
+  padding: var(--spacing-16);
+  background-color: var(--color-background);
+  display: none;
+}
+
+.skills-list,
+.project-skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-8);
+  margin-top: var(--spacing-12);
+}
+
+.empty-state,
+.project-skills-empty {
+  border: var(--spacing-1) solid var(--color-border);
+  border-radius: var(--border-radius-8);
+  padding: var(--spacing-16);
+  background-color: var(--color-white);
+  text-align: center;
+  color: var(--color-text-secondary);
+  margin: var(--spacing-16) 0;
+}
+
+.btn-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; /* ปุ่มชิดล่างให้ตรงกับ dropdown */
+}
+
+.btn-addskill {
+  padding: var(--spacing-10) var(--spacing-20);
+  border: var(--spacing-1) solid var(--color-border);
+  border-radius: var(--spacing-6);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  min-width: 100px;
+  background-color: var(--color-btn-blue); /* ใช้ฟ้าจาก root */
+  color: var(--color-white);
+  transition: background-color 0.2s ease;
+}
+
+.btn-addskill:hover {
+  background-color: var(--color-btn-blue-hover);
 }
 
 /* Responsive */
