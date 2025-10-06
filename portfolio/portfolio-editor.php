@@ -9,10 +9,10 @@
 <!-- Main -->
 <div class="container">
     <main class="page-con">
-        <div class="content-box portfolio-editor">
-            <h2 class="heading">Portfolio Information</h2>
-            <!-- 1 -->
-            <section id="personal"  class="personal">
+        <h2 class="heading">Portfolio Information</h2>
+        <!-- 1 -->
+        <div class="content-box">
+            <section id="personal" class="personal">
                 <form id="personalForm" method="POST" enctype="multipart/form-data">
                     <h2 class="title">
                         <span class="number">1</span>Personal
@@ -113,56 +113,56 @@
                         <label for="introContent" class="required-label">About Me :</label>
                         <textarea id="introContent" name="introContent" rows="4" placeholder="Tell us about your professional background, achievements, and career goals." required></textarea>
                     </div>
-                </form>
-            </section>
-
-            <!-- 2 -->
-            <section id="skills" class="skills">
-                <h2 class="title">
-                    <span class="number">2</span>Skills
-                </h2>
-                <div class="form-group">
-                    <label for="skillsContent" class="required-label">Description my skills :</label>
-                    <textarea id="skillsContent" name="skillsContent" rows="4" placeholder="List your technical skills, programming languages, software, and other relevant abilities." required></textarea>
-                </div>
-
-                <div class="input-group">
-                    <div class="form-group  dropdown">
-                        <label for="dropdownSkills" class="required-label">Select Skill :</label>
-                        <select id="dropdownSkills" class="form-select">
-                            <option value="">Choose a skill...</option>
-                        </select>
-                    </div>
-
-                    <div class="btn-wrapper">
-                        <button type="button" id="addSkillBtn" class="btn-addskill" onclick="addSkill()" disabled>
-                            Add Skill
-                        </button>
-                    </div>
-                </div>
-
-                <div id="mySkillsBox" class="selected-skills">
-                    <h5>Selected Skills (<span id="skillCount">0</span>)</h5>
-                    <div id="skillsList" class="skills-list"></div>
-                </div>
-                <div id="emptySkillsState" class="empty-state">
-                    No skills selected yet. Use the dropdown above to add skills.
-                </div>
-                <input type="hidden" name="mySkills" id="mySkillsInput" />
-            </section>
-
-            <!-- 3 -->
-            <section id="workExperience" class="workexperience">
-                <h2 class="title">
-                    <span class="number">3</span>Work Experince
-                </h2>
-
-
-            </section>
-
-            <!-- <button type="submit" class="btn btn-submit">Create account</button> -->
         </div>
-    </main>
+
+        <!-- 2 -->
+        <div class="content-box">
+            <h2 class="title">
+                <span class="number">2</span>Skills
+            </h2>
+            <div class="form-group">
+                <label for="skillsContent" class="required-label">Description my skills :</label>
+                <textarea id="skillsContent" name="skillsContent" rows="4" placeholder="List your technical skills, programming languages, software, and other relevant abilities." required></textarea>
+            </div>
+
+            <div class="input-group">
+                <div class="form-group  dropdown">
+                    <label for="dropdownSkills" class="required-label">Select Skill :</label>
+                    <select id="dropdownSkills" class="form-select">
+                        <option value="">Choose a skill...</option>
+                    </select>
+                </div>
+
+                <div class="btn-wrapper">
+                    <button type="button" id="addSkillBtn" class="btn-addskill" onclick="addSkill()" disabled>
+                        Add Skill
+                    </button>
+                </div>
+            </div>
+
+            <div id="mySkillsBox" class="selected-skills">
+                <h5>Selected Skills (<span id="skillCount">0</span>)</h5>
+                <div id="skillsList" class="skills-list"></div>
+            </div>
+            <div id="emptySkillsState" class="empty-state">
+                No skills selected yet. Use the dropdown above to add skills.
+            </div>
+            <input type="hidden" name="mySkills" id="mySkillsInput" />
+
+            </form>
+            </section>
+        </div>
+        <!-- 3 -->
+        <div class="content-box"></div>
+        <section id="workExperience" class="workexperience">
+            <h2 class="title">
+                <span class="number">3</span>Work Experince
+            </h2>
+            <form></form>
+        </section>
+</div>
+
+</main>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
