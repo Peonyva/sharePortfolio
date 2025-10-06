@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 06, 2025 at 09:22 AM
+-- Generation Time: Oct 06, 2025 at 09:30 AM
 -- Server version: 9.1.0
 -- PHP Version: 8.3.14
 
@@ -120,7 +120,33 @@ CREATE TABLE IF NOT EXISTS `skills` (
   `skillsName` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `skillsUrl` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`skillsID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `skills`
+--
+
+INSERT INTO `skills` (`skillsID`, `skillsName`, `skillsUrl`) VALUES
+(1, 'HTML5', 'fa-brands fa-html5'),
+(2, 'CSS3', 'fa-brands fa-css3-alt'),
+(3, 'JavaScript', 'fa-brands fa-js'),
+(4, 'Python', 'fa-brands fa-python'),
+(5, 'Java', 'fa-brands fa-java'),
+(6, 'C++', 'fa-solid fa-code'),
+(7, 'C#', 'fa-solid fa-code'),
+(8, 'PHP', 'fa-brands fa-php'),
+(9, 'SQL', 'fa-solid fa-database'),
+(10, 'TypeScript', 'fa-brands fa-js'),
+(11, 'React', 'fa-brands fa-react'),
+(12, 'Node.js', 'fa-brands fa-node-js'),
+(13, 'FastAPI', 'fa-solid fa-bolt'),
+(14, 'Bootstrap', 'fa-brands fa-bootstrap'),
+(15, 'Tailwind CSS', 'fa-solid fa-wind'),
+(16, 'Git', 'fa-brands fa-git-alt'),
+(17, 'GitHub', 'fa-brands fa-github'),
+(18, 'Figma', 'fa-brands fa-figma'),
+(19, 'Visual Studio Code', 'fa-solid fa-code-branch'),
+(20, 'Docker', 'fa-brands fa-docker');
 
 -- --------------------------------------------------------
 
