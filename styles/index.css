@@ -1,32 +1,14 @@
 :root {
-  /* ==============================
-     🎨 Colors
-  ============================== */
-  /* Text */
-  --color-text-primary: #333;
-  --color-text-secondary: #666;
-
+  
   /* Background */
-  --color-background: #fff;
   --color-background-card: #d2d5d7;
-  --color-background-navbar: #f8f9fa;
 
   /* Button */
-  --color-btn-primary: #333;
+  --color-btn-primary: #333 !important;
 
   /* Border */
-  --color-border: #d2d5d7;
-  --color-border-btn-primary: #333;
+  --color-border-btn-primary: #333 !important;
   --color-border-card: #d2d5d7;
-
-  /* Accent */
-  --color-accent: #007bff;
-  --color-white: #fff;
-
-  /* Feedback / Alerts */
-  --color-success: #28a745;
-  --color-error: #dc3545;
-  --color-warning: #ffc107;
 }
 
 /* padding: 10px 15px; (บน-ล่าง, ซ้าย-ขวา) */

@@ -1,6 +1,6 @@
 // ===== GLOBAL VARIABLES =====
 let allSkills = [];
-let selectedSkills = [];
+let mySkills = [];
 let projectSkills = [];
 
 // ===== INITIALIZATION =====
@@ -14,7 +14,7 @@ async function initializeApp() {
     populateSkillsDropdown();
     populateProjectSkillsDropdown();
     setupEventListeners();
-    
+
     console.log("Application initialized successfully");
   } catch (error) {
     console.error("Failed to initialize application:", error);
@@ -44,11 +44,10 @@ async function loadSkillsFromServer() {
       throw new Error("Invalid data format received from server");
     }
 
-    // Fix: Set allSkills first, then log
     allSkills = data;
     console.log(`Loaded ${allSkills.length} skills from server`);
-    
-    return allSkills; // Return allSkills instead of data for consistency
+
+    return allSkills;
   } catch (error) {
     console.error("Failed to load skills from server:", error);
     await showError(
@@ -64,7 +63,7 @@ async function loadSkillsFromServer() {
 function populateSkillsDropdown() {
   const dropdownSkills = document.getElementById("dropdownSkills");
   if (!dropdownSkills) {
-    console.warn("dropdownSkills element not found");
+    console.warn("Dropdown Skills element not found");
     return;
   }
 
@@ -72,7 +71,7 @@ function populateSkillsDropdown() {
 
   allSkills.forEach((skill) => {
     const skillsNum = parseInt(skill.id);
-    if (!selectedSkills.includes(skillsNum)) {
+    if (!mySkills.includes(skillsNum)) {
       const option = document.createElement("option");
       option.value = skillsNum;
       option.textContent = skill.name;
@@ -87,72 +86,76 @@ function populateSkillsDropdown() {
 }
 
 function populateProjectSkillsDropdown() {
-  const projectSelects = document.querySelectorAll(".dropdownProjectSkills");
+  const dropdownProjectSkills = document.getElementById("dropdownProjectSkills");
+  if (!dropdownProjectSkills) {
+    console.warn("Dropdown Project Skills element not found");
+    return;
+  }
 
-  projectSelects.forEach((select) => {
-    const projectIndex = parseInt(select.dataset.project);
-    const myskillsProject = projectSkills[projectIndex] || [];
+  dropdownProjectSkills.innerHTML = '<option value="">Choose a skill...</option>';
 
-    select.innerHTML = '<option value="">Choose a skill...</option>';
-
-    allSkills.forEach((skill) => {
-      const skillsNum = parseInt(skill.id);
-      if (!myskillsProject.includes(skillsNum)) {
-        const option = document.createElement("option");
-        option.value = skillsNum;
-        option.textContent = skill.name;
-        select.appendChild(option);
-      }
-    });
-
-    const addButton = select
-      .closest(".input-group")
-      .querySelector(".btn-success");
-    if (addButton) {
-      addButton.disabled = true;
+  allSkills.forEach((skill) => {
+    const skillsNum = parseInt(skill.id);
+    if (!projectSkills.includes(skillsNum)) {
+      const option = document.createElement("option");
+      option.value = skillsNum;
+      option.textContent = skill.name;
+      dropdownProjectSkills.appendChild(option);
     }
   });
+
+  const addBtn = document.getElementById("addProjectSkillBtn");
+  if (addBtn) {
+    addBtn.disabled = true;
+  }
 }
 
 // ===== EVENT LISTENERS SETUP =====
 function setupEventListeners() {
-  // Main skill select
   const dropdownSkills = document.getElementById("dropdownSkills");
+  const dropdownProjectSkills = document.getElementById("dropdownProjectSkills");
+
   if (dropdownSkills) {
     dropdownSkills.addEventListener("change", handleSkillSelectChange);
   }
-  
-  // Project skill selects (event delegation)
-  document.addEventListener("change", handleProjectSkillSelectChange);
+
+  if (dropdownProjectSkills) {
+    dropdownProjectSkills.addEventListener("change", handleProjectSkillSelectChange);
+  }
 }
 
-// ===== EVENT HANDLERS =====
 function handleSkillSelectChange(event) {
   const addBtn = document.getElementById("addSkillBtn");
   if (addBtn) {
-    addBtn.disabled = event.target.value === "" || !event.target.value;
-    console.log("skill select changed:", event.target.value, "Button disabled:", addBtn.disabled);
+    const selectedValue = event.target.value;
+    addBtn.disabled = selectedValue === "" || !selectedValue;
+
+    console.log("=== [Skills Dropdown Changed] ===");
+    console.log("Selected Skill:", selectedValue || "(none)");
+    console.log(
+      "Add Skill Button Status:",
+      addBtn.disabled ? "Disabled ❌" : "Enabled ✅"
+    );
+    console.log("=================================");
   }
 }
 
 function handleProjectSkillSelectChange(event) {
-  // Fix: Corrected class name from "dropdownProjectSkillst" to "dropdownProjectSkills"
-  if (event.target.classList.contains("dropdownProjectSkills")) {
-    const projectIndex = parseInt(event.target.dataset.project);
-    const addButton = event.target
-      .closest(".input-group")
-      .querySelector(".btn-success");
-    if (addButton) {
-      addButton.disabled = event.target.value === "" || !event.target.value;
-      console.log(
-        `Project ${projectIndex} skill select changed:`,
-        event.target.value,
-        "Button disabled:",
-        addButton.disabled
-      );
-    }
+  const addBtn = document.getElementById("addProjectSkillBtn");
+  if (addBtn) {
+    const selectedValue = event.target.value;
+    addBtn.disabled = selectedValue === "" || !selectedValue;
+
+    console.log("=== [Project Skills Dropdown Changed] ===");
+    console.log("Selected Project Skill:", selectedValue || "(none)");
+    console.log(
+      "Add Project Skill Button Status:",
+      addBtn.disabled ? "Disabled ❌" : "Enabled ✅"
+    );
+    console.log("=========================================");
   }
 }
+
 
 // ===== SKILL MANAGEMENT =====
 function addSkill() {
@@ -162,16 +165,16 @@ function addSkill() {
     return;
   }
 
-  const skillsNum = parseInt(dropdownSkills.value); 
+  const skillsNum = parseInt(dropdownSkills.value);
   console.log("Adding skill:", skillsNum);
 
-  if (skillsNum && !isNaN(skillsNum) && !selectedSkills.includes(skillsNum)) {
-    selectedSkills.push(skillsNum);
+  if (skillsNum && !isNaN(skillsNum) && !mySkills.includes(skillsNum)) {
+    mySkills.push(skillsNum);
     updateSkillsDisplay();
     populateSkillsDropdown();
     populateProjectSkillsDropdown();
-    updateSelectedSkillsInput();
-    console.log("Selected skills:", selectedSkills);
+    updateMySkillsInput();
+    console.log("Selected skills:", mySkills);
   } else {
     console.log("Invalid skill ID or skill already selected:", skillsNum);
   }
@@ -179,50 +182,41 @@ function addSkill() {
 
 function removeSkill(skillsNum) {
   const skillId = parseInt(skillsNum);
-  selectedSkills = selectedSkills.filter((id) => parseInt(id) !== skillId);
+  mySkills = mySkills.filter((id) => parseInt(id) !== skillId);
   updateSkillsDisplay();
   populateSkillsDropdown();
   populateProjectSkillsDropdown();
-  updateSelectedSkillsInput();
+  updateMySkillsInput();
 }
 
 // ===== PROJECT SKILL MANAGEMENT =====
-function addProjectSkill(projectIndex) {
-  const select = document.querySelector(`.dropdownProjectSkills[data-project="${projectIndex}"]`);
-  if (!select) {
-    console.error(`Project skill select for project ${projectIndex} not found`);
+function addProjectSkill() {
+  const dropdownProjectSkills = document.getElementById("dropdownProjectSkills");
+  if (!dropdownProjectSkills) {
+    console.error("Project Skill select element not found");
     return;
   }
 
-  const skillId = parseInt(select.value);
-  console.log(`Adding skill ${skillId} to project ${projectIndex}`);
+  const skillsNum = parseInt(dropdownProjectSkills.value);
+  console.log("Adding project skill:", skillsNum);
 
-  if (skillId && !isNaN(skillId)) {
-    // Initialize project skills array if it doesn't exist
-    if (!projectSkills[projectIndex]) {
-      projectSkills[projectIndex] = [];
-    }
-
-    // Add skill if not already present
-    if (!projectSkills[projectIndex].includes(skillId)) {
-      projectSkills[projectIndex].push(skillId);
-      updateProjectSkillsDisplay(projectIndex);
-      populateProjectSkillsDropdown();
-      updateProjectSkillsInput(projectIndex);
-      console.log(`Project ${projectIndex} skills:`, projectSkills[projectIndex]);
-    } else {
-      console.log(`Skill ${skillId} already selected for project ${projectIndex}`);
-    }
+  if (skillsNum && !isNaN(skillsNum) && !projectSkills.includes(skillsNum)) {
+    projectSkills.push(skillsNum);
+    updateProjectSkillsDisplay();
+    populateProjectSkillsDropdown();
+    updateProjectSkillsInput();
+    console.log("Selected project skills:", projectSkills);
+  } else {
+    console.log("Invalid project skill ID or already selected:", skillsNum);
   }
 }
 
-function removeProjectSkill(projectIndex, skillId) {
-  if (projectSkills[projectIndex]) {
-    projectSkills[projectIndex] = projectSkills[projectIndex].filter(id => parseInt(id) !== parseInt(skillId));
-    updateProjectSkillsDisplay(projectIndex);
-    populateProjectSkillsDropdown();
-    updateProjectSkillsInput(projectIndex);
-  }
+function removeProjectSkill(skillsNum) {
+  const skillId = parseInt(skillsNum);
+  projectSkills = projectSkills.filter((id) => parseInt(id) !== skillId);
+  updateProjectSkillsDisplay();
+  populateProjectSkillsDropdown();
+  updateProjectSkillsInput();
 }
 
 // ===== UI UPDATES =====
@@ -234,13 +228,13 @@ function updateSkillsDisplay() {
 
   if (!box || !emptyState || !skillsList || !skillCount) return;
 
-  if (selectedSkills.length > 0) {
+  if (mySkills.length > 0) {
     box.style.display = "block";
     emptyState.style.display = "none";
-    skillCount.textContent = selectedSkills.length;
+    skillCount.textContent = mySkills.length;
 
     skillsList.innerHTML = "";
-    selectedSkills.forEach((num) => {
+    mySkills.forEach((num) => {
       const skillsNum = parseInt(num);
       const skill = allSkills.find((s) => parseInt(s.id) === skillsNum);
       if (skill) {
@@ -254,55 +248,51 @@ function updateSkillsDisplay() {
   }
 }
 
-function updateProjectSkillsDisplay(projectIndex) {
-  const container = document.querySelector(`.project-skills-container[data-project="${projectIndex}"]`);
-  const emptyState = document.querySelector(`.project-skills-empty[data-project="${projectIndex}"]`);
-  
-  if (!container || !emptyState) return;
+function updateProjectSkillsDisplay() {
+  const box = document.getElementById("myProjectSkillsBox");
+  const emptyState = document.getElementById("emptyProjectSkillsState");
+  const skillsList = document.getElementById("projectSkillsList");
+  const skillCount = document.getElementById("projectSkillCount");
 
-  const skillsList = container.querySelector('.project-skills-list');
-  const skillCount = container.querySelector('.project-skill-count');
-  
-  if (!skillsList || !skillCount) return;
+  if (!box || !emptyState || !skillsList || !skillCount) return;
 
-  const projectSkillsList = projectSkills[projectIndex] || [];
-
-  if (projectSkillsList.length > 0) {
-    container.style.display = "block";
+  if (projectSkills.length > 0) {
+    box.style.display = "block";
     emptyState.style.display = "none";
-    skillCount.textContent = projectSkillsList.length;
+    skillCount.textContent = projectSkills.length;
 
     skillsList.innerHTML = "";
-    projectSkillsList.forEach((skillId) => {
-      const skill = allSkills.find((s) => parseInt(s.id) === parseInt(skillId));
+    projectSkills.forEach((num) => {
+      const skillsNum = parseInt(num);
+      const skill = allSkills.find((s) => parseInt(s.id) === skillsNum);
       if (skill) {
-        const skillTag = createSkillTag(skill, `removeProjectSkill(${projectIndex}, ${skillId})`);
+        const skillTag = createSkillTag(skill, `removeProjectSkill(${skillsNum})`);
         skillsList.appendChild(skillTag);
       }
     });
   } else {
-    container.style.display = "none";
+    box.style.display = "none";
     emptyState.style.display = "block";
   }
 }
 
-function updateSelectedSkillsInput() {
+function updateMySkillsInput() {
   const mySkillsInput = document.getElementById("mySkillsInput");
   if (mySkillsInput) {
-    mySkillsInput.value = selectedSkills.join(",");
+    mySkillsInput.value = mySkills.join(",");
   }
 }
 
-function updateProjectSkillsInput(projectIndex) {
-  const input = document.querySelector(`.project-skills-input[name="projects[${projectIndex}][skills]"]`);
-  if (input && projectSkills[projectIndex]) {
-    input.value = projectSkills[projectIndex].join(",");
+function updateProjectSkillsInput() {
+  const myProjectSkillsInput = document.getElementById("myProjectSkillsInput");
+  if (myProjectSkillsInput) {
+    myProjectSkillsInput.value = projectSkills.join(",");
   }
 }
 
 function createSkillTag(skill, onClickHandler) {
-  const tag = document.createElement('span');
-  tag.className = 'skill-tag';
+  const tag = document.createElement("span");
+  tag.className = "skill-tag";
   tag.innerHTML = `
     ${skill.name}
     <button type="button" class="skill-remove" onclick="${onClickHandler}">×</button>

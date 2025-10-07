@@ -1,5 +1,44 @@
 :root {
   /* ==============================
+     🎨 Colors
+  ============================== */
+  /* Text */
+  --color-text-primary: #333;
+  --color-text-secondary: #808080;
+  --color-text-white: #fff;
+
+
+  /* Background */
+  --color-background: #fff;
+  --color-background-navbar: #f8f9fa;
+
+  /* Button */
+  --color-btn-submit: #ddd;
+  --color-btn-primary: #3b82f6;
+  --color-btn-success: #28a745;
+  --color-btn-danger: #dc3545;
+  --color-btn-warning: #ffc107;
+  --color-btn-disabled : #d1d5db;
+
+  --color-btn-submit-hover: #ccc;
+  --color-btn-primary-hover: #2563eb;
+  --color-btn-success-hover: #218838;
+  --color-btn-danger-hover: #bb2d3b;
+  --color-btn-warning-hover: #ffca2c;
+
+  /* Border */
+  --color-border: #d2d5d7;
+
+  /* Hr */
+  --color-hr: #ccc;
+
+  /* Accent */
+  --color-accent: #3b82f6;
+  --color-required: #dc3545;
+  --color-white: #fff;
+
+
+  /* ==============================
      🔤 Typography
   ============================== */
   /* Font Sizes */
@@ -50,6 +89,7 @@
   --spacing-64: 4rem; /* 64px */
   --spacing-80: 5rem; /* 80px */
   --spacing-96: 6rem; /* 96px */
+  --spacing-100: 6.25rem; /* 100px */
   --spacing-128: 8rem; /* 128px */
 
   /* ==============================
@@ -176,6 +216,47 @@ nav {
   margin-left: var(--spacing-4);
 }
 
+.btn-submit {
+  background: var(--color-btn-submit);
+  color: var(--color-text-primary);
+}
+
+.btn-submit:hover {
+  background: var(--color-btn-submit-hover);
+}
+
+.btn-primary {
+  background: var(--color-btn-primary);
+  color: var(--color-text-white);
+}
+
+.btn-primary:hover {
+  background: var(--color-btn-primary-hover);
+}
+
+.btn-success {
+  background: var(--color-btn-success);
+  color: var(--color-text-white);
+}
+
+.btn-success:hover {
+  background: var(--color-btn-success-hover);
+}
+
+.btn-danger {
+  background: var(--color-btn-danger);
+  color: var(--color-text-white);
+}
+
+.btn-danger:hover {
+  background: var(--color-btn-danger-hover);
+}
+
+.btn:disabled {
+  background-color: var(--color-btn-disabled);
+  cursor: not-allowed;
+}
+
 /* Footer */
 
 footer {
@@ -196,4 +277,9 @@ footer p {
   font-size: var(--font-size-lg);
   padding: var(--spacing-16);
   margin: 0;
+}
+
+/* UTILITY CLASSES */
+.hidden {
+  display: none;
 }

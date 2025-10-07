@@ -50,8 +50,8 @@ function createImagePreviewHTML(imageSrc, inputFileID, divPreviewID, fileName = 
         ${fileName ? `<p>${fileName}</p>` : ""}
     </div>
     <div class="preview-actions">
-        <button type="button" class="btn btn-primary" onclick="document.getElementById('${inputFileID}').click()">Change Image</button>
-        <button type="button" class="btn btn-danger" onclick="removeImage('${divPreviewID}', '${inputFileID}')">Remove</button>
+        <button type="button" class="btn btn-primary btn-preview-image" onclick="document.getElementById('${inputFileID}').click()">Change Image</button>
+        <button type="button" class="btn btn-danger btn-preview-image" onclick="removeImage('${divPreviewID}', '${inputFileID}')">Remove</button>
     </div>
   `;
 }

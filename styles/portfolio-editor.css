@@ -1,43 +1,29 @@
 :root {
-  /* Text */
-  --color-text-primary: #333;
-  --color-text-secondary: #666;
+  /* Skill Tag */
+  --color-text-skill-tag: #3b82f6;
+  --color-background-skill-tag: #dbeafe;
+  --color-icon-skill-tag: #3b82f6;
+
+  /* Error */
+  --color-text-disabled: #808080;
+  --color-text-description: #808080;
+  --color-text-error: #dc3545;
+  --color-border-error: #dc3545;
 
   /* Background */
-  --color-background: #fff;
-  --color-background-navbar: #f8f9fa;
+  --color-background-content: #f8f9fa;
+  --color-background-upload-image: #fff;
+  --color-background-card: #fff;
 
-  /* Button */
-  --color-btn-submit: #ddd;
-  --color-btn-submit-hover: #ccc;
-  --color-btn-green: #28a745; /* ปุ่มสีเขียว*/
-  --color-btn-green-hover: #218838;
-  --color-btn-blue: #3b82f6; /* ปุ่มสีฟ้า*/
-  --color-btn-blue-hover: #2563eb;
-
-  /* icon */
+  /* Icon */
   --color-icon-uploadImage: #9ca3af;
-
-  /* Border */
-  --color-border: #d2d5d7;
-
-  /* Hr */
-  --color-hr: #ccc;
-
-  /* Accent */
-  --color-accent: #007bff;
-  --color-required: red;
-  --color-white: #fff;
-  --color-blue: #3b82f6;
 
   /* Image Preview */
   --height-preview-image: 10rem; /* 160px */
   --height-uploader-image: 17.5rem; /* 280px */
 }
 
-/* padding: 10px 15px; (บน-ล่าง, ซ้าย-ขวา) */
-/* padding: 10px 15px 20px 25px; (บน, ขวา, ล่าง, ซ้าย) */
-
+/* Global Styles */
 html,
 body {
   height: 100%;
@@ -52,42 +38,51 @@ body {
 }
 
 /* Main */
-
 main.page-con {
   padding: var(--spacing-40) 0;
 }
 
+.heading {
+  margin-top: var(--spacing-96);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-medium);
+  text-align: center;
+}
+
 .content-box {
-  margin-top: var(--spacing-80);
+  margin-top: var(--spacing-40);
   min-width: var(--container-wide);
-  min-height: var(--container-sm);
   padding: var(--spacing-32);
   border: var(--spacing-1) solid var(--color-border);
   border-radius: var(--spacing-8);
-  background: var(--color-background);
+  background: var(--color-background-content);
   text-align: center;
   box-shadow: 0 var(--spacing-4) var(--spacing-12) rgba(0, 0, 0, 0.05);
 }
 
-.heading {
-  margin-bottom: var(--spacing-20);
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-medium);
-}
-
+/* Grid */
 .grid {
   display: grid;
   gap: var(--spacing-16);
+}
+
+.gap-x-0 {
+  gap: 0 var(--spacing-16);
 }
 
 .grid-cols-2 {
   grid-template-columns: repeat(2, 1fr);
 }
 
+.grid-cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
 .mt-16 {
   margin-top: var(--spacing-16);
 }
 
+/* Form */
 .form-group {
   margin-bottom: var(--spacing-16);
   text-align: left;
@@ -124,16 +119,65 @@ main.page-con {
   resize: vertical; /* อนุญาตให้ขยายเฉพาะแนวตั้ง */
 }
 
-/* Button */
+/* Checkbox */
 
-.btn {
-  width: 85%;
-  padding: var(--spacing-10);
-  border: none;
-  border-radius: var(--spacing-6);
-  font-size: var(--font-size-base);
+.form-checkbox-group {
+  margin-bottom: var(--spacing-16);
+  text-align: left;
+}
+
+.form-checkbox {
+  width: var(--spacing-16);
+  height: var(--spacing-16);
+  accent-color: var(--color-accent);
   cursor: pointer;
+  margin-right: var(--spacing-8);
+}
+
+.form-group label[for="isCurrent"] {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Buttons */
+.btn {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--spacing-6);
+  border: var(--spacing-1) solid var(--color-border);
+  cursor: pointer;
+}
+
+.btn.upload-image {
+  width: 80%;
+  padding: var(--spacing-10);
   margin-top: var(--spacing-8);
+}
+
+.btn.btn-manage {
+  padding: var(--spacing-10) var(--spacing-20);
+  min-width: var(--spacing-100);
+}
+
+.btn-wrapper.addskills,
+.project .btn-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.workExperience .btn-wrapper,
+.education .btn-wrapper,
+.project .btn-wrapper {
+  display: flex;
+  gap: var(--spacing-8);
+  justify-content: flex-end;
+}
+
+.btn.add-data {
+  padding: var(--spacing-10);
 }
 
 .btn-submit {
@@ -141,26 +185,14 @@ main.page-con {
   text-decoration: none;
 }
 
-.btn.btn-submit {
-  background: var(--color-btn-submit);
-  color: var(--color-text-primary);
-}
-
-.btn.btn-submit:hover {
-  background: var(--color-btn-submit-hover);
-}
-
-.btn.btn-success {
-  background: var(--color-btn-submit);
-  color: var(--color-text-primary);
-}
-
+/* HR */
 hr {
   margin: var(--spacing-24) 0;
   border: none;
   border-top: var(--spacing-1) solid var(--color-hr);
 }
 
+/* Required Label */
 .required-label::after {
   content: "*";
   color: var(--color-required);
@@ -169,6 +201,23 @@ hr {
 }
 
 /* Portfolio Information */
+section .header {
+  display: flex;
+  justify-content: space-between;
+}
+
+section h4 {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-16);
+}
+
+section h5 {
+  font-weight: 500;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-12);
+}
 
 .title {
   font-size: var(--font-size-lg);
@@ -179,7 +228,7 @@ hr {
 }
 
 .title .number {
-  background-color: var(--color-blue);
+  background-color: var(--color-accent);
   color: var(--color-white);
   border-radius: var(--border-radius-full);
   width: var(--spacing-24);
@@ -190,19 +239,51 @@ hr {
   margin-right: var(--spacing-8);
 }
 
-/* image */
+.form-Add-data {
+  margin-top: var(--spacing-16);
+  background-color: var(--color-background-card);
+  border-radius: var(--border-radius-8);
+  padding: var(--spacing-24);
+  border: var(--spacing-1) solid var(--color-border);
+  transition: var(--transition-fast);
+}
 
+.input-error {
+  border: var(--spacing-1) solid var(--color-border-error);
+}
+
+.description-message {
+  color: var(--color-text-description);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.error-message {
+  color: var(--color-text-error);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.disabled-text {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-disabled);
+}
+
+/* Image Upload */
 .file-input {
   display: none;
 }
 
 .image-uploader {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   height: var(--height-uploader-image);
   border: 2px dashed var(--color-border);
   border-radius: var(--border-radius-8);
   padding: var(--spacing-16);
   text-align: center;
-  background-color: var(--color-white);
+  background-color: var(--color-background-upload-image);
   transition: border-color var(--transition-fast);
 }
 
@@ -227,7 +308,7 @@ hr {
   color: var(--color-icon-uploadImage);
 }
 
-/* image on javascripts */
+/* Image Preview JS */
 
 .image-preview img {
   max-width: 100%;
@@ -237,9 +318,9 @@ hr {
 }
 
 .image-preview p {
-  font-size: 12px;
-  color: #666;
-  margin-top: 8px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-8);
   word-break: break-all;
 }
 
@@ -250,14 +331,17 @@ hr {
   margin-top: 12px;
 }
 
+.btn-preview-image {
+  padding: var(--spacing-8) var(--spacing-16);
+}
+
 .upload-hint {
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
 }
 
 /* Select Skills */
-
-section.skills .input-group {
+.input-group  {
   display: grid;
   grid-template-columns: 1fr auto; /* ซ้าย dropdown, ขวา ปุ่ม */
   gap: var(--spacing-8);
@@ -267,7 +351,6 @@ section.skills .input-group {
   margin-bottom: 0;
 }
 
-
 .selected-skills,
 .project-skills-container {
   border: var(--spacing-1) solid var(--color-border);
@@ -275,6 +358,8 @@ section.skills .input-group {
   padding: var(--spacing-16);
   background-color: var(--color-background);
   display: none;
+  text-align: left;
+  margin: var(--spacing-16) 0 0;
 }
 
 .skills-list,
@@ -283,6 +368,31 @@ section.skills .input-group {
   flex-wrap: wrap;
   gap: var(--spacing-8);
   margin-top: var(--spacing-12);
+}
+
+.skill-tag {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-background-skill-tag);
+  color: var(--color-text-skill-tag);
+  padding: var(--spacing-4) var(--spacing-12);
+  border-radius: var(--border-radius-24);
+  font-size: var(--font-size-sm);
+}
+
+.skill-remove {
+  background: none;
+  border: none;
+  color: var(--color-icon-skill-tag);
+  margin-left: var(--spacing-sm);
+  cursor: pointer;
+  font-weight: bold;
+  font-size: var(--font-size-md);
+  transition: color var(--transition-default);
+}
+
+.skill-remove:hover {
+  color: var(--color-blue-dark);
 }
 
 .empty-state,
@@ -296,32 +406,7 @@ section.skills .input-group {
   margin: var(--spacing-16) 0;
 }
 
-.btn-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end; /* ปุ่มชิดล่างให้ตรงกับ dropdown */
-}
-
-.btn-addskill {
-  padding: var(--spacing-10) var(--spacing-20);
-  border: var(--spacing-1) solid var(--color-border);
-  border-radius: var(--spacing-6);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-  min-width: 100px;
-  background-color: var(--color-btn-blue); /* ใช้ฟ้าจาก root */
-  color: var(--color-white);
-  transition: background-color 0.2s ease;
-}
-
-.btn-addskill:hover {
-  background-color: var(--color-btn-blue-hover);
-}
-
 /* Responsive */
-
-/* 920px */
 @media (max-width: 57.5rem) {
   .container {
     padding: 0 var(--spacing-64);
