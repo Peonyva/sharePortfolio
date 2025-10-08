@@ -10,10 +10,11 @@
 <div class="container">
     <main class="page-con">
         <h2 class="heading">Portfolio Information</h2>
-        <div class="content-box">
-            <!-- 1 -->
-            <section id="personal" class="personal">
-                <form id="personalForm" method="POST" enctype="multipart/form-data">
+
+        <section id="personal" class="personal">
+            <form id="personalForm" method="POST" enctype="multipart/form-data">
+                <div class="content-box">
+                    <!-- 1 -->
                     <h2 class="title">
                         <span class="number">1</span>Personal
                     </h2>
@@ -116,46 +117,47 @@
                         <textarea id="introContent" name="introContent" rows="4" placeholder="Tell us about your professional background, achievements, and career goals." required></textarea>
                         <div class="description-message">Press Enter to separate each item onto a new line.</div>
                     </div>
-        </div>
-
-        <div class="content-box">
-            <!-- 2 -->
-            <h2 class="title">
-                <span class="number">2</span>Skills
-            </h2>
-
-            <div class="form-group">
-                <label for="skillsContent" class="required-label">Description my skills :</label>
-                <textarea id="skillsContent" name="skillsContent" rows="4" placeholder="List your technical skills, programming languages, software, and other relevant abilities." required></textarea>
-                <div class="description-message">Press Enter to separate each item onto a new line.</div>
-            </div>
-
-            <div class="input-group">
-                <div class="form-group dropdown">
-                    <label for="dropdownSkills" class="required-label">Select Skill :</label>
-                    <select id="dropdownSkills" class="form-select">
-                        <option value="">Choose a skill...</option>
-                    </select>
                 </div>
 
-                <div class="btn-wrapper addskills">
-                    <button type="button" id="addSkillBtn" class="btn btn-success btn-manage" onclick="addSkill()" disabled>
-                        Add Skill
-                    </button>
-                </div>
-            </div>
+                <div class="content-box">
+                    <!-- 2 -->
+                    <h2 class="title">
+                        <span class="number">2</span>Skills
+                    </h2>
 
-            <div id="mySkillsBox" class="selected-skills">
-                <h5>Selected Skills (<span id="skillCount">0</span>)</h5>
-                <div id="skillsList" class="skills-list"></div>
-            </div>
-            <div id="emptySkillsState" class="empty-state">
-                No skills selected yet. Use the dropdown above to add skills.
-            </div>
-            <input type="hidden" name="mySkills" id="mySkillsInput" />
+                    <div class="form-group">
+                        <label for="skillsContent" class="required-label">Description my skills :</label>
+                        <textarea id="skillsContent" name="skillsContent" rows="4" placeholder="List your technical skills, programming languages, software, and other relevant abilities." required></textarea>
+                        <div class="description-message">Press Enter to separate each item onto a new line.</div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="form-group dropdown">
+                            <label for="dropdownSkills" class="required-label">Select Skill :</label>
+                            <select id="dropdownSkills" class="form-select">
+                                <option value="">Choose a skill...</option>
+                            </select>
+                        </div>
+
+                        <div class="btn-wrapper addskills">
+                            <button type="button" id="addSkillBtn" class="btn btn-success btn-manage" onclick="addSkill()" disabled>
+                                Add Skill
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="mySkillsBox" class="selected-skills">
+                        <h5>Selected Skills (<span id="skillCount">0</span>)</h5>
+                        <div id="skillsList" class="skills-list"></div>
+                    </div>
+                    <div id="emptySkillsState" class="empty-state">
+                        No skills selected yet. Use the dropdown above to add skills.
+                    </div>
+                    <input type="hidden" name="mySkills" id="mySkillsInput" />
+                </div>
             </form>
-            </section>
-        </div>
+        </section>
+
 
         <div class="content-box">
             <!-- 3 -->
@@ -291,6 +293,7 @@
                 </form>
             </section>
         </div>
+
         <div class="content-box">
             <!-- 5 -->
             <section id="project" class="project">
