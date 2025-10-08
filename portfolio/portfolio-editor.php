@@ -365,12 +365,11 @@
     </main>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="/scripts/scripts.js"></script>
-<script src="/scripts/upload-image.js"></script>
-<script src="/scripts/upload-skills.js"></script>
-<script src="/scripts/form-blur.js"></script>
-<!-- <script src="/scripts/portfolioEditor.js"></script> -->
+<!-- Scripts -->
+<script src="/portfolio/personal/uploadImage.js"></script>
+<script src="/portfolio/personal/uploadSkills.js"></script>
+<script src="/portfolio/personal/formBlur.js"></script>
+
 <!-- Footer -->
 <?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php';  ?>
 

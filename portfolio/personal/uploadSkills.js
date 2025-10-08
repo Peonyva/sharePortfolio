@@ -28,7 +28,7 @@ async function initializeApp() {
 // ===== DATA LOADING =====
 async function loadSkillsFromServer() {
   try {
-    const response = await fetch("/portfolio/get-skills.php");
+    const response = await fetch("/portfolio/personal/getSkills.php");
 
     if (!response.ok) {
       throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
