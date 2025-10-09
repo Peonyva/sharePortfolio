@@ -45,18 +45,29 @@ $(document).ready(function () {
   // =============================
   // 🔹 Work Experience
   // =============================
-
   $("#btnCancelWorkExp").click(function () {
-    $("#AddWorkExp").addClass("hidden");
-    $("#AddWorkExp")[0].reset();
+    Swal.fire({
+      title: "ยืนยันการยกเลิก?",
+      text: "ข้อมูลที่กรอกจะถูกล้างทั้งหมด",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "ยืนยัน",
+      cancelButtonText: "ยกเลิก",
+      confirmButtonColor: "#3b82f6",
+      cancelButtonColor: "#ef4444",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $("#AddWorkExp").addClass("hidden");
+        $("#AddWorkExp")[0].reset();
+        showToast("ฟอร์ม Work Experience ถูกล้างแล้ว");
+      }
+    });
   });
 
   $("#AddWorkExp").on("submit", function (e) {
     e.preventDefault();
 
-    if (!validateWorkExpForm(this)) {
-      return;
-    }
+    if (!validateWorkExpForm(this)) return;
 
     const isCurrent = $("#isCurrent").is(":checked");
     const endDate = $("#endDate").val();
@@ -64,7 +75,7 @@ $(document).ready(function () {
     if (!isCurrent && !endDate) {
       showError(
         "Incomplete information.",
-        " Please select an End Date if 'Current' is not selected."
+        "Please select an End Date if 'Current' is not selected."
       );
       return;
     }
@@ -79,12 +90,14 @@ $(document).ready(function () {
       processData: false,
       contentType: false,
       dataType: "json",
-      success: function () {
+      success: function (response) {
         if (response.status === 1) {
           showToast("Work Experience saved!");
           $("#AddWorkExp").addClass("hidden");
           $("#AddWorkExp")[0].reset();
-          loadWorkExp();
+
+          let userID = $("#userID").val();
+          loadWorkExp(userID);
         } else {
           showError(
             "An error occurred",
@@ -95,171 +108,193 @@ $(document).ready(function () {
       error: function () {
         showError(
           "An error has occurred",
-          "The Work Experience could not be saved"
+          "The Work Experience could not be saved."
         );
       },
     });
-
-    // =============================
-    // 🔹 Education
-    // =============================
-
-    $("#btnCancelEducation").click(function () {
-      $("#AddEducation").addClass("hidden");
-      $("#AddEducation")[0].reset();
-    });
-
-    $("#AddEducation").on("submit", function (e) {
-      e.preventDefault();
-
-      if (!validateEducationForm(this)) {
-        return;
-      }
-
-      const formData = new FormData(this);
-      formData.append("userID", $("#userID").val());
-
-      $.ajax({
-        url: "/portfolio/education/insertEducation.php",
-        method: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        dataType: "json",
-        success: function () {
-          if (response.status === 1) {
-            showToast("Education saved!");
-            $("#AddEducation").addClass("hidden");
-            $("#AddEducation")[0].reset();
-            loadEducation();
-          } else {
-            showError(
-              "An error occurred",
-              response.message || "Please try again."
-            );
-          }
-        },
-        error: function () {
-          showError(
-            "An error has occurred",
-            "The Education could not be saved"
-          );
-        },
-      });
-    });
-
-    // =============================
-    // 🔹 Project
-    // =============================
-
-    $("#btnCancelProject").click(function () {
-      $("#AddProject").addClass("hidden");
-      $("#AddProject")[0].reset();
-    });
-
-    $("#AddProject").on("submit", function (e) {
-      e.preventDefault();
-
-      if (!validateProjectForm(this)) {
-        return;
-      }
-
-      const formData = new FormData(this);
-      formData.append("userID", $("#userID").val());
-      formData.append("myProjectSkills", $("#myProjectSkillsInput").val());
-
-      $.ajax({
-        url: "/portfolio/project/insertProject.php",
-        method: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        dataType: "json",
-        success: function () {
-          if (response.status === 1) {
-            showToast("Project saved!");
-            $("#AddProject").addClass("hidden");
-            $("#AddProject")[0].reset();
-            loadProjects();
-          } else {
-            showError(
-              "An error occurred",
-              response.message || "Please try again."
-            );
-          }
-        },
-        error: function () {
-          showError(
-            "An error has occurred",
-            "The Education could not be saved"
-          );
-        },
-      });
-    });
-
-    // =============================
-    // 🔹 Validation
-    // =============================
-
-    function validateWorkExpForm(form) {
-      const company = $(form).find("#companyName").val();
-      const position = $(form).find("#position").val();
-      const start = $(form).find("#startDate").val();
-      const end = $(form).find("#endDate").val();
-      const isCurrent = $(form).find("#isCurrent").is(":checked");
-
-      if (!company || !position || !start) {
-        showError(
-          "Incomplete Information",
-          "Please fill out all required fields."
-        );
-        return false;
-      }
-
-      if (!isCurrent && end && new Date(end) < new Date(start)) {
-        showError("Invalid Date", "End Date must be after Start Date.");
-        return false;
-      }
-
-      return true;
-    }
-
-    function validateEducationForm(form) {
-      const name = $(form).find("#educationName").val();
-      const degree = $(form).find("#degree").val();
-      const start = $(form).find("#startDate").val();
-      const end = $(form).find("#endDate").val();
-      const isCurrent = $(form).find("#isCurrent").is(":checked");
-
-      if (!name || !degree || !start) {
-        showError(
-          "Incomplete Information",
-          "Please fill out all required fields."
-        );
-        return false;
-      }
-
-      if (!isCurrent && end && new Date(end) < new Date(start)) {
-        showError("Invalid Date", "End Date must be after Start Date.");
-        return false;
-      }
-
-      return true;
-    }
-
-    function validateProjectForm(form) {
-      const title = $(form).find("#projectTitle").val();
-      const desc = $(form).find("#keyPoint").val();
-
-      if (!title || !desc) {
-        showError(
-          "Incomplete Information",
-          "Please fill out all required fields."
-        );
-        return false;
-      }
-
-      return true;
-    }
   });
+
+
+  
+
+  // =============================
+  // 🔹 Education
+  // =============================
+  $("#btnCancelEducation").click(function () {
+    Swal.fire({
+      title: "ยืนยันการยกเลิก?",
+      text: "ข้อมูลที่กรอกจะถูกล้างทั้งหมด",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "ยืนยัน",
+      cancelButtonText: "ยกเลิก",
+      confirmButtonColor: "#3b82f6",
+      cancelButtonColor: "#ef4444",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $("#AddEducation").addClass("hidden");
+        $("#AddEducation")[0].reset();
+        showToast("ฟอร์ม Education ถูกล้างแล้ว");
+      }
+    });
+  });
+
+  $("#AddEducation").on("submit", function (e) {
+    e.preventDefault();
+
+    if (!validateEducationForm(this)) return;
+
+    const formData = new FormData(this);
+    formData.append("userID", $("#userID").val());
+
+    $.ajax({
+      url: "/portfolio/education/insertEducation.php",
+      method: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: "json",
+      success: function (response) {
+        if (response.status === 1) {
+          showToast("Education saved!");
+          $("#AddEducation").addClass("hidden");
+          $("#AddEducation")[0].reset();
+
+          let userID = $("#userID").val();
+          loadEducation(userID);
+        } else {
+          showError(
+            "An error occurred",
+            response.message || "Please try again."
+          );
+        }
+      },
+      error: function () {
+        showError("An error has occurred", "The Education could not be saved.");
+      },
+    });
+  });
+
+  // =============================
+  // 🔹 Project
+  // =============================
+  $("#btnCancelProject").click(function () {
+    Swal.fire({
+      title: "ยืนยันการยกเลิก?",
+      text: "ข้อมูลที่กรอกจะถูกล้างทั้งหมด",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "ยืนยัน",
+      cancelButtonText: "ยกเลิก",
+      confirmButtonColor: "#3b82f6",
+      cancelButtonColor: "#ef4444",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $("#AddProject").addClass("hidden");
+        $("#AddProject")[0].reset();
+        showToast("ฟอร์ม Project ถูกล้างแล้ว");
+      }
+    });
+  });
+
+  $("#AddProject").on("submit", function (e) {
+    e.preventDefault();
+
+    if (!validateProjectForm(this)) return;
+
+    const formData = new FormData(this);
+    formData.append("userID", $("#userID").val());
+    formData.append("myProjectSkills", $("#myProjectSkillsInput").val());
+
+    $.ajax({
+      url: "/portfolio/project/insertProject.php",
+      method: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: "json",
+      success: function (response) {
+        if (response.status === 1) {
+          showToast("Project saved!");
+          $("#AddProject").addClass("hidden");
+          $("#AddProject")[0].reset();
+
+          let userID = $("#userID").val();
+          loadProjects(userID);
+        } else {
+          showError(
+            "An error occurred",
+            response.message || "Please try again."
+          );
+        }
+      },
+      error: function () {
+        showError("An error has occurred", "The Project could not be saved.");
+      },
+    });
+  });
+
+  // =============================
+  // 🔹 Validation
+  // =============================
+  function validateWorkExpForm(form) {
+    const company = $(form).find("#companyName").val();
+    const position = $(form).find("#position").val();
+    const start = $(form).find("#startDate").val();
+    const end = $(form).find("#endDate").val();
+    const isCurrent = $(form).find("#isCurrent").is(":checked");
+
+    if (!company || !position || !start) {
+      showError(
+        "Incomplete Information",
+        "Please fill out all required fields."
+      );
+      return false;
+    }
+
+    if (!isCurrent && end && new Date(end) < new Date(start)) {
+      showError("Invalid Date", "End Date must be after Start Date.");
+      return false;
+    }
+
+    return true;
+  }
+
+  function validateEducationForm(form) {
+    const name = $(form).find("#educationName").val();
+    const degree = $(form).find("#degree").val();
+    const start = $(form).find("#startDate").val();
+    const end = $(form).find("#endDate").val();
+    const isCurrent = $(form).find("#isCurrent").is(":checked");
+
+    if (!name || !degree || !start) {
+      showError(
+        "Incomplete Information",
+        "Please fill out all required fields."
+      );
+      return false;
+    }
+
+    if (!isCurrent && end && new Date(end) < new Date(start)) {
+      showError("Invalid Date", "End Date must be after Start Date.");
+      return false;
+    }
+
+    return true;
+  }
+
+  function validateProjectForm(form) {
+    const title = $(form).find("#projectTitle").val();
+    const desc = $(form).find("#keyPoint").val();
+
+    if (!title || !desc) {
+      showError(
+        "Incomplete Information",
+        "Please fill out all required fields."
+      );
+      return false;
+    }
+
+    return true;
+  }
 });

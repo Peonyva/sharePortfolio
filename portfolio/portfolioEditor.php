@@ -13,8 +13,8 @@
 
         <section id="personal" class="personal">
             <form id="personalForm" method="POST" enctype="multipart/form-data">
+                <!-- 1 -->
                 <div class="content-box">
-                    <!-- 1 -->
                     <h2 class="title">
                         <span class="number">1</span>Personal
                     </h2>
@@ -119,8 +119,8 @@
                     </div>
                 </div>
 
+                <!-- 2 -->
                 <div class="content-box">
-                    <!-- 2 -->
                     <h2 class="title">
                         <span class="number">2</span>Skills
                     </h2>
@@ -158,9 +158,11 @@
             </form>
         </section>
 
+        <!-- ทดสอบ UserID -->
+        <input type="hidden" id="userID" name="userID" value="1">
 
+        <!-- 3 -->
         <div class="content-box">
-            <!-- 3 -->
             <section id="workExperience" class="workExperience">
                 <div class="header">
                     <h2 class="title">
@@ -294,8 +296,8 @@
             </section>
         </div>
 
+        <!-- 5 -->
         <div class="content-box">
-            <!-- 5 -->
             <section id="project" class="project">
                 <div class="header">
                     <h2 class="title">
@@ -366,9 +368,10 @@
 </div>
 
 <!-- Scripts -->
+<script src="/portfolio/portfolioEditor.js"></script>
 <script src="/portfolio/personal/uploadImage.js"></script>
 <script src="/portfolio/personal/uploadSkills.js"></script>
-<script src="/portfolio/personal/formBlur.js"></script>
+<script src="/portfolio/personal/blur.js"></script>
 
 <!-- Footer -->
 <?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php';  ?>
