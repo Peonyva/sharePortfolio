@@ -87,7 +87,7 @@ $(document).ready(function () {
           loadWorkExp();
         } else {
           showError(
-            "An error occurred.",
+            "An error occurred",
             response.message || "Please try again."
           );
         }
@@ -134,7 +134,7 @@ $(document).ready(function () {
             loadEducation();
           } else {
             showError(
-              "An error occurred.",
+              "An error occurred",
               response.message || "Please try again."
             );
           }
@@ -168,7 +168,7 @@ $(document).ready(function () {
       formData.append("userID", $("#userID").val());
       formData.append("myProjectSkills", $("#myProjectSkillsInput").val());
 
-    $.ajax({
+      $.ajax({
         url: "/portfolio/project/insertProject.php",
         method: "POST",
         data: formData,
@@ -183,7 +183,7 @@ $(document).ready(function () {
             loadProjects();
           } else {
             showError(
-              "An error occurred.",
+              "An error occurred",
               response.message || "Please try again."
             );
           }
@@ -193,7 +193,7 @@ $(document).ready(function () {
             "An error has occurred",
             "The Education could not be saved"
           );
-        }
+        },
       });
     });
 
@@ -209,12 +209,15 @@ $(document).ready(function () {
       const isCurrent = $(form).find("#isCurrent").is(":checked");
 
       if (!company || !position || !start) {
-        showError("ข้อมูลไม่ครบถ้วน", "กรุณากรอกข้อมูลให้ครบทุกช่อง");
+        showError(
+          "Incomplete Information",
+          "Please fill out all required fields."
+        );
         return false;
       }
 
       if (!isCurrent && end && new Date(end) < new Date(start)) {
-        showError("วันที่ไม่ถูกต้อง", "End Date ต้องอยู่หลัง Start Date");
+        showError("Invalid Date", "End Date must be after Start Date.");
         return false;
       }
 
@@ -229,12 +232,15 @@ $(document).ready(function () {
       const isCurrent = $(form).find("#isCurrent").is(":checked");
 
       if (!name || !degree || !start) {
-        showError("ข้อมูลไม่ครบถ้วน", "กรุณากรอกข้อมูลให้ครบทุกช่อง");
+        showError(
+          "Incomplete Information",
+          "Please fill out all required fields."
+        );
         return false;
       }
 
       if (!isCurrent && end && new Date(end) < new Date(start)) {
-        showError("วันที่ไม่ถูกต้อง", "End Date ต้องอยู่หลัง Start Date");
+        showError("Invalid Date", "End Date must be after Start Date.");
         return false;
       }
 
@@ -246,7 +252,10 @@ $(document).ready(function () {
       const desc = $(form).find("#keyPoint").val();
 
       if (!title || !desc) {
-        showError("ข้อมูลไม่ครบถ้วน", "กรุณากรอกข้อมูล Project ให้ครบถ้วน");
+        showError(
+          "Incomplete Information",
+          "Please fill out all required fields."
+        );
         return false;
       }
 
