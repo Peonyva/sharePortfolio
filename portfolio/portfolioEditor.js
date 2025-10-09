@@ -73,7 +73,7 @@ $(document).ready(function () {
     formData.append("userID", $("#userID").val());
 
     $.ajax({
-      url: "/portfolio/workexperince/insertExp.php",
+      url: "/portfolio/workExperince/insertExp.php",
       method: "POST",
       data: formData,
       processData: false,
@@ -99,6 +99,7 @@ $(document).ready(function () {
         );
       },
     });
+
     // =============================
     // 🔹 Education
     // =============================
@@ -119,19 +120,30 @@ $(document).ready(function () {
       formData.append("userID", $("#userID").val());
 
       $.ajax({
-        url: "/api/education/add",
+        url: "/portfolio/education/insertEducation.php",
         method: "POST",
         data: formData,
         processData: false,
         contentType: false,
+        dataType: "json",
         success: function () {
-          showToast("เพิ่ม Education สำเร็จ");
-          $("#AddEducation").addClass("hidden");
-          $("#AddEducation")[0].reset();
-          loadEducation();
+          if (response.status === 1) {
+            showToast("Education saved!");
+            $("#AddEducation").addClass("hidden");
+            $("#AddEducation")[0].reset();
+            loadEducation();
+          } else {
+            showError(
+              "An error occurred.",
+              response.message || "Please try again."
+            );
+          }
         },
         error: function () {
-          showError("เกิดข้อผิดพลาด", "ไม่สามารถบันทึก Education ได้");
+          showError(
+            "An error has occurred",
+            "The Education could not be saved"
+          );
         },
       });
     });
@@ -156,21 +168,32 @@ $(document).ready(function () {
       formData.append("userID", $("#userID").val());
       formData.append("myProjectSkills", $("#myProjectSkillsInput").val());
 
-      $.ajax({
-        url: "/api/project/add",
+    $.ajax({
+        url: "/portfolio/project/insertProject.php",
         method: "POST",
         data: formData,
         processData: false,
         contentType: false,
+        dataType: "json",
         success: function () {
-          showToast("เพิ่ม Project สำเร็จ");
-          $("#AddProject").addClass("hidden");
-          $("#AddProject")[0].reset();
-          loadProjects();
+          if (response.status === 1) {
+            showToast("Project saved!");
+            $("#AddProject").addClass("hidden");
+            $("#AddProject")[0].reset();
+            loadProjects();
+          } else {
+            showError(
+              "An error occurred.",
+              response.message || "Please try again."
+            );
+          }
         },
         error: function () {
-          showError("เกิดข้อผิดพลาด", "ไม่สามารถบันทึก Project ได้");
-        },
+          showError(
+            "An error has occurred",
+            "The Education could not be saved"
+          );
+        }
       });
     });
 
