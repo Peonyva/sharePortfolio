@@ -384,15 +384,15 @@ section h5 {
   background: none;
   border: none;
   color: var(--color-icon-skill-tag);
-  margin-left: var(--spacing-sm);
+  margin-left: var(--spacing-8);
   cursor: pointer;
   font-weight: bold;
-  font-size: var(--font-size-md);
-  transition: color var(--transition-default);
+  font-size: var(--font-size-base);
+  transition: color var(--transition-fast);
 }
 
 .skill-remove:hover {
-  color: var(--color-blue-dark);
+  color: var(--color-btn-primary-hover);
 }
 
 .empty-state,
@@ -405,6 +405,33 @@ section h5 {
   color: var(--color-text-secondary);
   margin: var(--spacing-16) 0;
 }
+
+/* show data after save button */
+
+.work-item, .education-item, .project-item {
+  margin-top: var(--spacing-16);
+  background-color: var(--color-background-card);
+  border-radius: var(--border-radius-8);
+  padding: var(--spacing-24);
+  border: var(--spacing-1) solid var(--color-border);
+  transition: var(--transition-fast);
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-16);
+  padding-bottom: var(--spacing-8);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.item-header .item-title {
+  flex: 1;
+  margin-left: var(--spacing-8);
+  font-weight: var(--font-weight-medium);
+}
+
 
 /* Responsive */
 @media (max-width: 57.5rem) {

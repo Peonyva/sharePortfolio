@@ -4,7 +4,7 @@
 <html lang="en">
 
 <!-- Head & Navbar -->
-<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/header-editor.php';  ?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/headerEditor.php';  ?>
 
 <!-- Main -->
 <div class="container">

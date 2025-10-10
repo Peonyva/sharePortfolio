@@ -15,12 +15,14 @@
   /* Button */
   --color-btn-submit: #ddd;
   --color-btn-primary: #3b82f6;
+  --color-btn-secondary: #6c757d;
   --color-btn-success: #28a745;
   --color-btn-danger: #dc3545;
   --color-btn-warning: #ffc107;
   --color-btn-disabled : #d1d5db;
 
   --color-btn-submit-hover: #ccc;
+  --color-btn-secondary-hover: #5c636a;;
   --color-btn-primary-hover: #2563eb;
   --color-btn-success-hover: #218838;
   --color-btn-danger-hover: #bb2d3b;

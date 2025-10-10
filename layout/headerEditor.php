@@ -5,7 +5,7 @@
     <script src="/lib/jquery-3.7.1.min.js"></script>
     <link rel="stylesheet" href="/lib/reset.css" />
     <link rel="stylesheet" href="/styles/root-default.css" />
-    <link rel="stylesheet" href="/styles/portfolio-editor.css" />
+    <link rel="stylesheet" href="/styles/portfolioEditor.css" />
     <title><?php echo isset($title) ? $title : 'Documents'; ?></title>
 </head>
 
