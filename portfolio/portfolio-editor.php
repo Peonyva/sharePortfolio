@@ -4,7 +4,7 @@
 <html lang="en">
 
 <!-- Head & Navbar -->
-<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/headerEditor.php';  ?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/header-editor.php';  ?>
 
 <!-- Main -->
 <div class="container">
@@ -368,10 +368,10 @@
 </div>
 
 <!-- Scripts -->
-<script src="/portfolio/portfolioEditor.js"></script>
-<script src="/portfolio/personal/uploadImage.js"></script>
-<script src="/portfolio/personal/uploadSkills.js"></script>
-<script src="/portfolio/personal/blur.js"></script>
+<script src="/portfolio/portfolio-editor.js"></script>
+<script src="/portfolio/personal/upload-image.js"></script>
+<script src="/portfolio/personal/upload-skills.js"></script>
+<!-- <script src="/portfolio/personal/blur.js"></script> -->
 
 <!-- Footer -->
 <?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php';  ?>
