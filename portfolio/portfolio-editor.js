@@ -65,19 +65,29 @@ $(document).ready(function () {
       }
     });
   });
+
+  // Handle checkbox in ADD form
+  $("#workIsCurrent").change(function () {
+    if ($(this).is(":checked")) {
+      $("#workEndDate").val("").prop("disabled", true);
+    } else {
+      $("#workEndDate").prop("disabled", false);
+    }
+  });
+
   // Save Button
   $("#AddWorkExp").on("submit", function (e) {
     e.preventDefault();
 
     if (!validateWorkExpForm(this)) return;
 
-    const isCurrent = $("#isCurrent").is(":checked");
-    const endDate = $("#endDate").val();
+    const isCurrent = $("#workIsCurrent").is(":checked");
+    const endDate = $("#workEndDate").val();
 
     if (!isCurrent && !endDate) {
       showError(
         "Incomplete information.",
-        "Please select an End Date if 'Current' is not selected."
+        "Please select an End Date or check 'Currently working here'."
       );
       return;
     }
@@ -97,6 +107,7 @@ $(document).ready(function () {
           showToast("Work Experience saved!");
           $("#AddWorkExp").addClass("hidden");
           $("#AddWorkExp")[0].reset();
+          $("#workEndDate").prop("disabled", false); // Reset disabled state
 
           let userID = $("#userID").val();
           loadWorkExp(userID);
@@ -152,128 +163,126 @@ $(document).ready(function () {
     let totalItems = allData.length;
 
     let container = $(
-      `<div class="container" data-id="${itemId}" data-sort-order="${sortOrder}"></div>`
+        `<div class="work-item-container" data-id="${itemId}" data-sort-order="${sortOrder}"></div>`
     );
+
     let upButton = "";
     let downButton = "";
 
     if (totalItems > 1) {
-      if (sortOrder > 1) {
-        upButton = `<button type="button" class="btn btn-secondary move-up-btn" data-id="${itemId}" data-current-sort="${sortOrder}">
-                        <i class="fa-solid fa-arrow-up"></i> Up
-                    </button>`;
-      }
-      if (sortOrder < totalItems) {
-        downButton = `<button type="button" class="btn btn-secondary move-down-btn" data-id="${itemId}" data-current-sort="${sortOrder}">
-                        <i class="fa-solid fa-arrow-down"></i> Down
-                    </button>`;
-      }
+        if (sortOrder > 1) {
+            upButton = `<button type="button" class="btn btn-secondary move-up-btn" data-id="${itemId}" data-current-sort="${sortOrder}">
+                <i class="fa-solid fa-arrow-up"></i> Up
+            </button>`;
+        }
+        if (sortOrder < totalItems) {
+            downButton = `<button type="button" class="btn btn-secondary move-down-btn" data-id="${itemId}" data-current-sort="${sortOrder}">
+                <i class="fa-solid fa-arrow-down"></i> Down
+            </button>`;
+        }
     }
 
     let workItem = $(`
-                     <div class="work-item">
+        <div class="work-item">
+            <div class="controller">
+                ${upButton}
+                ${downButton}
+            </div>
+            <div class="item-header">
+                <h3 class="item-title">Work Experience ${sortOrder}</h3>
+            </div>
 
-                      <div class="controller">
-                          ${upButton}
-                          ${downButton}
-                      </div>
-                      <div class="item-header">
-                          <h3 class="item-title">Work Experience ${sortOrder}</h3>
-                      </div>
+            <div class="grid grid-cols-2">
+                <div class="form-group">
+                    <label class="required-label">Company Name :</label>
+                    <input type="text" class="work-company-name" data-id="${itemId}" name="companyName" value="${data.companyName}">
+                </div>
+                <div class="form-group">
+                    <label class="required-label">Employment Type :</label>
+                    <select class="work-employee-type form-select" data-id="${itemId}" name="employeeType">
+                        <option value="Full-time" ${data.employeeType === "Full-time" ? "selected" : ""}>Full-time</option>
+                        <option value="Part-time" ${data.employeeType === "Part-time" ? "selected" : ""}>Part-time</option>
+                        <option value="Contract" ${data.employeeType === "Contract" ? "selected" : ""}>Contract</option>
+                        <option value="Freelance" ${data.employeeType === "Freelance" ? "selected" : ""}>Freelance</option>
+                        <option value="Internship" ${data.employeeType === "Internship" ? "selected" : ""}>Internship</option>
+                    </select>
+                </div>
+            </div>
 
-                      <div class="grid grid-cols-2">
-                          <div class="form-group">
-                              <label for="companyName" class="required-label">Company Name :</label>
-                              <input type="text" id="companyName" name="companyName" value="${
-                                data.companyName
-                              }">
-                          </div>
-                          <div class="form-group">
-                              <label for="employeeType" class="required-label">Employment Type :</label>
-                              <select id="employeeType" name="employeeType" class="form-select" value="${
-                                data.employeeType
-                              }">
-                                  <option value="Full-time">Full-time</option>
-                                  <option value="Part-time">Part-time</option>
-                                  <option value="Contract">Contract</option>
-                                  <option value="Freelance">Freelance</option>
-                                  <option value="Internship">Internship</option>
-                              </select>
-                          </div>
-                      </div>
+            <div class="grid grid-cols-3">
+                <div class="form-group">
+                    <label class="required-label">Position :</label>
+                    <input type="text" class="work-position" data-id="${itemId}" name="position" value="${data.position}">
+                </div>
 
-                      <div class="grid grid-cols-3">
-                          <div class="form-group">
-                              <label for="position" class="required-label">Position :</label>
-                              <input type="text" id="position" name="position" value="${
-                                data.position
-                              }">
-                          </div>
+                <div class="form-group">
+                    <label class="required-label">Start Date :</label>
+                    <input type="date" class="work-start-date" data-id="${itemId}" name="startDate" value="${data.startDate}">
+                </div>
+                <div class="form-group">
+                    <label class="required-label">End Date :</label>
+                    <input type="date" class="work-end-date" data-id="${itemId}" name="endDate" value="${data.endDate || ""}" ${data.isCurrent == 1 ? "disabled" : ""}>
+                    <div class="error-message">End date must be after start date.</div>
+                </div>
+            </div>
 
-                          <div class="form-group">
-                              <label for="startDate" class="required-label">Start Date :</label>
-                              <input type="date" id="startDate" name="startDate" value="${
-                                data.startDate
-                              }">
-                          </div>
-                          <div class="form-group">
-                              <label for="endDate" class="required-label">End Date :</label>
-                              <input type="date" id="endDate" name="endDate" value="${
-                                data.endDate || ""
-                              }" ${data.isCurrent == 1 ? "disabled" : ""}>
-                              <div class="error-message">End date must be after start date.</div>
-                          </div>
-                      </div>
+            <div class="form-checkbox-group">
+                <input type="checkbox" class="work-is-current form-checkbox" data-id="${itemId}" name="isCurrent" ${data.isCurrent == 1 ? "checked" : ""}>
+                <label>I currently work here</label>
+            </div>
 
-                      <div class="form-checkbox-group">
-                          <input type="checkbox" id="isCurrent" name="isCurrent" class="form-checkbox" ${
-                            data.isCurrent == 1 ? "checked" : ""
-                          }>>
-                          <label for="isCurrent">I currently work here</label>
-                      </div>
+            <div class="form-group">
+                <label class="required-label">Job Description :</label>
+                <textarea class="work-job-description" data-id="${itemId}" name="jobDescription">${data.jobDescription}</textarea>
+                <div class="description-message">Press Enter to separate each item onto a new line.</div>
+            </div>
 
-                      <div class="form-group">
-                          <label for="jobDescription" class="required-label">Job Description :</label>
-                          <textarea id="jobDescription" name="jobDescription">${
-                            data.jobDescription
-                          }</textarea>
-                          <div class="description-message">Press Enter to separate each item onto a new line.</div>
-                      </div>
+            <div class="form-group">
+                <label>Remarks :</label>
+                <textarea class="work-remarks" data-id="${itemId}" name="remarks">${data.remarks || ""}</textarea>
+            </div>
 
-                      <div class="form-group">
-                          <label for="remarks">Remarks :</label>
-                          <textarea id="remarks" name="remarks">${
-                            data.remarks || ""
-                          }</textarea>
-                      </div>
-                        
-                    </div> `);
+            <div class="btn-wrapper">
+                <button type="button" class="btn btn-success btn-update-work" data-id="${itemId}">Update</button>
+                <button type="button" class="btn btn-danger btn-delete-work" data-id="${itemId}">Delete</button>
+            </div>
+        </div>
+    `);
 
     $("#WorkExp").append(container);
     container.append(workItem);
 
-    // Handle move up/down
+    // ✅ Handle move up/down
     container.find(".move-up-btn").click(function () {
-      let currentSort = parseInt($(this).data("current-sort"));
-      moveWorkItem(itemId, currentSort, currentSort - 1);
+        let currentSort = parseInt($(this).data("current-sort"));
+        moveWorkItem(itemId, currentSort, currentSort - 1);
     });
 
     container.find(".move-down-btn").click(function () {
-      let currentSort = parseInt($(this).data("current-sort"));
-      moveWorkItem(itemId, currentSort, currentSort + 1);
+        let currentSort = parseInt($(this).data("current-sort"));
+        moveWorkItem(itemId, currentSort, currentSort + 1);
     });
 
-    // Handle checkbox change in edit mode
-    container.on("change", `.isCurrent-${itemId}`, function () {
-      const endDateInput = container.find(`.endDate-${itemId}`);
-      if ($(this).is(":checked")) {
-        endDateInput.val("").prop("disabled", true);
-      } else {
-        endDateInput.prop("disabled", false);
-      }
+    // ✅ Handle checkbox change in edit mode
+    container.find(".work-is-current").change(function () {
+        const endDateInput = container.find(".work-end-date");
+        if ($(this).is(":checked")) {
+            endDateInput.val("").prop("disabled", true);
+        } else {
+            endDateInput.prop("disabled", false);
+        }
     });
-  }
 
+    // ✅ Handle Update Button
+    container.find(".btn-update-work").click(function () {
+        updateWorkItem(itemId, container);
+    });
+
+    // ✅ Handle Delete Button
+    container.find(".btn-delete-work").click(function () {
+        deleteWorkItem(itemId, container);
+    });
+}
   // Move work item up/down
   function moveWorkItem(currentId, currentSort, newSort) {
     console.log("Moving Item:", {
@@ -284,7 +293,7 @@ $(document).ready(function () {
     });
 
     $.ajax({
-      url: "move-work.php",
+      url: "/portfolio/workExperience/move-work.php",
       type: "POST",
       data: {
         currentId: currentId,
@@ -296,7 +305,7 @@ $(document).ready(function () {
       success: function (response) {
         console.log("Move Response:", response);
         if (response.status === 1) {
-          loadAllWorkItems($("#userID").val()); // โหลดข้อมูลใหม่หลัง swap
+          loadWorkExp($("#userID").val()); // โหลดข้อมูลใหม่หลัง swap
         } else {
           console.error("Error: " + response.message);
         }
@@ -306,6 +315,95 @@ $(document).ready(function () {
       },
     });
   }
+
+// ฟังก์ชัน Update Work Experience Item
+function updateWorkItem(itemId, container) {
+    const companyName = container.find(".work-company-name").val();
+    const employeeType = container.find(".work-employee-type").val();
+    const position = container.find(".work-position").val();
+    const startDate = container.find(".work-start-date").val();
+    const endDate = container.find(".work-end-date").val();
+    const isCurrent = container.find(".work-is-current").is(":checked");
+    const jobDescription = container.find(".work-job-description").val();
+    const remarks = container.find(".work-remarks").val();
+
+    // Validation
+    if (!isCurrent && endDate && new Date(endDate) < new Date(startDate)) {
+        showError("Invalid Date", "End Date must be after Start Date.");
+        return;
+    }
+
+    if (!isCurrent && endDate && new Date(endDate) > new Date()) {
+        showError("Invalid Date", "End Date cannot be in the future.");
+        return;
+    }
+
+    // ส่งข้อมูลไป update
+    $.ajax({
+        url: "/portfolio/workExperience/update-work.php",
+        method: "POST",
+        data: {
+            id: itemId,
+            companyName: companyName,
+            employeeType: employeeType,
+            position: position,
+            startDate: startDate,
+            endDate: endDate,
+            isCurrent: isCurrent ? 1 : 0,
+            jobDescription: jobDescription,
+            remarks: remarks
+        },
+        dataType: "json",
+        success: function (response) {
+            if (response.status === 1) {
+                showToast("Work Experience updated successfully!");
+            } else {
+                showError("Update failed", response.message || "Please try again.");
+            }
+        },
+        error: function () {
+            showError("An error occurred", "Could not update Work Experience.");
+        }
+    });
+}
+
+// ฟังก์ชัน Delete Work Experience Item
+function deleteWorkItem(itemId, container) {
+    Swal.fire({
+        title: "Confirm deletion?",
+        text: "This action cannot be undone.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Delete",
+        cancelButtonText: "Cancel",
+        confirmButtonColor: "#ef4444",
+        cancelButtonColor: "#6b7280"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "/portfolio/workExperience/delete-work.php",
+                method: "POST",
+                data: { id: itemId },
+                dataType: "json",
+                success: function (response) {
+                    if (response.status === 1) {
+                        container.remove();
+                        showToast("Work Experience deleted successfully!");
+                        
+                        // Reload เพื่อ update sortOrder
+                        loadWorkExp($("#userID").val());
+                    } else {
+                        showError("Deletion failed", response.message || "Please try again.");
+                    }
+                },
+                error: function () {
+                    showError("An error occurred", "Could not delete Work Experience.");
+                }
+            });
+        }
+    });
+}
+
 
   // =============================
   // 🔹 Education
@@ -329,6 +427,15 @@ $(document).ready(function () {
       }
     });
   });
+
+    $("#eduIsCurrent").change(function () {
+        if ($(this).is(":checked")) {
+            $("#eduEndDate").val("").prop("disabled", true);
+        } else {
+            $("#eduEndDate").prop("disabled", false);
+        }
+    });
+
   // Save Button
   $("#AddEducation").on("submit", function (e) {
     e.preventDefault();
@@ -434,22 +541,17 @@ $(document).ready(function () {
   // 🔹 Validation
   // =============================
   function validateWorkExpForm(form) {
-    const company = $(form).find("#companyName").val();
-    const position = $(form).find("#position").val();
-    const start = $(form).find("#startDate").val();
-    const end = $(form).find("#endDate").val();
-    const isCurrent = $(form).find("#isCurrent").is(":checked");
-
-    if (!company || !position || !start) {
-      showError(
-        "Incomplete Information",
-        "Please fill out all required fields."
-      );
-      return false;
-    }
+    const start = $(form).find("#workStartDate").val();
+    const end = $(form).find("#workEndDate").val();
+    const isCurrent = $(form).find("#workIsCurrent").is(":checked");
 
     if (!isCurrent && end && new Date(end) < new Date(start)) {
       showError("Invalid Date", "End Date must be after Start Date.");
+      return false;
+    }
+
+    if (!isCurrent && end && new Date(end) > new Date()) {
+      showError("Invalid Date", "End Date cannot be in the future.");
       return false;
     }
 
@@ -457,37 +559,17 @@ $(document).ready(function () {
   }
 
   function validateEducationForm(form) {
-    const name = $(form).find("#educationName").val();
-    const degree = $(form).find("#degree").val();
-    const start = $(form).find("#startDate").val();
-    const end = $(form).find("#endDate").val();
-    const isCurrent = $(form).find("#isCurrent").is(":checked");
-
-    if (!name || !degree || !start) {
-      showError(
-        "Incomplete Information",
-        "Please fill out all required fields."
-      );
-      return false;
-    }
+    const start = $("#eduStartDate").val();
+    const end = $("#eduEndDate").val();
+    const isCurrent = $("#eduIsCurrent").is(":checked");
 
     if (!isCurrent && end && new Date(end) < new Date(start)) {
       showError("Invalid Date", "End Date must be after Start Date.");
       return false;
     }
 
-    return true;
-  }
-
-  function validateProjectForm(form) {
-    const title = $(form).find("#projectTitle").val();
-    const desc = $(form).find("#keyPoint").val();
-
-    if (!title || !desc) {
-      showError(
-        "Incomplete Information",
-        "Please fill out all required fields."
-      );
+    if (!isCurrent && end && new Date(end) > new Date()) {
+      showError("Invalid Date", "End Date cannot be in the future.");
       return false;
     }
 

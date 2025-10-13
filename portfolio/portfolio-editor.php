@@ -89,7 +89,7 @@
                                     <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                                     </svg>
-                                    <button type="button" class="btn btn-primary upload-image" onclick="document.getElementById('profileImage').click()">Upload Logo</button>
+                                    <button type="button" class="btn btn-primary upload-image" onclick="document.getElementById('profileImage').click()">Upload Profile</button>
                                     <p>PNG, JPG, GIF up to 10MB</p>
                                 </div>
                             </div>
@@ -104,7 +104,7 @@
                                     <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                                     </svg>
-                                    <button type="button" class="btn btn-primary upload-image" onclick="document.getElementById('coverImage').click()">Upload Logo</button>
+                                    <button type="button" class="btn btn-primary upload-image" onclick="document.getElementById('coverImage').click()">Upload Cover</button>
                                     <p>PNG, JPG, GIF up to 10MB</p>
                                 </div>
                             </div>
@@ -198,19 +198,19 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="startDate" class="required-label">Start Date :</label>
-                            <input type="date" id="startDate" name="startDate" required>
+                            <label for="workStartDate" class="required-label">Start Date :</label>
+                            <input type="date" id="workStartDate" name="startDate" required>
                         </div>
                         <div class="form-group">
-                            <label for="endDate" class="required-label">End Date :</label>
-                            <input type="date" id="endDate" name="endDate" required>
+                            <label for="workEndDate" class="required-label">End Date :</label>
+                            <input type="date" id="workEndDate" name="endDate" required>
                             <div class="error-message">End date must be after start date.</div>
                         </div>
                     </div>
 
                     <div class="form-checkbox-group">
-                        <input type="checkbox" id="isCurrent" name="isCurrent" value="1" class="form-checkbox">
-                        <label for="isCurrent">I currently work here</label>
+                        <input type="checkbox" id="workIsCurrent" name="isCurrent" value="1" class="form-checkbox">
+                        <label for="workIsCurrent">I currently work here</label>
                     </div>
 
                     <div class="form-group">
@@ -221,7 +221,7 @@
 
                     <div class="form-group">
                         <label for="remarks">Remarks :</label>
-                        <textarea id="remarks" name="remarks"></textarea>
+                        <textarea id="workRemarks" name="remarks"></textarea>
                     </div>
 
                     <div class="btn-wrapper">
@@ -268,24 +268,24 @@
                             <input type="text" id="majorName" name="majorName" required>
                         </div>
                         <div class="form-group">
-                            <label for="startDate" class="required-label">Start Date :</label>
-                            <input type="date" id="startDate" name="startDate" required>
+                            <label for="eduStartDate" class="required-label">Start Date :</label>
+                            <input type="date" id="eduStartDate" name="startDate" required>
                         </div>
                         <div class="form-group">
-                            <label for="endDate" class="required-label">End Date :</label>
-                            <input type="date" id="endDate" name="endDate" required>
+                            <label for="eduEndDate" class="required-label">End Date :</label>
+                            <input type="date" id="eduEndDate" name="endDate" required>
                             <div class="error-message">End date must be after start date.</div>
                         </div>
                     </div>
 
                     <div class="form-checkbox-group">
-                        <input type="checkbox" id="isCurrent" name="isCurrent" value="1" class="form-checkbox">
-                        <label for="isCurrent">Currently studying here</label>
+                        <input type="checkbox" id="eduIsCurrent" name="isCurrent" value="1" class="form-checkbox">
+                        <label for="eduIsCurrent">Currently studying here</label>
                     </div>
 
                     <div class="form-group">
                         <label for="remarks">Remarks :</label>
-                        <textarea id="remarks" name="remarks"></textarea>
+                        <textarea id="eduRemarks" name="remarks"></textarea>
                     </div>
 
                     <div class="btn-wrapper">
