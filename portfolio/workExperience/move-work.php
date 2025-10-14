@@ -6,13 +6,21 @@ try {
         throw new Exception("Invalid request method.");
     }
 
-    $currentId = intval($_POST['currentId']);
-    $currentSort = intval($_POST['currentSort']);
-    $newSort = intval($_POST['newSort']);
-    $userID = intval($_POST['userID']);
+    $currentId   = intval($_POST['currentId'] ?? 0);
+    $currentSort = intval($_POST['currentSort'] ?? 0);
+    $newSort     = intval($_POST['newSort'] ?? 0);
+    $userID      = intval($_POST['userID'] ?? 0);
 
     if ($currentId <= 0 || $userID <= 0) {
         throw new Exception("Invalid parameters.");
+    }
+
+    if ($currentSort <= 0 || $newSort <= 0) {
+        throw new Exception("Invalid sort order values.");
+    }
+
+    if ($currentSort === $newSort) {
+        throw new Exception("No changes detected.");
     }
 
     // หา record ที่ sortOrder = newSort
@@ -27,25 +35,39 @@ try {
         throw new Exception("Target position not found.");
     }
 
-    $swapId = $swapItem['id'];
+    $swapId = intval($swapItem['id']);
 
-    // สลับ sortOrder
-    $stmt = $conn->prepare("UPDATE workexperience SET sortOrder = :currentSort WHERE id = :swapId");
+    if ($swapId === $currentId) {
+        throw new Exception("Cannot swap with the same record.");
+    }
+
+    // 🔹 สลับ sortOrder ระหว่างสอง record
+    // 1) ตั้งค่าของ record ปลายทางเป็น sort เดิมของ current
+    $stmt = $conn->prepare("UPDATE workexperience SET sortOrder = :currentSort WHERE id = :swapId AND userID = :userID");
     $stmt->execute([
         ':currentSort' => $currentSort,
-        ':swapId' => $swapId
+        ':swapId' => $swapId,
+        ':userID' => $userID
     ]);
 
-    $stmt = $conn->prepare("UPDATE workexperience SET sortOrder = :newSort WHERE id = :currentId");
+    // 2) ตั้งค่าของ record ปัจจุบันเป็น sort ใหม่
+    $stmt = $conn->prepare("UPDATE workexperience SET sortOrder = :newSort WHERE id = :currentId AND userID = :userID");
     $stmt->execute([
         ':newSort' => $newSort,
-        ':currentId' => $currentId
+        ':currentId' => $currentId,
+        ':userID' => $userID
     ]);
+
+    // ตรวจสอบว่ามีการอัปเดตสำเร็จหรือไม่
+    if ($stmt->rowCount() === 0) {
+        throw new Exception("No record updated. Please check your data.");
+    }
 
     echo json_encode([
         "status" => 1,
-        "message" => "Work experience order updated successfully."
+        "message" => "Work Experience order updated successfully."
     ]);
+
 } catch (Exception $e) {
     echo json_encode([
         "status" => 0,

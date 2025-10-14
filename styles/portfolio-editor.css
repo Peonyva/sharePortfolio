@@ -449,6 +449,11 @@ section h5 {
   min-width: var(--spacing-100);
 }
 
+.htmlforSkills {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
 .hidden {
   display: none !important;
 }
