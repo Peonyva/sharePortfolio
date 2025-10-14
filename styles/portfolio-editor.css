@@ -37,6 +37,8 @@ body {
   background-color: var(--color-background);
 }
 
+
+
 /* Main */
 main.page-con {
   padding: var(--spacing-40) 0;
@@ -156,16 +158,16 @@ main.page-con {
   margin-top: var(--spacing-8);
 }
 
-.btn.btn-manage {
-  padding: var(--spacing-10) var(--spacing-20);
-  min-width: var(--spacing-100);
-}
-
 .btn-wrapper.addskills,
 .project .btn-wrapper {
   display: flex;
   justify-content: center;
   align-items: flex-end;
+}
+
+.btn.btn-addSkill {
+  padding: var(--spacing-10) var(--spacing-20);
+  min-width: var(--spacing-100);
 }
 
 .workExperience .btn-wrapper,
@@ -341,7 +343,7 @@ section h5 {
 }
 
 /* Select Skills */
-.input-group  {
+.input-group {
   display: grid;
   grid-template-columns: 1fr auto; /* ซ้าย dropdown, ขวา ปุ่ม */
   gap: var(--spacing-8);
@@ -408,13 +410,23 @@ section h5 {
 
 /* show data after save button */
 
-.work-item, .education-item, .project-item {
+.work-item,
+.education-item,
+.project-item {
   margin-top: var(--spacing-16);
   background-color: var(--color-background-card);
   border-radius: var(--border-radius-8);
   padding: var(--spacing-24);
   border: var(--spacing-1) solid var(--color-border);
   transition: var(--transition-fast);
+}
+
+.controller-header {
+  text-align: left;
+}
+
+.controller {
+  margin-bottom: var(--spacing-16);
 }
 
 .item-header {
@@ -432,6 +444,14 @@ section h5 {
   font-weight: var(--font-weight-medium);
 }
 
+.btn-manage {
+  padding: var(--spacing-8) var(--spacing-20);
+  min-width: var(--spacing-100);
+}
+
+.hidden {
+  display: none !important;
+}
 
 /* Responsive */
 @media (max-width: 57.5rem) {

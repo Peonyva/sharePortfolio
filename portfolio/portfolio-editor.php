@@ -140,7 +140,7 @@
                         </div>
 
                         <div class="btn-wrapper addskills">
-                            <button type="button" id="addSkillBtn" class="btn btn-success btn-manage" onclick="addSkill()" disabled>
+                            <button type="button" id="addSkillBtn" class="btn btn-success btn-addSkill" onclick="addSkill()" disabled>
                                 Add Skill
                             </button>
                         </div>
@@ -293,6 +293,7 @@
                         <button type="button" id="btnCancelEducation" class="btn btn-danger btn-manage">Cancel</button>
                     </div>
                 </form>
+                <div id="Education"></div>
             </section>
         </div>
 
@@ -307,7 +308,7 @@
                         <i class="fa-solid fa-plus"></i>
                     </button>
                 </div>
-                <form id="Addproject" class="form-Add-data hidden" method="POST" enctype="multipart/form-data">
+                <form id="AddProject" class="form-Add-data hidden" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="projectTitle" class="required-label">Project Title :</label>
                         <input type="text" id="projectTitle" name="projectTitle" required>
@@ -360,6 +361,7 @@
                         <button type="button" id="btnCancelProject" class="btn btn-danger btn-manage">Cancel</button>
                     </div>
                 </form>
+                <div id="Project"></div>
             </section>
 
         </div>
@@ -367,13 +369,13 @@
     </main>
 </div>
 
+<!-- Footer -->
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php';  ?>
+
 <!-- Scripts -->
 <script src="/portfolio/portfolio-editor.js"></script>
 <script src="/portfolio/personal/upload-image.js"></script>
 <script src="/portfolio/personal/upload-skills.js"></script>
-<!-- <script src="/portfolio/personal/blur.js"></script> -->
 
-<!-- Footer -->
-<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php';  ?>
-
+</body>
 </html>
