@@ -688,7 +688,7 @@ function updateEducationItem(itemId, container) {
 }
 
 function deleteEducationItem(itemId, container) {
-  const userID = $("#userID").val(); // ✅ ดึงค่า userID จาก input ที่มี id="userID"
+  const userID = $("#userID").val();
 
   Swal.fire({
     title: "Confirm deletion?",
@@ -785,8 +785,6 @@ function loadProject(userID) {
   });
 }
 
-
-
 function appendProjectItem(data, allData) {
   let sortOrder = parseInt(data.sortOrder);
   let itemId = data.id;
@@ -851,11 +849,11 @@ function appendProjectItem(data, allData) {
 
       <div class="form-group">
         <label class="required-label">Project Image :</label>
-        <div class="project-image-preview" data-id="${itemId}">
-          <img src="${data.projectImagePath}" alt="${data.projectTitle}" style="max-width: 300px; max-height: 200px; border-radius: 8px;">
+        <div class="project-image-preview image-preview" data-id="${itemId}">
+          <img src="${data.projectImage}" alt="${data.projectTitle}">
         </div>
         <div class="mt-2">
-          <button type="button" class="btn btn-secondary btn-change-image" data-id="${itemId}">
+          <button type="button" class="btn btn-secondary btn-change-image btn-preview-image" data-id="${itemId}">
             <i class="fa-solid fa-image"></i> Change Image
           </button>
           <input type="file" class="project-image-input hidden" data-id="${itemId}" accept="image/*">
@@ -968,9 +966,13 @@ function appendProjectItem(data, allData) {
   });
 
   // ปุ่ม Delete
-  container.find(".btn-delete-project").click(function () {
-    deleteProjectItem(itemId, container);
-  });
+container.find(".btn-delete-project").click(function () {
+  const itemId = $(this).attr("data-id"); // ใช้ attr() แทน data()
+  console.log("🧩 Delete clicked itemId =", itemId); // ✅ ดูค่าก่อนส่ง
+  
+  deleteProjectItem(itemId, container);
+});
+
 }
 
 // =============================
@@ -1176,19 +1178,29 @@ function deleteProjectItem(itemId, container) {
       $.ajax({
         url: "/portfolio/project/delete-project.php",
         method: "POST",
-        data: { id: itemId, userID: userID },
+        data: {
+          id: itemId,
+          userID: userID, // ✅ ส่งค่า userID ไปด้วย
+        },
         dataType: "json",
         success: function (response) {
           if (response.status === 1) {
-            container.remove();
             showToast("Project deleted successfully!");
-            loadProjects(userID);
+
+            // ✅ Reload ข้อมูลใหม่ของ user เดียวกัน
+            loadProject(userID);
           } else {
-            showError("Deletion failed", response.message || "Please try again.");
+            showError(
+              "Deletion failed",
+              response.message || "Please try again."
+            );
           }
         },
         error: function () {
-          showError("An error occurred", "Could not delete Project.");
+          showError(
+            "An error occurred",
+            "Could not delete Project."
+          );
         },
       });
     }
@@ -1420,7 +1432,10 @@ $(document).ready(function () {
 
     const formData = new FormData(this);
     formData.append("userID", $("#userID").val());
-    formData.append("myProjectSkills", $("#myProjectSkillsInput").val());
+
+    // ✅ ส่ง skills เป็น JSON array (ปลอดภัยสุด)
+    const skillValues = $("#myProjectSkillsInput").val();
+    formData.append("myProjectSkills", JSON.stringify(skillValues ? skillValues.split(",") : []));
 
     $.ajax({
       url: "/portfolio/project/insert-project.php",
@@ -1432,16 +1447,16 @@ $(document).ready(function () {
       success: function (response) {
         if (response.status === 1) {
           showToast("Project saved!");
-          $("#AddProject").addClass("hidden");
           $("#AddProject")[0].reset();
+          $("#AddProject").addClass("hidden");
+          $("#projectSkillsList").empty();
+          $("#projectSkillCount").text("0");
+          $("#emptyProjectSkillsState").show();
 
           let userID = $("#userID").val();
-          loadProjects(userID);
+          loadProject(userID);
         } else {
-          showError(
-            "An error occurred",
-            response.message || "Please try again."
-          );
+          showError("An error occurred", response.message || "Please try again.");
         }
       },
       error: function () {
@@ -1449,6 +1464,7 @@ $(document).ready(function () {
       },
     });
   });
+
 
 }); // ✅ ปิด $(document).ready()
 

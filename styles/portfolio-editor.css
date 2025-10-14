@@ -454,6 +454,10 @@ section h5 {
   font-weight: var(--font-weight-medium);
 }
 
+div#myProjectSkillsBox {
+  margin: var(--spacing-16) 0;
+}
+
 .hidden {
   display: none !important;
 }
