@@ -58,8 +58,6 @@ function validateDateRange(startDate, endDate, isCurrent, labelText = "currently
   }
 
   if (!isCurrent) {
-
-    // --- 4.1: ต้องมี End Date ---
     if (!endDate) {
       showError("Missing information", `Please select an end date or check 'I ${labelText}'`);
       return false;
@@ -79,12 +77,30 @@ function validateDateRange(startDate, endDate, isCurrent, labelText = "currently
     }
   }
 
-  // ============================================
-  // ขั้นที่ 5: ผ่านทุกการตรวจสอบแล้ว ✅
-  // ============================================
   return true;
 }
 
+function validateWorkExpForm(form) {
+  const start = $(form).find("#workStartDate").val();
+  const end = $(form).find("#workEndDate").val();
+  const isCurrent = $(form).find("#workIsCurrent").is(":checked");
+
+  return validateDateRange(start, end, isCurrent, {
+    fieldName: "Date",
+    currentCheckboxLabel: "currently work here"
+  });
+}
+
+function validateEducationForm(form) {
+  const start = $("#eduStartDate").val();
+  const end = $("#eduEndDate").val();
+  const isCurrent = $("#eduIsCurrent").is(":checked");
+
+  return validateDateRange(start, end, isCurrent, {
+    fieldName: "Date",
+    currentCheckboxLabel: "currently studying here"
+  });
+}
 
 function validateProjectForm(form) {
   const title = $(form).find("#projectTitle").val();
@@ -102,8 +118,11 @@ function validateProjectForm(form) {
     return false;
   }
 
-  // ตรวจสอบขนาดไฟล์ (10MB = 10485760 bytes)
-  if (image.size > 10485760) {
+  // ตรวจสอบขนาดไฟล์
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+  const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+
+  if (image.size > MAX_FILE_SIZE) {
     showError("File Too Large", "Image size must not exceed 10MB.");
     return false;
   }
@@ -129,81 +148,48 @@ function validateProjectForm(form) {
 }
 
 function validateWorkExpUpdate(container) {
-  const startDate = new Date(container.find(".work-start-date").val());
-  const endDateVal = container.find(".work-end-date").val();
-  const endDate = endDateVal ? new Date(endDateVal) : null;
+  const startDate = container.find(".work-start-date").val();
+  const endDate = container.find(".work-end-date").val();
   const isCurrent = container.find(".work-is-current").is(":checked");
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
 
-  // ✅ เช็ค: Start Date ต้องไม่เกินวันที่ปัจจุบัน
-  if (startDate > today) {
-    showError(
-      "Invalid Date",
-      "Start Date cannot be in the future."
-    );
-    return false;
-  }
-
-  if (!isCurrent && endDateVal) {
-    // ✅ เช็ค: End Date ต้องมากกว่า Start Date
-    if (endDate <= startDate) {
-      showError("Invalid Date", "End Date must be after Start Date.");
-      return false;
-    }
-
-    // ✅ เช็ค: End Date ต้องไม่เกินวันที่ปัจจุบัน
-    if (endDate > today) {
-      showError(
-        "Invalid Date",
-        "End Date cannot be in the future. If you're still working here, please check 'I currently work here'."
-      );
-      return false;
-    }
-  }
-
-  return true;
+  return validateDateRange(startDate, endDate, isCurrent, {
+    fieldName: "Date",
+    currentCheckboxLabel: "currently work here"
+  });
 }
 
 function validateEducationUpdate(container) {
-  const startDate = new Date(container.find(".edu-start-date").val());
-  const endDateVal = container.find(".edu-end-date").val();
-  const endDate = endDateVal ? new Date(endDateVal) : null;
+  const startDate = container.find(".edu-start-date").val();
+  const endDate = container.find(".edu-end-date").val();
   const isCurrent = container.find(".edu-is-current").is(":checked");
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
 
-  // ✅ เช็ค: Start Date ต้องไม่เกินวันที่ปัจจุบัน
-  if (startDate > today) {
-    showError(
-      "Invalid Date",
-      "Start Date cannot be in the future."
-    );
-    return false;
-  }
-
-  if (!isCurrent && endDateVal) {
-    // ✅ เช็ค: End Date ต้องมากกว่า Start Date
-    if (endDate <= startDate) {
-      showError("Invalid Date", "End Date must be after Start Date.");
-      return false;
-    }
-
-    // ✅ เช็ค: End Date ต้องไม่เกินวันที่ปัจจุบัน
-    if (endDate > today) {
-      showError(
-        "Invalid Date",
-        "End Date cannot be in the future. If you're still studying here, please check 'Currently studying here'."
-      );
-      return false;
-    }
-  }
-
-  return true;
+  return validateDateRange(startDate, endDate, isCurrent, {
+    fieldName: "Date",
+    currentCheckboxLabel: "currently studying here"
+  });
 }
 
 function validateProjectUpdate(container) {
-  // ... โค้ด validation สำหรับ Update
+  const title = container.find(".project-title").val().trim();
+  const keyPoint = container.find(".project-keypoint").val().trim();
+  const skills = container.find(`.project-skills-data[data-id="${container.data('id')}"]`).val();
+
+  if (!title) {
+    showError("Validation Error", "Project title is required.");
+    return false;
+  }
+
+  if (!keyPoint) {
+    showError("Validation Error", "Job description is required.");
+    return false;
+  }
+
+  if (!skills || skills === "[]") {
+    showError("Validation Error", "Please select at least one skill.");
+    return false;
+  }
+
+  return true;
 }
 
 // ============================================
@@ -725,7 +711,7 @@ function deleteEducationItem(itemId, container) {
         dataType: "json",
         success: function (response) {
           if (response.status === 1) {
-            showToast("Eduacation deleted successfully!");
+            showToast("Education deleted successfully!");
 
             // ✅ Reload ข้อมูลใหม่ของ user เดียวกัน
             loadEducation(userID);

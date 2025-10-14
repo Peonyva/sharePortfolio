@@ -43,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $newSort = $stmtMaxSort->fetch(PDO::FETCH_ASSOC)['newSort'];
         
         // Insert ข้อมูล
-        $sql = "INSERT INTO education (userID, educationName, degree, facultyName, majorName, startDate, endDate, isCurrent, remarks, sortOrder, createdAt) 
-                VALUES (:userID, :educationName, :degree, :facultyName, :majorName, :startDate, :endDate, :isCurrent, :remarks, :sortOrder, NOW())";
+        $sql = "INSERT INTO education (userID, educationName, degree, facultyName, majorName, startDate, endDate, isCurrent, remarks, sortOrder) 
+                VALUES (:userID, :educationName, :degree, :facultyName, :majorName, :startDate, :endDate, :isCurrent, :remarks, :sortOrder)";
         
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);

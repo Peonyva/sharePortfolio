@@ -77,8 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 startDate = :startDate,
                 endDate = :endDate,
                 isCurrent = :isCurrent,
-                remarks = :remarks,
-                updatedAt = NOW()
+                remarks = :remarks
                 WHERE id = :id AND userID = :userID";
         
         $stmt = $conn->prepare($sql);
