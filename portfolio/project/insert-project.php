@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     try {
         // หา sortOrder สูงสุด
-        $sqlMaxSort = "SELECT COALESCE(MAX(sortOrder), 0) + 1 AS newSort FROM projects WHERE userID = :userID";
+        $sqlMaxSort = "SELECT COALESCE(MAX(sortOrder), 0) + 1 AS newSort FROM project WHERE userID = :userID";
         $stmtMaxSort = $conn->prepare($sqlMaxSort);
         $stmtMaxSort->bindParam(':userID', $userID, PDO::PARAM_INT);
         $stmtMaxSort->execute();
@@ -106,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'message' => 'Failed to save project.'
             ]);
         }
+    
         
     } catch (PDOException $e) {
         // ลบไฟล์ถ้าเกิด error

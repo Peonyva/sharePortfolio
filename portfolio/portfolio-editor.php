@@ -304,7 +304,7 @@
                     <h2 class="title">
                         <span class="number">5</span>Project
                     </h2>
-                    <button type="button" class="btn btn-primary btn-toggle" data-target="#Addproject">
+                    <button type="button" class="btn btn-primary btn-toggle" data-target="#AddProject">
                         <i class="fa-solid fa-plus"></i>
                     </button>
                 </div>

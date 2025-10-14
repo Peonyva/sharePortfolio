@@ -761,9 +761,9 @@ function moveEducationItem(currentId, currentSort, newSort) {
 // 5️⃣ PROJECT - CRUD FUNCTIONS
 // ============================================
 
-function loadProjects(userID) {
+function loadProject(userID) {
   $.ajax({
-    url: "/portfolio/project/get-projects.php",
+    url: "/portfolio/project/get-project.php",
     type: "GET",
     dataType: "json",
     data: { userID: userID },
@@ -784,6 +784,8 @@ function loadProjects(userID) {
     },
   });
 }
+
+
 
 function appendProjectItem(data, allData) {
   let sortOrder = parseInt(data.sortOrder);
@@ -1231,7 +1233,7 @@ $(document).ready(function () {
   if (userID) {
     loadWorkExp(userID);      // ✅ เรียกใช้ฟังก์ชันที่ประกาศข้างบน
     loadEducation(userID);    // ✅ เรียกใช้ฟังก์ชันที่ประกาศข้างบน
-    loadProjects(userID);     // ✅ เรียกใช้ฟังก์ชันที่ประกาศข้างบน
+    loadProject(userID);     // ✅ เรียกใช้ฟังก์ชันที่ประกาศข้างบน
   }
 
   // =====================
@@ -1421,7 +1423,7 @@ $(document).ready(function () {
     formData.append("myProjectSkills", $("#myProjectSkillsInput").val());
 
     $.ajax({
-      url: "/portfolio/project/insertProject.php",
+      url: "/portfolio/project/insert-project.php",
       method: "POST",
       data: formData,
       processData: false,
