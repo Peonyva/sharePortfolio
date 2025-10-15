@@ -37,8 +37,6 @@ body {
   background-color: var(--color-background);
 }
 
-
-
 /* Main */
 main.page-con {
   padding: var(--spacing-40) 0;
@@ -361,7 +359,7 @@ section h5 {
   background-color: var(--color-background);
   display: none;
   text-align: left;
-  margin: var(--spacing-16) 0 0;
+  margin: var(--spacing-16) 0;
 }
 
 .skills-list,
@@ -449,14 +447,20 @@ section h5 {
   min-width: var(--spacing-100);
 }
 
+.project-image-preview.image-preview {
+  text-align: center;
+}
+
 .htmlforSkills {
   color: var(--color-text-secondary);
   font-weight: var(--font-weight-medium);
 }
 
-div#myProjectSkillsBox {
+.skill-editor-container .selected-skills-box {
+  text-align: left;
   margin: var(--spacing-16) 0;
 }
+
 
 .hidden {
   display: none !important;

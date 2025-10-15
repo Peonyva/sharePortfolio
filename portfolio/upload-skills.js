@@ -3,6 +3,10 @@ let allSkills = [];
 let mySkills = [];
 let projectSkills = [];
 
+if (addProjectSkillBtn) {
+  addProjectSkillBtn.addEventListener("click", addProjectSkill);
+}
+
 // ===== INITIALIZATION =====
 document.addEventListener("DOMContentLoaded", async function () {
   await initializeApp();
@@ -28,7 +32,7 @@ async function initializeApp() {
 // ===== DATA LOADING =====
 async function loadSkillsFromServer() {
   try {
-    const response = await fetch("/portfolio/personal/get-skills.php");
+    const response = await fetch("/portfolio/get-skills.php");
 
     if (!response.ok) {
       throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);

@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $keyPoint = isset($_POST['keyPoint']) ? trim($_POST['keyPoint']) : '';
     $myProjectSkills = isset($_POST['myProjectSkills']) ? $_POST['myProjectSkills'] : '';
 
-    // Validation
+    // ✅ Validation
     if (empty($userID) || empty($projectTitle) || empty($keyPoint) || empty($myProjectSkills)) {
         echo json_encode([
             'status' => 0,
@@ -18,15 +18,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // ✅ แปลง skill ให้เป็น array
     if (!is_array($myProjectSkills)) {
         $decoded = json_decode($myProjectSkills, true);
-        if ($decoded) {
-            $myProjectSkills = $decoded;
-        } else {
-            $myProjectSkills = explode(',', $myProjectSkills);
-        }
+        $myProjectSkills = $decoded ?: explode(',', $myProjectSkills);
     }
 
+    // ✅ ตรวจสอบไฟล์อัปโหลด
     if (!isset($_FILES['projectImage']) || $_FILES['projectImage']['error'] !== UPLOAD_ERR_OK) {
         echo json_encode([
             'status' => 0,
@@ -36,17 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $file = $_FILES['projectImage'];
-    $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-    $maxSize = 10485760; // 10MB
+    $maxSize = 10 * 1024 * 1024; // 10MB
 
-    if (!in_array($file['type'], $allowedTypes)) {
-        echo json_encode([
-            'status' => 0,
-            'message' => 'Only JPG, PNG, and GIF images are allowed.'
-        ]);
-        exit;
-    }
-
+    // ✅ ตรวจขนาดไฟล์
     if ($file['size'] > $maxSize) {
         echo json_encode([
             'status' => 0,
@@ -55,44 +45,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // ✅ ตรวจชนิดไฟล์จริง (ปลอดภัยกว่า)
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mimeType = finfo_file($finfo, $file['tmp_name']);
+    finfo_close($finfo);
+
+    $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    if (!in_array($mimeType, $allowedMimeTypes)) {
+        echo json_encode([
+            'status' => 0,
+            'message' => 'Only JPG, PNG, and GIF images are allowed.'
+        ]);
+        exit;
+    }
+
     // ✅ สร้างชื่อไฟล์ใหม่
-    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     $newFileName = 'project_' . $userID . '_' . time() . '.' . $extension;
     $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/projects/';
     if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
     $uploadPath = $uploadDir . $newFileName;
-    move_uploaded_file($file['tmp_name'], $uploadPath);
+
+    if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
+        echo json_encode([
+            'status' => 0,
+            'message' => 'Failed to upload image.'
+        ]);
+        exit;
+    }
 
     $projectImagePath = '/uploads/projects/' . $newFileName;
 
     try {
-        // หา sortOrder สูงสุด
-        $sqlMaxSort = "SELECT COALESCE(MAX(sortOrder), 0) + 1 AS newSort FROM education WHERE userID = :userID";
+        // ✅ หา sortOrder ล่าสุดจาก project table (ไม่ใช่ education)
+        $sqlMaxSort = "SELECT COALESCE(MAX(sortOrder), 0) + 1 AS newSort FROM project WHERE userID = :userID";
         $stmtMaxSort = $conn->prepare($sqlMaxSort);
         $stmtMaxSort->bindParam(':userID', $userID, PDO::PARAM_INT);
         $stmtMaxSort->execute();
         $newSort = $stmtMaxSort->fetch(PDO::FETCH_ASSOC)['newSort'];
 
-        // ✅ Insert ข้อมูล project
-        $sqlProject = "INSERT INTO project (userID, projectTitle, projectImage, keyPoint)
-                       VALUES (:userID, :projectTitle, :projectImage, :keyPoint)";
+        // ✅ Insert project
+        $sqlProject = "INSERT INTO project (userID, projectTitle, projectImage, keyPoint, sortOrder)
+                       VALUES (:userID, :projectTitle, :projectImage, :keyPoint, :sortOrder)";
         $stmtProject = $conn->prepare($sqlProject);
         $stmtProject->bindParam(':userID', $userID, PDO::PARAM_INT);
         $stmtProject->bindParam(':projectTitle', $projectTitle);
         $stmtProject->bindParam(':projectImage', $projectImagePath);
         $stmtProject->bindParam(':keyPoint', $keyPoint);
+        $stmtProject->bindParam(':sortOrder', $newSort, PDO::PARAM_INT);
         $stmtProject->execute();
 
         $projectID = $conn->lastInsertId();
 
-        // ✅ Insert ข้อมูล skills
+        // ✅ Insert project skills
         $sqlSkill = "INSERT INTO projectSkill (projectID, skillsID) VALUES (:projectID, :skillsID)";
         $stmtSkill = $conn->prepare($sqlSkill);
 
         foreach ($myProjectSkills as $skillID) {
-            $stmtSkill->bindParam(':projectID', $projectID, PDO::PARAM_INT);
-            $stmtSkill->bindParam(':skillsID', $skillID, PDO::PARAM_INT);
-            $stmtSkill->execute();
+            $skillID = intval($skillID);
+            if ($skillID > 0) {
+                $stmtSkill->bindParam(':projectID', $projectID, PDO::PARAM_INT);
+                $stmtSkill->bindParam(':skillsID', $skillID, PDO::PARAM_INT);
+                $stmtSkill->execute();
+            }
         }
 
         echo json_encode([
@@ -100,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'message' => 'Project saved successfully!'
         ]);
     } catch (PDOException $e) {
-        // ถ้า insert skill ล้มเหลว อาจจะมี project อยู่แล้ว
+        // ลบไฟล์ออกหาก insert ล้มเหลว
         if (isset($uploadPath) && file_exists($uploadPath)) unlink($uploadPath);
         echo json_encode([
             'status' => 0,

@@ -13,7 +13,13 @@ if (!isset($_GET['userID'])) {
 $userID = intval($_GET['userID']);
 
 try {
-    $sql = "SELECT * FROM project WHERE userID = :userID ORDER BY sortOrder ASC";
+ $sql = "SELECT p.projectID, p.projectTitle, p.projectImage, p.keyPoint, p.sortOrder, JSON_ARRAYAGG(s.skillsName) AS skills
+        FROM project AS p
+        LEFT JOIN projectSkill ps ON p.projectID = ps.projectID
+        LEFT JOIN skills s ON ps.skillsID = s.skillsID
+        WHERE p.userID = :userID
+        GROUP BY p.projectID
+        ORDER BY p.sortOrder ASC;";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
     $stmt->execute();

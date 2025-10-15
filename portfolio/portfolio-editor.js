@@ -785,53 +785,74 @@ function loadProject(userID) {
   });
 }
 
+// ============================================
+// 🔧 แก้ไขปัญหา Project CRUD
+// ============================================
+
 function appendProjectItem(data, allData) {
   let sortOrder = parseInt(data.sortOrder);
-  let itemId = data.id;
+  let itemId = String(data.projectID).trim();
   let totalItems = allData.length;
 
-  let container = $(
-    `<div class="project-item-container" data-id="${itemId}" data-sort-order="${sortOrder}"></div>`
+  console.log("📦 Appending Project Item:", {
+    itemId: itemId,
+    itemIdType: typeof itemId,
+    sortOrder: sortOrder
+  });
+
+  let container = $(`
+    <div class="project-item-container" 
+         data-id="${itemId}" 
+         data-sort-order="${sortOrder}">
+    </div>`
   );
 
-  // ปุ่ม Up/Down
-  let upButton = "";
-  let downButton = "";
+  // Up/Down Buttons
+  let upButton = sortOrder > 1 ? `
+    <button type="button" 
+            class="btn btn-secondary move-up-project-btn btn-manage" 
+            data-id="${itemId}" 
+            data-current-sort="${sortOrder}">
+      <i class="fa-solid fa-arrow-up"></i> Up
+    </button>` : "";
 
-  if (totalItems > 1) {
-    if (sortOrder > 1) {
-      upButton = `<button type="button" class="btn btn-secondary move-up-project-btn btn-manage" data-id="${itemId}" data-current-sort="${sortOrder}">
-        <i class="fa-solid fa-arrow-up"></i> Up
-      </button>`;
-    }
-    if (sortOrder < totalItems) {
-      downButton = `<button type="button" class="btn btn-secondary move-down-project-btn btn-manage" data-id="${itemId}" data-current-sort="${sortOrder}">
-        <i class="fa-solid fa-arrow-down"></i> Down
-      </button>`;
-    }
-  }
+  let downButton = sortOrder < totalItems ? `
+    <button type="button" 
+            class="btn btn-secondary move-down-project-btn btn-manage" 
+            data-id="${itemId}" 
+            data-current-sort="${sortOrder}">
+      <i class="fa-solid fa-arrow-down"></i> Down
+    </button>` : "";
 
-  // แปลง skills จาก JSON string เป็น array
+  // =============================
+  // Parse Skills
+  // =============================
   let skillsArray = [];
-  try {
-    skillsArray = JSON.parse(data.skills || "[]");
-  } catch (e) {
-    console.error("Error parsing skills:", e);
-    skillsArray = [];
+  if (Array.isArray(data.skills)) {
+    skillsArray = data.skills;
+  } else if (typeof data.skills === "string" && data.skills.trim()) {
+    let skillsStr = data.skills.trim();
+    if (skillsStr.startsWith("[") && skillsStr.endsWith("]")) {
+      try {
+        skillsArray = JSON.parse(skillsStr);
+      } catch (e) {
+        console.warn("JSON parse failed, using comma split:", e);
+        skillsArray = skillsStr.replace(/[\[\]"]/g, "").split(",").map(s => s.trim()).filter(s => s);
+      }
+    } else {
+      skillsArray = skillsStr.split(",").map(s => s.trim()).filter(s => s);
+    }
   }
 
-  // สร้าง HTML สำหรับ skills
-  let skillsHTML = '';
-  if (skillsArray.length > 0) {
-    skillsHTML = skillsArray.map(skill =>
-      `<span class="skill-badge">${skill}</span>`
-    ).join('');
-  } else {
-    skillsHTML = '<span class="htmlforSkills">No skills selected</span>';
-  }
+  const skillsHTML = skillsArray.length
+    ? skillsArray.map(skill => `<span class="skill-tag">${skill}</span>`).join("")
+    : `<span class="text-muted">No skills selected</span>`;
 
+  // =============================
+  // Build Project Item HTML
+  // =============================
   let projectItem = $(`
-    <div class="project-item">
+    <div class="project-item" data-project-id="${itemId}">
       <div class="controller-header"> 
         <div class="controller">
           ${upButton}
@@ -844,7 +865,10 @@ function appendProjectItem(data, allData) {
 
       <div class="form-group">
         <label class="required-label">Project Title :</label>
-        <input type="text" class="project-title" data-id="${itemId}" value="${data.projectTitle}">
+        <input type="text" 
+               class="project-title" 
+               data-id="${itemId}" 
+               value="${data.projectTitle}">
       </div>
 
       <div class="form-group">
@@ -852,55 +876,75 @@ function appendProjectItem(data, allData) {
         <div class="project-image-preview image-preview" data-id="${itemId}">
           <img src="${data.projectImage}" alt="${data.projectTitle}">
         </div>
-        <div class="mt-2">
-          <button type="button" class="btn btn-secondary btn-change-image btn-preview-image" data-id="${itemId}">
-            <i class="fa-solid fa-image"></i> Change Image
+        <div class="preview-actions">
+          <button type="button" 
+                  class="btn btn-primary btn-change-image btn-preview-image" 
+                  data-id="${itemId}">Change Image
           </button>
-          <input type="file" class="project-image-input hidden" data-id="${itemId}" accept="image/*">
+          <input type="file" 
+                 class="project-image-input hidden" 
+                 data-id="${itemId}" 
+                 accept="image/*">
         </div>
       </div>
 
       <div class="form-group">
         <label class="required-label">Job Description :</label>
-        <textarea class="project-keypoint" data-id="${itemId}" rows="3">${data.keyPoint}</textarea>
+        <textarea class="project-keypoint" 
+                  data-id="${itemId}" 
+                  rows="3">${data.keyPoint}</textarea>
         <div class="description-message">Press Enter to separate each item onto a new line.</div>
       </div>
 
       <div class="form-group">
         <label class="required-label">Skills :</label>
-        <div class="project-skills-display" data-id="${itemId}">
+        <div class="skills-list project-skills-display" data-id="${itemId}">
           ${skillsHTML}
         </div>
-        <button type="button" class="btn btn-secondary btn-edit-skills mt-2" data-id="${itemId}">
-          <i class="fa-solid fa-edit"></i> Edit Skills
-        </button>
       </div>
 
-      <!-- Hidden Skills Editor -->
       <div class="project-skills-editor hidden" data-id="${itemId}">
+       <div class="skill-editor-container">
         <div class="input-group">
           <div class="form-group dropdown">
             <label>Select Skill :</label>
-            <select class="form-select project-skill-dropdown" data-id="${itemId}">
+            <select class="project-skill-dropdown form-select" data-id="${itemId}">
               <option value="">Choose a skill...</option>
             </select>
           </div>
           <div class="btn-wrapper">
-            <button type="button" class="btn btn-success btn-add-project-skill" data-id="${itemId}" disabled>
+            <button type="button" class="btn-add-project-skill btn btn-success btn-manage" data-id="${itemId}" disabled>
               Add Skill
             </button>
           </div>
         </div>
-        <div class="selected-skills-box">
+
+        <div class="selected-skills-box" data-id="${itemId}">
           <h5>Selected Skills (<span class="project-skill-count" data-id="${itemId}">0</span>)</h5>
           <div class="project-skills-list" data-id="${itemId}"></div>
         </div>
-        <input type="hidden" class="project-skills-data" data-id="${itemId}" value='${data.skills}'>
+        <input type="hidden" class="project-skills-data" data-id="${itemId}" value='${JSON.stringify(skillsArray)}'>
+         </div>
       </div>
 
       <div class="btn-wrapper">
-        <button type="button" class="btn btn-success btn-update-project btn-manage" data-id="${itemId}">Update</button>
-        <button type="button" class="btn btn-danger btn-delete-project btn-manage" data-id="${itemId}">Delete</button>
+        <button type="button" 
+                class="btn-edit-skills btn btn-primary btn-manage" 
+                data-id="${itemId}">
+          Edit Skills
+        </button>
+
+        <button type="button" 
+                class="btn-update-project btn btn-success btn-manage" 
+                data-id="${itemId}">
+          Update
+        </button>
+
+        <button type="button" 
+                class="btn-delete-project btn btn-danger btn-manage" 
+                data-id="${itemId}">
+          Delete
+        </button>
       </div>
     </div>
   `);
@@ -908,210 +952,65 @@ function appendProjectItem(data, allData) {
   $("#Project").append(container);
   container.append(projectItem);
 
-  // ✅ Load skills dropdown สำหรับ edit mode
   loadSkillsForProjectEdit(itemId);
-
-  // ✅ Initialize selected skills
   initializeProjectSkills(itemId, skillsArray);
 
   // =============================
   // Event Handlers
   // =============================
-
-  // ปุ่ม Move Up
-  container.find(".move-up-project-btn").click(function () {
-    let currentSort = parseInt($(this).data("current-sort"));
-    moveProjectItem(itemId, currentSort, currentSort - 1);
+ container.find(".move-up-project-btn").click(function () {
+    moveProjectItem(itemId, parseInt($(this).data("current-sort")), parseInt($(this).data("current-sort")) - 1);
   });
 
-  // ปุ่ม Move Down
   container.find(".move-down-project-btn").click(function () {
-    let currentSort = parseInt($(this).data("current-sort"));
-    moveProjectItem(itemId, currentSort, currentSort + 1);
+    moveProjectItem(itemId, parseInt($(this).data("current-sort")), parseInt($(this).data("current-sort")) + 1);
   });
 
-  // ปุ่ม Change Image
   container.find(".btn-change-image").click(function () {
     container.find(`.project-image-input[data-id="${itemId}"]`).click();
   });
 
-  // เมื่อเลือกรูปใหม่
   container.find(`.project-image-input[data-id="${itemId}"]`).change(function () {
     handleProjectImageChange(this, itemId);
   });
 
-  // ปุ่ม Edit Skills
   container.find(".btn-edit-skills").click(function () {
     container.find(`.project-skills-editor[data-id="${itemId}"]`).toggleClass("hidden");
   });
 
-  // Dropdown skills change
   container.find(`.project-skill-dropdown[data-id="${itemId}"]`).change(function () {
     const btn = container.find(`.btn-add-project-skill[data-id="${itemId}"]`);
-    if ($(this).val()) {
-      btn.prop("disabled", false);
-    } else {
-      btn.prop("disabled", true);
-    }
+    btn.prop("disabled", !$(this).val());
   });
 
-  // ปุ่ม Add Skill
   container.find(`.btn-add-project-skill[data-id="${itemId}"]`).click(function () {
     addProjectSkillToEdit(itemId, container);
   });
 
-  // ปุ่ม Update
   container.find(".btn-update-project").click(function () {
     updateProjectItem(itemId, container);
   });
 
-  // ปุ่ม Delete
-container.find(".btn-delete-project").click(function () {
-  const itemId = $(this).attr("data-id"); // ใช้ attr() แทน data()
-  console.log("🧩 Delete clicked itemId =", itemId); // ✅ ดูค่าก่อนส่ง
-  
-  deleteProjectItem(itemId, container);
-});
-
-}
-
-// =============================
-// 🔹 PROJECT - HELPER FUNCTIONS
-// =============================
-
-function loadSkillsForProjectEdit(itemId) {
-  $.ajax({
-    url: "/portfolio/personal/get-skills.php",
-    type: "GET",
-    dataType: "json",
-    success: function (response) {
-      if (response.status === 1) {
-        const dropdown = $(`.project-skill-dropdown[data-id="${itemId}"]`);
-        dropdown.empty().append('<option value="">Choose a skill...</option>');
-
-        response.data.forEach(function (skill) {
-          dropdown.append(`<option value="${skill.skillName}">${skill.skillName}</option>`);
-        });
-      }
-    },
-    error: function () {
-      console.error("Failed to load skills for project edit");
-    },
+  container.find(".btn-delete-project").click(function () {
+    deleteProjectItem(itemId, container);
   });
 }
 
-function initializeProjectSkills(itemId, skillsArray) {
-  const container = $(`.project-item-container[data-id="${itemId}"]`);
-  const skillsList = container.find(`.project-skills-list[data-id="${itemId}"]`);
-  const skillCount = container.find(`.project-skill-count[data-id="${itemId}"]`);
-
-  skillsList.empty();
-
-  if (skillsArray.length > 0) {
-    skillsArray.forEach(skill => {
-      const skillItem = $(`
-        <div class="skill-item">
-          <span class="skill-name">${skill}</span>
-          <button type="button" class="btn-remove-skill" data-skill="${skill}">
-            <i class="fa-solid fa-times"></i>
-          </button>
-        </div>
-      `);
-
-      skillItem.find(".btn-remove-skill").click(function () {
-        removeProjectSkillFromEdit(itemId, skill, container);
-      });
-
-      skillsList.append(skillItem);
-    });
-  }
-
-  skillCount.text(skillsArray.length);
-}
-
-function addProjectSkillToEdit(itemId, container) {
-  const dropdown = container.find(`.project-skill-dropdown[data-id="${itemId}"]`);
-  const selectedSkill = dropdown.val();
-
-  if (!selectedSkill) return;
-
-  // ดึง skills ปัจจุบัน
-  const skillsData = container.find(`.project-skills-data[data-id="${itemId}"]`);
-  let currentSkills = [];
-  try {
-    currentSkills = JSON.parse(skillsData.val() || "[]");
-  } catch (e) {
-    currentSkills = [];
-  }
-
-  // เช็คว่ามีอยู่แล้วหรือไม่
-  if (currentSkills.includes(selectedSkill)) {
-    showError("Duplicate Skill", "This skill is already added.");
-    return;
-  }
-
-  // เพิ่ม skill ใหม่
-  currentSkills.push(selectedSkill);
-  skillsData.val(JSON.stringify(currentSkills));
-
-  // Refresh display
-  initializeProjectSkills(itemId, currentSkills);
-
-  // Reset dropdown
-  dropdown.val("");
-  container.find(`.btn-add-project-skill[data-id="${itemId}"]`).prop("disabled", true);
-}
-
-function removeProjectSkillFromEdit(itemId, skillToRemove, container) {
-  const skillsData = container.find(`.project-skills-data[data-id="${itemId}"]`);
-  let currentSkills = [];
-  try {
-    currentSkills = JSON.parse(skillsData.val() || "[]");
-  } catch (e) {
-    currentSkills = [];
-  }
-
-  // ลบ skill
-  currentSkills = currentSkills.filter(skill => skill !== skillToRemove);
-  skillsData.val(JSON.stringify(currentSkills));
-
-  // Refresh display
-  initializeProjectSkills(itemId, currentSkills);
-}
-
-function handleProjectImageChange(input, itemId) {
-  const file = input.files[0];
-  if (!file) return;
-
-  // Validation
-  if (file.size > 10485760) {
-    showError("File Too Large", "Image size must not exceed 10MB.");
-    input.value = "";
-    return;
-  }
-
-  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-  if (!allowedTypes.includes(file.type)) {
-    showError("Invalid File Type", "Only JPG, PNG, and GIF images are allowed.");
-    input.value = "";
-    return;
-  }
-
-  // แสดง preview
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    $(`.project-image-preview[data-id="${itemId}"] img`).attr("src", e.target.result);
-  };
-  reader.readAsDataURL(file);
-}
-
 function updateProjectItem(itemId, container) {
+  console.group("🔄 UPDATE PROJECT");
+  console.log("itemId:", itemId, typeof itemId);
+  console.groupEnd();
+
+  if (!itemId || String(itemId).trim() === "") {
+    showError("Error", "Project ID is missing.");
+    return;
+  }
+
   const title = container.find(".project-title").val().trim();
   const keyPoint = container.find(".project-keypoint").val().trim();
   const skillsData = container.find(`.project-skills-data[data-id="${itemId}"]`).val();
   const imageInput = container.find(`.project-image-input[data-id="${itemId}"]`)[0];
 
-  // Validation
   if (!title) {
     showError("Validation Error", "Project title is required.");
     return;
@@ -1127,16 +1026,14 @@ function updateProjectItem(itemId, container) {
     return;
   }
 
-  // สร้าง FormData
   const formData = new FormData();
-  formData.append("id", itemId);
+  formData.append("id", String(itemId).trim());
   formData.append("userID", $("#userID").val());
   formData.append("projectTitle", title);
   formData.append("keyPoint", keyPoint);
   formData.append("myProjectSkills", skillsData);
 
-  // ถ้ามีการเปลี่ยนรูป
-  if (imageInput.files.length > 0) {
+  if (imageInput && imageInput.files.length > 0) {
     formData.append("projectImage", imageInput.files[0]);
   }
 
@@ -1148,14 +1045,16 @@ function updateProjectItem(itemId, container) {
     contentType: false,
     dataType: "json",
     success: function (response) {
+      console.log("✅ UPDATE SUCCESS:", response);
       if (response.status === 1) {
         showToast("Project updated successfully!");
-        loadProjects($("#userID").val());
+        loadProject($("#userID").val());
       } else {
         showError("Update failed", response.message || "Please try again.");
       }
     },
-    error: function () {
+    error: function (xhr, status, error) {
+      console.error("❌ UPDATE ERROR:", { status, error, response: xhr.responseText });
       showError("An error occurred", "Could not update Project.");
     },
   });
@@ -1163,6 +1062,24 @@ function updateProjectItem(itemId, container) {
 
 function deleteProjectItem(itemId, container) {
   const userID = $("#userID").val();
+
+  console.group("🗑️ DELETE PROJECT");
+  console.log("itemId:", itemId, typeof itemId);
+  console.log("userID:", userID, typeof userID);
+  console.groupEnd();
+
+  if (!itemId || String(itemId).trim() === "") {
+    showError("Error", "Project ID is missing.");
+    return;
+  }
+
+  if (!userID || String(userID).trim() === "") {
+    showError("Error", "User ID is missing.");
+    return;
+  }
+
+  const safeItemId = String(itemId).trim();
+  const safeUserID = String(userID).trim();
 
   Swal.fire({
     title: "Confirm deletion?",
@@ -1175,32 +1092,34 @@ function deleteProjectItem(itemId, container) {
     cancelButtonColor: "#6b7280",
   }).then((result) => {
     if (result.isConfirmed) {
+      const formData = new FormData();
+      formData.append("id", safeItemId);
+      formData.append("userID", safeUserID);
+
       $.ajax({
         url: "/portfolio/project/delete-project.php",
         method: "POST",
-        data: {
-          id: itemId,
-          userID: userID, // ✅ ส่งค่า userID ไปด้วย
-        },
+        data: formData,
+        processData: false,
+        contentType: false,
         dataType: "json",
         success: function (response) {
+          console.log("✅ DELETE SUCCESS:", response);
           if (response.status === 1) {
             showToast("Project deleted successfully!");
-
-            // ✅ Reload ข้อมูลใหม่ของ user เดียวกัน
-            loadProject(userID);
+            loadProject(safeUserID);
           } else {
-            showError(
-              "Deletion failed",
-              response.message || "Please try again."
-            );
+            showError("Deletion failed", response.message || "Please try again.");
           }
         },
-        error: function () {
-          showError(
-            "An error occurred",
-            "Could not delete Project."
-          );
+        error: function (xhr, status, error) {
+          console.error("❌ DELETE ERROR:", { status, error, response: xhr.responseText });
+          try {
+            const errorResponse = JSON.parse(xhr.responseText);
+            showError("An error occurred", errorResponse.message || "Could not delete Project.");
+          } catch (e) {
+            showError("An error occurred", "Could not delete Project.");
+          }
         },
       });
     }
@@ -1220,7 +1139,7 @@ function moveProjectItem(currentId, currentSort, newSort) {
     dataType: "json",
     success: function (response) {
       if (response.status === 1) {
-        loadProjects($("#userID").val());
+        loadProject($("#userID").val());
       } else {
         console.error("Error: " + response.message);
       }
@@ -1229,6 +1148,198 @@ function moveProjectItem(currentId, currentSort, newSort) {
       console.error("AJAX Error:", error);
     },
   });
+}
+
+// =============================
+// 🔹 PROJECT - HELPER FUNCTIONS  ⬅️ ใส่ตรงนี้
+// =============================
+
+function loadSkillsForProjectEdit(itemId) {
+  $.ajax({
+    url: "/portfolio/get-skills.php",
+    type: "GET",
+    dataType: "json",
+    success: function (response) {
+      let skillsData = [];
+      
+      // ✅ รองรับทั้ง format ที่มี wrapper และไม่มี
+      if (response.status === 1 && Array.isArray(response.data)) {
+        skillsData = response.data;
+      } else if (Array.isArray(response)) {
+        skillsData = response;
+      }
+
+      const dropdown = $(`.project-skill-dropdown[data-id="${itemId}"]`);
+      dropdown.empty().append('<option value="">Choose a skill...</option>');
+
+      skillsData.forEach(function (skill) {
+        const skillName = skill.name || skill.skillName;
+        dropdown.append(`<option value="${skillName}">${skillName}</option>`);
+      });
+    },
+    error: function () {
+      console.error("Failed to load skills for project edit");
+    },
+  });
+}
+
+function initializeProjectSkills(itemId, skillsArray) {
+  const container = $(`.project-item-container[data-id="${itemId}"]`);
+  const skillsList = container.find(`.project-skills-list[data-id="${itemId}"]`);
+  const skillCount = container.find(`.project-skill-count[data-id="${itemId}"]`);
+
+  if (!skillsList.length) {
+    console.warn(`Skills list not found for itemId=${itemId}`);
+    return;
+  }
+
+  skillsList.empty();
+
+  if (skillsArray && skillsArray.length > 0) {
+    skillsArray.forEach(skill => {
+      const skillItem = $(`
+        <span class="skill-tag">
+          ${skill}
+          <button type="button" class="skill-remove" data-skill="${skill}">×</button>
+        </span>
+      `);
+
+      skillItem.find(".skill-remove").click(function () {
+        removeProjectSkillFromEdit(itemId, skill, container);
+      });
+
+      skillsList.append(skillItem);
+    });
+  }
+
+  skillCount.text(skillsArray ? skillsArray.length : 0);
+}
+
+function addProjectSkillToEdit(itemId, container) {
+  const dropdown = container.find(`.project-skill-dropdown[data-id="${itemId}"]`);
+  const selectedSkill = dropdown.val();
+
+  if (!selectedSkill) return;
+
+  const skillsData = container.find(`.project-skills-data[data-id="${itemId}"]`);
+  let currentSkills = [];
+  
+  try {
+    const dataValue = skillsData.val();
+    if (dataValue && dataValue.trim()) {
+      currentSkills = JSON.parse(dataValue);
+    }
+  } catch (e) {
+    console.warn("Error parsing skills data:", e);
+    currentSkills = [];
+  }
+
+  if (currentSkills.includes(selectedSkill)) {
+    showError("Duplicate Skill", "This skill is already added.");
+    return;
+  }
+
+  currentSkills.push(selectedSkill);
+  skillsData.val(JSON.stringify(currentSkills));
+
+  // ✅ Update display
+  const skillsList = container.find(`.project-skills-list[data-id="${itemId}"]`);
+  const skillItem = $(`
+    <span class="skill-tag">
+      ${selectedSkill}
+      <button type="button" class="skill-remove" data-skill="${selectedSkill}">×</button>
+    </span>
+  `);
+
+  skillItem.find(".skill-remove").click(function () {
+    removeProjectSkillFromEdit(itemId, selectedSkill, container);
+  });
+
+  skillsList.append(skillItem);
+
+  // ✅ Update count
+  const skillCount = container.find(`.project-skill-count[data-id="${itemId}"]`);
+  skillCount.text(currentSkills.length);
+
+  // ✅ Reset dropdown
+  dropdown.val("");
+  container.find(`.btn-add-project-skill[data-id="${itemId}"]`).prop("disabled", true);
+}
+
+
+function removeProjectSkillFromEdit(itemId, skillToRemove, container) {
+  const skillsData = container.find(`.project-skills-data[data-id="${itemId}"]`);
+  let currentSkills = [];
+  
+  try {
+    const dataValue = skillsData.val();
+    if (dataValue && dataValue.trim()) {
+      currentSkills = JSON.parse(dataValue);
+    }
+  } catch (e) {
+    console.warn("Error parsing skills data:", e);
+    currentSkills = [];
+  }
+
+  currentSkills = currentSkills.filter(skill => skill !== skillToRemove);
+  skillsData.val(JSON.stringify(currentSkills));
+
+  initializeProjectSkills(itemId, currentSkills);
+}
+
+function handleProjectImageChange(input, itemId) {
+  try {
+    const file = input.files && input.files[0];
+    if (!file) return;
+
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      showError("File Too Large", "Image size must not exceed 10MB.");
+      input.value = "";
+      return;
+    }
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+    if (!allowedTypes.includes(file.type)) {
+      showError("Invalid File Type", "Only JPG, PNG, and GIF images are allowed.");
+      input.value = "";
+      return;
+    }
+
+    const allowedExtensions = ["jpg", "jpeg", "png", "gif"];
+    const fileExtension = file.name.split(".").pop().toLowerCase();
+    if (!allowedExtensions.includes(fileExtension)) {
+      showError("Invalid File Extension", "Unsupported file extension detected.");
+      input.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const imageUrl = e.target.result;
+
+      const $previewContainer = $(`.project-image-preview[data-id="${itemId}"] img`);
+      if ($previewContainer.length === 0) {
+        console.warn(`Preview element for itemId=${itemId} not found.`);
+        return;
+      }
+
+      if (!/^data:image\/(jpeg|png|gif);base64,/.test(imageUrl)) {
+        showError("Invalid File Content", "The uploaded file is not a valid image.");
+        input.value = "";
+        return;
+      }
+
+      $previewContainer.attr("src", imageUrl);
+      showToast("Image preview updated");
+    };
+
+    reader.readAsDataURL(file);
+  } catch (err) {
+    console.error("Image upload error:", err);
+    showError("Unexpected Error", "Something went wrong while processing the image.");
+    input.value = "";
+  }
 }
 
 // ============================================

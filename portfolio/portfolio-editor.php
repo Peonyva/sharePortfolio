@@ -326,7 +326,7 @@
                                 <p>PNG, JPG, GIF up to 10MB</p>
                             </div>
                         </div>
-                        <input type="file" id="projectImage" name="projectImage" class="file-input" accept="image/*" onchange="handleImageUpload(this, 'projectImageUploader')" required>
+                        <input type="file" id="projectImage" name="projectImage" class="file-input" accept="image/*" required>
                     </div>
                     <div class="form-group">
                         <label for="keyPoint" class="required-label">Job Description :</label>
@@ -342,7 +342,7 @@
                         </div>
 
                         <div class="btn-wrapper">
-                            <button type="button" id="addProjectSkillBtn" class="btn btn-success btn-manage" onclick="addProjectSkill()" disabled>
+                            <button type="button" id="addProjectSkillBtn" class="btn btn-success btn-manage" disabled>
                                 Add Skill
                             </button>
                         </div>
@@ -374,8 +374,8 @@
 
 <!-- Scripts -->
 <script src="/portfolio/portfolio-editor.js"></script>
-<script src="/portfolio/personal/upload-image.js"></script>
-<script src="/portfolio/personal/upload-skills.js"></script>
+<script src="/portfolio/upload-image.js"></script>
+<script src="/portfolio/upload-skills.js"></script>
 
 </body>
 </html>
