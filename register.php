@@ -8,38 +8,41 @@
 <!-- Main -->
 <main class="page-con register">
     <div class="content-box register">
-        <!-- <div class="account-text">
-            Already have an account? <a href="#" class="redirect-col2">Login</a>
-        </div> -->
 
         <h2 class="heading">Register to create your free portfolio.</h2>
 
-        <form method="POST">
+        <form id="register" method="POST">
             <div class="grid grid-cols-2">
 
                 <div class="form-group">
                     <label for="firstname" class="required-label">Firstname :</label>
-                    <input type="text" id="firstname" required>
+                    <input type="text" id="firstname" name="firstname" required>
                 </div>
                 <div class="form-group">
-                    <label for="firstname" class="required-label">Lastname :</label>
-                    <input type="text" id="lastname" required>
+                    <label for="lastname" class="required-label">Lastname :</label>
+                    <input type="text" id="lastname" name="lastname" required>
                 </div>
                 <div class="form-group">
-                    <label for="datebirth" class="required-label">Date of birth :</label>
-                    <input type="date" id="datebirth" required>
+                    <label for="birthdate" class="required-label">Date of birth :</label>
+                    <input type="date" id="birthdate" name="birthdate" required>
                 </div>
                 <div class="form-group">
                     <label for="email" class="required-label">Email :</label>
-                    <input type="email" id="email" required>
+                    <input type="email" id="email" name="email" required>
                 </div>
                 <div class="form-group">
                     <label for="password" class="required-label">Password :</label>
-                    <input type="password" id="password" required>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="password-confirm" class="required-label">Confirm Password :</label>
-                    <input type="password" id="password-confirm" required>
+                    <div class="password-container">
+                        <input type="password" id="password-confirm" name="password-confirm" required>
+                        <i class="fas fa-eye toggle-password"></i>
+                    </div>
                 </div>
 
             </div>
@@ -55,7 +58,10 @@
     </div>
 </main>
 
+
+
 <!-- Footer -->
-<?php  require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php';  ?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php';  ?>
+<script src="/main.js"></script>
 
 </html>
