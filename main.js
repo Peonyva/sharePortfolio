@@ -97,13 +97,36 @@ function validateRegisterForm(form) {
   return true;
 }
 
+function validateLoginForm(form) {
+  const email = $(form).find("#email").val().trim();
+  const password = $(form).find("#password").val();
+
+  if (!email) {
+    showError("Validation Error", "Email is required.");
+    return false;
+  }
+
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email)) {
+    showError("Validation Error", "Invalid email format.");
+    return false;
+  }
+
+  if (!password) {
+    showError("Validation Error", "Password is required.");
+    return false;
+  }
+
+  return true;
+}
+
 // ============================================
 // 3️⃣ GLOBAL FUNCTIONS (ฟังก์ชันที่ใช้ได้ทุกหน้า)
 // ============================================
 
 function togglePassword() {
-  
-  var clickedIcon = this; 
+
+  var clickedIcon = this;
 
   // หา input ที่อยู่ใกล้ที่สุด (หรือใน div เดียวกัน)
   var container = clickedIcon.closest('.password-container');
@@ -161,6 +184,53 @@ $(function () {
       },
     });
   });
+
+  $("#login").on("submit", function (e) {
+    e.preventDefault();
+
+    if (!validateLoginForm(this)) return;
+
+    const formData = new FormData(this);
+
+    $.ajax({
+      url: "/get-login.php",
+      method: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: "json",
+      success: function (response) {
+        if (response.status === 1) {
+          showToast("Login successful!");
+
+          let isPublic = response.data.isPublic;
+          let isEverPublic = response.data.isEverPublic;
+          let redirectURL = '/portfolio/portfolio-editor.php'; // ค่าเริ่มต้น
+
+          // เงื่อนไข: ถ้า (isPublic = 1 และ isEverPublic = 1) หรือ (isPublic = 0 และ isEverPublic = 1) 
+          // ให้ไป portfolio.php
+          if (isEverPublic === 1) {
+            redirectURL = '/portfolio.php';
+          }
+
+          // กรณีที่เป็น isPublic = 0 และ isEverPublic = 0 (ล็อคอินครั้งแรก/ไม่เคยเปิดสาธารณะ)
+          // จะใช้ค่าเริ่มต้น คือ '/portfolio/portfolio-editor.php'
+
+
+          setTimeout(() => {
+            window.location.href = '/portfolio/portfolio-editor.php';
+          }, 1500);
+
+        } else {
+          showError("An error occurred", response.message || "Please try again.");
+        }
+      },
+      error: function () {
+        showError("An error has occurred", "The Register could not be saved.");
+      },
+    });
+  });
+
 
 
   document.querySelectorAll('.toggle-password').forEach(btn => {

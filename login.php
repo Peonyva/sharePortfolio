@@ -35,9 +35,8 @@
 </main>
 
 
-<script src="/main.js"></script>
-
 <!-- Footer -->
 <?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php';  ?>
+<script src="/main.js"></script>
 
 </html>
