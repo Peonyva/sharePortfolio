@@ -461,6 +461,89 @@ section h5 {
   margin: var(--spacing-16) 0;
 }
 
+.heading-container {
+  display: flex; /* ใช้ Flexbox */
+  align-items: center; /* จัดให้อยู่กึ่งกลางแนวตั้ง (เพื่อให้ข้อความและสวิตช์ตรงกัน) */
+  justify-content: space-between; /* แยกข้อความ (title) และสวิตช์ (switch) ให้ห่างกันมากที่สุด */
+  width: 100%; /* สำคัญ: กำหนดความกว้างเต็มที่ของคอนเทนเนอร์ */
+  margin-bottom: var(--spacing-24); /* เพิ่มระยะห่างด้านล่างเล็กน้อย */
+}
+
+/* 2. จัดการกับข้อความ (title) ภายใน heading-container */
+.heading-container .title {
+    font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  display: flex;
+  align-items: center;
+  flex-grow: 1; /* ให้ h2 กินพื้นที่ที่เหลือทั้งหมด */
+  margin-bottom: 0;
+}
+
+/* The switch - สวิตช์หลัก */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider - พื้นหลังของสวิตช์ */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+/* วงกลมสวิตช์ */
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+/* สีเมื่อเปิด (สถานะ checked) */
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+/* ตำแหน่งวงกลมเมื่อเปิด */
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders - ทำให้สวิตช์เป็นวงกลม */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
 
 .hidden {
   display: none !important;

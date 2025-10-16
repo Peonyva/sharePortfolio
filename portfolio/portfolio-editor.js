@@ -1349,6 +1349,8 @@ function handleProjectImageChange(input, itemId) {
 
 $(document).ready(function () {
 
+
+  
   // =====================
   // 🔹 Initial Load
   // =====================

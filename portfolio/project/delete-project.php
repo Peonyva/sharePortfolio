@@ -21,14 +21,14 @@ if (empty($_POST['id']) || empty($_POST['userID'])) {
 $id = intval($_POST['id']);
 $userID = intval($_POST['userID']);
 
+
+
 try {
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $sqlSelect = "
-        SELECT projectImage, sortOrder 
-        FROM project 
-        WHERE projectID = :id AND userID = :userID
-    ";
+    // 1. Select the project to get image path and sortOrder
+    $sqlSelect = " SELECT projectImage, sortOrder FROM project 
+                WHERE projectID = :id AND userID = :userID ";
     $stmtSelect = $conn->prepare($sqlSelect);
     $stmtSelect->bindParam(':id', $id, PDO::PARAM_INT);
     $stmtSelect->bindParam(':userID', $userID, PDO::PARAM_INT);
@@ -46,16 +46,22 @@ try {
 
     $deletedSortOrder = intval($project['sortOrder']);
 
-    $sqlDelete = "
-        DELETE FROM project 
-        WHERE projectID = :id AND userID = :userID
-    ";
+    // 2. ลบข้อมูลที่เกี่ยวข้องในตาราง projectSkill (ต้องทำก่อนลบ project)
+    $sqlDeleteSkills = " DELETE FROM projectSkill WHERE projectID = :id";
+    $stmtDeleteSkills = $conn->prepare($sqlDeleteSkills);
+    $stmtDeleteSkills->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmtDeleteSkills->execute(); // ดำเนินการลบ projectSkill
+
+
+    // 3. ลบข้อมูลโปรเจกต์หลัก
+    $sqlDelete = " DELETE FROM project WHERE projectID = :id AND userID = :userID ";
     $stmtDelete = $conn->prepare($sqlDelete);
     $stmtDelete->bindParam(':id', $id, PDO::PARAM_INT);
     $stmtDelete->bindParam(':userID', $userID, PDO::PARAM_INT);
 
     if ($stmtDelete->execute()) {
 
+        // 4. ลบไฟล์รูปภาพโปรเจกต์
         if (!empty($project['projectImage'])) {
             $imagePath = realpath($_SERVER['DOCUMENT_ROOT'] . $project['projectImage']);
             $uploadBase = realpath($_SERVER['DOCUMENT_ROOT'] . '/uploads/projects/');
@@ -64,11 +70,9 @@ try {
                 unlink($imagePath);
             }
         }
-        $sqlReorder = "
-            UPDATE project
-            SET sortOrder = sortOrder - 1
-            WHERE userID = :userID AND sortOrder > :deletedSort
-        ";
+        // 5. จัดเรียงลำดับ (sortOrder) ของโปรเจกต์ที่เหลือใหม่
+        $sqlReorder = " UPDATE project SET sortOrder = sortOrder - 1
+                    WHERE userID = :userID AND sortOrder > :deletedSort ";
         $stmtReorder = $conn->prepare($sqlReorder);
         $stmtReorder->bindParam(':userID', $userID, PDO::PARAM_INT);
         $stmtReorder->bindParam(':deletedSort', $deletedSortOrder, PDO::PARAM_INT);
@@ -84,7 +88,6 @@ try {
             'message' => 'Failed to delete project.'
         ]);
     }
-
 } catch (PDOException $e) {
     echo json_encode([
         'status' => 0,
@@ -93,4 +96,3 @@ try {
 }
 
 $conn = null;
-?>

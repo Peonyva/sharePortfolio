@@ -1,13 +1,3 @@
-function setupImageUploadHandlers() {
-  const projectImageInput = document.getElementById("projectImage");
-  
-  if (projectImageInput) {
-    projectImageInput.addEventListener("change", function() {
-      handleImageUpload(this, "projectImageUploader");
-    });
-  }
-}
-
 // ===== IMAGE UPLOAD FUNCTIONS =====
 function handleImageUpload(input, divPreviewID) {
   const uploader = document.getElementById(divPreviewID);

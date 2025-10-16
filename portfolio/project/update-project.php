@@ -4,10 +4,10 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // ✅ ตรวจสอบค่าที่ส่งมา
     $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
     $userID = isset($_POST['userID']) ? intval($_POST['userID']) : 0;
 
+    // 💡 ปรับปรุงข้อความ
     if (empty($id) || empty($userID)) {
         echo json_encode([
             'status' => 0,
@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $oldData = $stmtSelect->fetch(PDO::FETCH_ASSOC);
 
         if (!$oldData) {
+            // 💡 ปรับปรุงข้อความ
             echo json_encode([
                 'status' => 0,
                 'message' => 'Project not found or does not belong to this user.'
@@ -37,12 +38,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // ✅ ใช้ข้อมูลเก่า ถ้าไม่มีการส่งค่ามาใหม่
         $projectTitle = !empty($_POST['projectTitle']) ? trim($_POST['projectTitle']) : $oldData['projectTitle'];
         $keyPoint = !empty($_POST['keyPoint']) ? trim($_POST['keyPoint']) : $oldData['keyPoint'];
-        $myProjectSkills = isset($_POST['myProjectSkills']) ? $_POST['myProjectSkills'] : [];
 
-        if (!is_array($myProjectSkills)) {
-            $decoded = json_decode($myProjectSkills, true);
-            $myProjectSkills = $decoded ?: explode(',', $myProjectSkills);
+        // 💡 ปรับปรุงการจัดการ myProjectSkills ให้ยืดหยุ่นขึ้น
+        $myProjectSkills = [];
+        if (isset($_POST['myProjectSkills'])) {
+            $inputSkills = $_POST['myProjectSkills'];
+
+            if (is_array($inputSkills)) {
+                $myProjectSkills = $inputSkills;
+            } else {
+                $decoded = json_decode($inputSkills, true);
+                if (is_array($decoded)) {
+                    $myProjectSkills = $decoded;
+                } else {
+                    // กรองค่าว่างและ Trim ช่องว่าง
+                    $myProjectSkills = array_filter(array_map('trim', explode(',', $inputSkills)));
+                }
+            }
         }
+
 
         $projectImagePath = $oldData['projectImage']; // เริ่มต้นใช้รูปเดิม
 
@@ -74,18 +88,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
 
-            // สร้างชื่อไฟล์ใหม่
             $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
             $newFileName = 'project_' . $userID . '_' . time() . '.' . $extension;
             $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/projects/';
-            if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+            if (!is_dir($uploadDir)) {
+                // สร้าง Folder ถ้าไม่มี (ตั้งค่า permission 0755)
+                mkdir($uploadDir, 0755, true);
+            }
             $uploadPath = $uploadDir . $newFileName;
 
             if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-                // ลบไฟล์เก่า
-                $oldFilePath = $_SERVER['DOCUMENT_ROOT'] . $oldData['projectImage'];
-                if (file_exists($oldFilePath)) {
-                    unlink($oldFilePath);
+                $oldImagePath = $oldData['projectImage'];
+                if (!empty($oldImagePath)) {
+                    $oldFilePath = $_SERVER['DOCUMENT_ROOT'] . $oldImagePath;
+                    if (file_exists($oldFilePath)) {
+                        @unlink($oldFilePath);
+                    }
                 }
 
                 $projectImagePath = '/uploads/projects/' . $newFileName;
@@ -98,7 +116,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // ✅ ตรวจสอบค่าที่จำเป็น
         if (empty($projectTitle) || empty($keyPoint)) {
             echo json_encode([
                 'status' => 0,
@@ -107,7 +124,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        // ✅ อัปเดตข้อมูล project
+        if (empty($myProjectSkills)) {
+            echo json_encode([
+                'status' => 0,
+                'message' => 'At least one skill is required.'
+            ]);
+            exit;
+        }
+
+        // 1. ✅ อัปเดตข้อมูล project
         $sqlUpdate = "UPDATE project 
                       SET projectTitle = :projectTitle,
                           projectImage = :projectImage,
@@ -121,17 +146,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmtUpdate->bindParam(':userID', $userID, PDO::PARAM_INT);
         $stmtUpdate->execute();
 
-        // ✅ อัปเดต skills (ลบเก่าก่อน)
+        // 2. ✅ อัปเดต skills (ลบเก่าก่อน)
         $sqlDeleteSkill = "DELETE FROM projectSkill WHERE projectID = :projectID";
         $stmtDelete = $conn->prepare($sqlDeleteSkill);
         $stmtDelete->bindParam(':projectID', $id, PDO::PARAM_INT);
         $stmtDelete->execute();
 
+        // 3. ✅ เพิ่ม skills ใหม่
         $sqlInsertSkill = "INSERT INTO projectSkill (projectID, skillsID) VALUES (:projectID, :skillsID)";
         $stmtInsert = $conn->prepare($sqlInsertSkill);
         foreach ($myProjectSkills as $skillID) {
+            // ตรวจสอบและแปลงเป็น INT ก่อน
             $skillID = intval($skillID);
             if ($skillID > 0) {
+                // ต้อง bindParam ใน Loop (หรือใช้ execute(array(...)))
                 $stmtInsert->bindParam(':projectID', $id, PDO::PARAM_INT);
                 $stmtInsert->bindParam(':skillsID', $skillID, PDO::PARAM_INT);
                 $stmtInsert->execute();
@@ -156,4 +184,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $conn = null;
-?>

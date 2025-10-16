@@ -203,6 +203,7 @@ $(function () {
         if (response.status === 1) {
           showToast("Login successful!");
 
+          const userID = response.data.userID;
           let isPublic = response.data.isPublic;
           let isEverPublic = response.data.isEverPublic;
           let redirectURL = '/portfolio/portfolio-editor.php'; // ค่าเริ่มต้น
@@ -210,15 +211,15 @@ $(function () {
           // เงื่อนไข: ถ้า (isPublic = 1 และ isEverPublic = 1) หรือ (isPublic = 0 และ isEverPublic = 1) 
           // ให้ไป portfolio.php
           if (isEverPublic === 1) {
-            redirectURL = '/portfolio.php';
+            redirectURL = '/portfolio/portfolio.php.php';
           }
+
+          redirectURL += '?user=' + userID;
 
           // กรณีที่เป็น isPublic = 0 และ isEverPublic = 0 (ล็อคอินครั้งแรก/ไม่เคยเปิดสาธารณะ)
           // จะใช้ค่าเริ่มต้น คือ '/portfolio/portfolio-editor.php'
-
-
           setTimeout(() => {
-            window.location.href = '/portfolio/portfolio-editor.php';
+            window.location.href = redirectURL; // เช่น: /portfolio-editor.php?user=123
           }, 1500);
 
         } else {

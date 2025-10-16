@@ -1,4 +1,51 @@
-<?php $title = "Portfolio Editor"; ?>
+<?php
+$title = "Portfolio Editor";
+$currentUserID = $_GET['user'] ?? null;
+
+if (empty($currentUserID)) {
+    header('Location: /login.php');
+    exit; // Always exit after a header redirect
+}
+
+// --- START: Code to fetch isPublic status from DB ---
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php'; // Ensure your DB connection is included
+
+$isPublicFromDB = 0; // Default to unpublished
+
+try {
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Fetch the isPublic status from the 'profile' table for the current user
+    $sqlFetchStatus = "
+        SELECT isPublic
+        FROM profile 
+        WHERE userID = :userID
+    ";
+    $stmtFetchStatus = $conn->prepare($sqlFetchStatus);
+    $stmtFetchStatus->bindParam(':userID', $currentUserID, PDO::PARAM_INT);
+    $stmtFetchStatus->execute();
+    
+    $profileStatus = $stmtFetchStatus->fetch(PDO::FETCH_ASSOC);
+
+    if ($profileStatus) {
+        // Set the variable based on the database value (0 or 1)
+        $isPublicFromDB = intval($profileStatus['isPublic']);
+    }
+    
+    // NOTE: We keep the $conn open here if other sections below use it. 
+    // If not, you should close it ($conn = null;).
+    
+} catch (PDOException $e) {
+    // Handle error (e.g., log it or set a safe default)
+    error_log("DB Error fetching public status: " . $e->getMessage());
+    $isPublicFromDB = 0; // Safe default in case of error
+}
+// --- END: Code to fetch isPublic status from DB ---
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
 
 <!DOCTYPE html>
 <html lang="en">
@@ -11,13 +58,26 @@
     <main class="page-con">
         <h2 class="heading">Portfolio Information</h2>
 
+        <!-- UserID -->
+        <input type="hidden" id="userID" name="userID" value="<?php echo $currentUserID ?>">
+
         <section id="personal" class="personal">
             <form id="personalForm" method="POST" enctype="multipart/form-data">
                 <!-- 1 -->
                 <div class="content-box">
+                    <div class="heading-container">
+                        <h2 class="title">Would you like to publish your portfolio?</h2>
+                        <label class="switch">
+                            <input type="checkbox" id="publishToggle" <?php echo ($isPublicFromDB == 1) ? 'checked' : ''; ?>>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+
                     <h2 class="title">
                         <span class="number">1</span>Personal
                     </h2>
+
+
                     <div class="grid grid-cols-2">
                         <div class="form-group">
                             <label for="firstname" class="required-label">Firstname :</label>
@@ -157,9 +217,6 @@
                 </div>
             </form>
         </section>
-
-        <!-- ทดสอบ UserID -->
-        <input type="hidden" id="userID" name="userID" value="1">
 
         <!-- 3 -->
         <div class="content-box">
@@ -313,21 +370,21 @@
                         <label for="projectTitle" class="required-label">Project Title :</label>
                         <input type="text" id="projectTitle" name="projectTitle" required>
                     </div>
+
                     <div class="form-group">
-                        <label for="projectImage" class="required-label">Project Image :</label>
+                        <label for="projectImage" class="required-label">Logo Image :</label>
                         <div class="image-uploader" id="projectImageUploader">
                             <div class="upload-placeholder">
                                 <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                                 </svg>
-                                <button type="button" class="btn btn-primary upload-image" onclick="document.getElementById('projectImage').click()">
-                                    Upload Image
-                                </button>
+                                <button type="button" class="btn btn-primary upload-image" onclick="document.getElementById('projectImage').click()">Upload Project</button>
                                 <p>PNG, JPG, GIF up to 10MB</p>
                             </div>
                         </div>
-                        <input type="file" id="projectImage" name="projectImage" class="file-input" accept="image/*" required>
+                        <input type="file" id="projectImage" name="projectImage" class="file-input" accept="image/*" onchange="handleImageUpload(this, 'projectImageUploader')" required>
                     </div>
+
                     <div class="form-group">
                         <label for="keyPoint" class="required-label">Job Description :</label>
                         <textarea id="keyPoint" name="keyPoint" rows="3" placeholder="Describe the project, your role, and key achievements..." required></textarea>
@@ -374,8 +431,10 @@
 
 <!-- Scripts -->
 <script src="/portfolio/portfolio-editor.js"></script>
+<script src="/portfolio/toggle-public.js"></script>
 <script src="/portfolio/upload-image.js"></script>
 <script src="/portfolio/upload-skills.js"></script>
 
 </body>
+
 </html>
