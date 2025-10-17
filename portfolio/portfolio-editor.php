@@ -365,7 +365,7 @@ try {
                     </div>
 
                     <div class="form-group">
-                        <label for="keyPoint" class="required-label">Job Description :</label>
+                        <label for="keyPoint" class="required-label">Key Point :</label>
                         <textarea id="keyPoint" name="keyPoint" rows="3" placeholder="Describe the project, your role, and key achievements..." required></textarea>
                         <div class="description-message">Press Enter to separate each item onto a new line.</div>
                     </div>
@@ -426,6 +426,7 @@ try {
         $("#lastname").val(userData.lastname);
         $("#birthdate").val(userData.birthdate);
         $("#email").val(userData.email);
+
 
         $("#publishToggle").prop("checked", userData.isPublic == 1);
 

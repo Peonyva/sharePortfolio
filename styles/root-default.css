@@ -7,7 +7,6 @@
   --color-text-secondary: #808080;
   --color-text-white: #fff;
 
-
   /* Background */
   --color-background: #fff;
   --color-background-navbar: #f8f9fa;
@@ -19,10 +18,10 @@
   --color-btn-success: #28a745;
   --color-btn-danger: #dc3545;
   --color-btn-warning: #ffc107;
-  --color-btn-disabled : #d1d5db;
+  --color-btn-disabled: #d1d5db;
 
   --color-btn-submit-hover: #ccc;
-  --color-btn-secondary-hover: #5c636a;;
+  --color-btn-secondary-hover: #5c636a;
   --color-btn-primary-hover: #2563eb;
   --color-btn-success-hover: #218838;
   --color-btn-danger-hover: #bb2d3b;
@@ -40,8 +39,7 @@
   --color-white: #fff;
 
   /* icon */
-    --color-icon-toggle: #808080;
-
+  --color-icon-toggle: #808080;
 
   /* ==============================
      🔤 Typography
@@ -210,6 +208,15 @@ nav {
 
 .btn-link:hover {
   color: var(--color-accent);
+}
+
+/* Navbar Menu */
+.menu {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 /* form */

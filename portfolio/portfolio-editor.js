@@ -898,7 +898,7 @@ function appendProjectItem(data, allData) {
       </div>
 
       <div class="form-group">
-        <label class="required-label">Job Description :</label>
+        <label class="required-label">Key Point :</label>
         <textarea class="project-keypoint" 
                   data-id="${itemId}" 
                   rows="3">${data.keyPoint}</textarea>

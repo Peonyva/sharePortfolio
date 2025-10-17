@@ -144,7 +144,7 @@ function uploadImage($file, $dir, $prefix) {
     }
 
     $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-    $filename = $prefix . '_' . time() . '.' . $ext;
+    $filename = $prefix . '.' . $ext;
     $filepath = $dir . $filename;
 
     if (!move_uploaded_file($file['tmp_name'], $filepath)) {

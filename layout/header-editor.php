@@ -25,7 +25,8 @@
 
                     <div class="nav-menu">
                         <ul class="menu">
-                            <a href="#" id="logoutBtn" class="btn-link">Logout</a>
+                            <li><a href="/portfolio/portfolio.php" class="btn-link">Show your Portfolio</a></li>
+                            <li><a href="#" id="logoutBtn" class="btn-link">Logout</a></li>
                         </ul>
                     </div>
 
