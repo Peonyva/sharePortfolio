@@ -1,19 +1,23 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
-$userID = 1; // สมมติว่าเป็นผู้ใช้คนที่ 1
+$currentUserID = $_GET['user'] ?? null;
+$userID = $currentUserID;
+
+if (empty($currentUserID)) {
+    header('Location: /login.php');
+    exit; // Always exit after a header redirect
+}
 
 try {
   // ดึงข้อมูล Profile + Skills
-  $stmt = $conn->prepare("
-      SELECT p.firstname, p.lastname, p.position, p.email, p.phone, p.facebook,
+  $stmt = $conn->prepare(" SELECT p.firstname, p.lastname, p.position, p.email, p.phone, p.facebook,
              p.facebookUrl, p.logoImage, p.profileImage, p.coverImage, 
              p.introContent, p.skillsContent, s.skillsName, s.skillsUrl
       FROM profile p
-      LEFT JOIN profileSkills ps ON p.userID = ps.userID
+      LEFT JOIN profileSkill ps ON p.userID = ps.userID
       LEFT JOIN skills s ON ps.skillsID = s.skillsID
-      WHERE p.userID = :userID
-  ");
+      WHERE p.userID = :userID");
   $stmt->execute(['userID' => $userID]);
   $profileSkills = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

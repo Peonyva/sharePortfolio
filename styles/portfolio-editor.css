@@ -37,6 +37,7 @@ body {
   background-color: var(--color-background);
 }
 
+
 /* Main */
 main.page-con {
   padding: var(--spacing-40) 0;
@@ -58,6 +59,10 @@ main.page-con {
   background: var(--color-background-content);
   text-align: center;
   box-shadow: 0 var(--spacing-4) var(--spacing-12) rgba(0, 0, 0, 0.05);
+}
+
+.hidden {
+  display: none !important;
 }
 
 /* Grid */
@@ -545,9 +550,77 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
-.hidden {
-  display: none !important;
+/* ==================================== */
+/* 1. KEYFRAME ANIMATIONS (From original JS) */
+/* ==================================== */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* ==================================== */
+/* 2. AUTO-SAVE NOTIFICATION STYLES */
+/* ==================================== */
+.auto-save-notification {
+    /* Positioning & Layering */
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    
+    /* Layout */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    
+    /* Look & Feel */
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    
+    /* Typography */
+    font-size: 14px;
+    font-weight: 500;
+    
+    /* Animation (Entry) */
+    animation: slideIn 0.3s ease-out;
+    
+    /* Default background for safety */
+    background-color: #757575; 
+}
+
+/* Modifier Classes for background color (Set by JS) */
+.auto-save-notification.success {
+    background-color: #4caf50;
+}
+
+.auto-save-notification.error {
+    background-color: #f44336;
+}
+
+.auto-save-notification.info {
+    background-color: #2196F3;
+}
+
+
 
 /* Responsive */
 @media (max-width: 57.5rem) {

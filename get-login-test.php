@@ -16,7 +16,6 @@ try {
         exit;
     }
 
-    // ✅ ตรวจสอบว่า email มีอยู่จริงไหม
     $stmt = $conn->prepare("SELECT * FROM user WHERE email = :email");
     $stmt->bindParam(":email", $email);
     $stmt->execute();
@@ -28,30 +27,28 @@ try {
 
             $userID = $user['userID'];
 
-            // ✅ ตรวจสอบว่ามี profile ไหม
+            // ตรวจสอบและสร้าง Profile
             $checkProfile = $conn->prepare("SELECT isPublic, isEverPublic FROM profile WHERE userID = ?");
             $checkProfile->execute([$userID]);
-            $profileData = $checkProfile->fetch(PDO::FETCH_ASSOC);
 
-            // ✅ ถ้าไม่มี profile -> สร้างใหม่
+            $profileData = $checkProfile->fetch(PDO::FETCH_ASSOC); 
+
+            // ถ้ายังไม่มี -> สร้างใหม่เลย
             if ($checkProfile->rowCount() === 0) {
-                $insertProfile = $conn->prepare("
-                    INSERT INTO profile (userID, isPublic, isEverPublic)
-                    VALUES (?, 0, 0)
-                ");
+                $insertProfile = $conn->prepare(" INSERT INTO profile (userID, isPublic, isEverPublic) VALUES (?, 0, 0) ");
                 $insertProfile->execute([$userID]);
+
+                // ตั้งค่า profileData สำหรับส่งกลับในกรณีที่สร้างใหม่
                 $profileData = ['isPublic' => 0, 'isEverPublic' => 0];
             }
 
-            // ✅ รวมข้อมูล profile เข้ากับข้อมูล user
-            $user = array_merge($user, $profileData);
 
-            // ✅ ปลอดภัยขึ้น (ลบรหัสผ่านออกก่อนส่ง)
-            unset($user['password']);
+            // **รวมข้อมูล Profile เข้าไปใน data ที่จะส่งกลับ**
+            $user = array_merge($user, $profileData);
 
             echo json_encode([
                 "status" => 1,
-                "data" => $user, // มี userID, firstname, lastname, birthdate, email, isPublic, isEverPublic
+                "data" => $user, // ตอนนี้ $user มี isPublic และ isEverPublic แล้ว
                 "message" => "Login successful"
             ]);
         } else {

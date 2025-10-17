@@ -185,52 +185,53 @@ $(function () {
     });
   });
 
-  $("#login").on("submit", function (e) {
-    e.preventDefault();
+$("#login").on("submit", function (e) {
+  e.preventDefault();
 
-    if (!validateLoginForm(this)) return;
+  if (!validateLoginForm(this)) return;
 
-    const formData = new FormData(this);
+  const formData = new FormData(this);
 
-    $.ajax({
-      url: "/get-login.php",
-      method: "POST",
-      data: formData,
-      processData: false,
-      contentType: false,
-      dataType: "json",
-      success: function (response) {
-        if (response.status === 1) {
-          showToast("Login successful!");
+  $.ajax({
+    url: "/get-login.php",
+    method: "POST",
+    data: formData,
+    processData: false,
+    contentType: false,
+    dataType: "json",
+    success: function (response) {
+      if (response.status === 1) {
+        showToast("Login successful!");
 
-          const userID = response.data.userID;
-          let isPublic = response.data.isPublic;
-          let isEverPublic = response.data.isEverPublic;
-          let redirectURL = '/portfolio/portfolio-editor.php'; // ค่าเริ่มต้น
+        const userData = response.data;
+        const userID = userData.userID;
+        let redirectURL = '/portfolio/portfolio-editor.php';
 
-          // เงื่อนไข: ถ้า (isPublic = 1 และ isEverPublic = 1) หรือ (isPublic = 0 และ isEverPublic = 1) 
-          // ให้ไป portfolio.php
-          if (isEverPublic === 1) {
-            redirectURL = '/portfolio/portfolio.php.php';
-          }
+        // ✅ เก็บข้อมูลไว้ใน localStorage
+        localStorage.setItem("userData", JSON.stringify(userData));
 
-          redirectURL += '?user=' + userID;
-
-          // กรณีที่เป็น isPublic = 0 และ isEverPublic = 0 (ล็อคอินครั้งแรก/ไม่เคยเปิดสาธารณะ)
-          // จะใช้ค่าเริ่มต้น คือ '/portfolio/portfolio-editor.php'
-          setTimeout(() => {
-            window.location.href = redirectURL; // เช่น: /portfolio-editor.php?user=123
-          }, 1500);
-
-        } else {
-          showError("An error occurred", response.message || "Please try again.");
+        // ถ้าเคยเผยแพร่แล้ว -> ไปหน้า portfolio.php
+        if (userData.isEverPublic === 1) {
+          redirectURL = '/portfolio/portfolio.php';
         }
-      },
-      error: function () {
-        showError("An error has occurred", "The Register could not be saved.");
-      },
-    });
+
+        redirectURL += '?user=' + userID;
+
+        // ✅ ไปหน้าต่อหลังล็อกอิน
+        setTimeout(() => {
+          window.location.href = redirectURL;
+        }, 1500);
+
+      } else {
+        showError("An error occurred", response.message || "Please try again.");
+      }
+    },
+    error: function () {
+      showError("An error has occurred", "The login could not be processed.");
+    },
   });
+});
+
 
 
 

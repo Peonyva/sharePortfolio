@@ -4,65 +4,46 @@ $currentUserID = $_GET['user'] ?? null;
 
 if (empty($currentUserID)) {
     header('Location: /login.php');
-    exit; // Always exit after a header redirect
+    exit;
 }
 
-// --- START: Code to fetch isPublic status from DB ---
-require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php'; // Ensure your DB connection is included
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
-$isPublicFromDB = 0; // Default to unpublished
+$isPublicFromDB = 0;
 
 try {
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Fetch the isPublic status from the 'profile' table for the current user
-    $sqlFetchStatus = "
-        SELECT isPublic
-        FROM profile 
-        WHERE userID = :userID
-    ";
+    $sqlFetchStatus = "SELECT isPublic FROM profile WHERE userID = :userID";
     $stmtFetchStatus = $conn->prepare($sqlFetchStatus);
     $stmtFetchStatus->bindParam(':userID', $currentUserID, PDO::PARAM_INT);
     $stmtFetchStatus->execute();
-    
+
     $profileStatus = $stmtFetchStatus->fetch(PDO::FETCH_ASSOC);
 
     if ($profileStatus) {
-        // Set the variable based on the database value (0 or 1)
         $isPublicFromDB = intval($profileStatus['isPublic']);
     }
-    
-    // NOTE: We keep the $conn open here if other sections below use it. 
-    // If not, you should close it ($conn = null;).
-    
 } catch (PDOException $e) {
-    // Handle error (e.g., log it or set a safe default)
     error_log("DB Error fetching public status: " . $e->getMessage());
-    $isPublicFromDB = 0; // Safe default in case of error
+    $isPublicFromDB = 0;
 }
-// --- END: Code to fetch isPublic status from DB ---
-
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
-<!DOCTYPE html>
-<html lang="en">
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/header-editor.php'; ?>
 
-<!-- Head & Navbar -->
-<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/header-editor.php';  ?>
-
-<!-- Main -->
 <div class="container">
     <main class="page-con">
         <h2 class="heading">Portfolio Information</h2>
 
-        <!-- UserID -->
-        <input type="hidden" id="userID" name="userID" value="<?php echo $currentUserID ?>">
+        <input type="hidden" id="userID" name="userID" value="<?php echo htmlspecialchars($currentUserID); ?>">
 
         <section id="personal" class="personal">
             <form id="personalForm" method="POST" enctype="multipart/form-data">
+
                 <!-- 1 -->
                 <div class="content-box">
                     <div class="heading-container">
@@ -77,53 +58,52 @@ try {
                         <span class="number">1</span>Personal
                     </h2>
 
-
                     <div class="grid grid-cols-2">
                         <div class="form-group">
                             <label for="firstname" class="required-label">Firstname :</label>
-                            <input type="text" id="firstname" readonly>
+                            <input type="text" id="firstname" name="firstname">
                         </div>
                         <div class="form-group">
                             <label for="lastname" class="required-label">Lastname :</label>
-                            <input type="text" id="lastname" readonly>
+                            <input type="text" id="lastname" name="lastname">
                         </div>
 
                         <div class="form-group">
-                            <label for="datebirth" class="required-label">Date of birth :</label>
-                            <input type="date" id="datebirth" required>
+                            <label for="birthdate" class="required-label">Date of birth :</label>
+                            <input type="date" id="birthdate" name="birthdate">
                         </div>
                         <div class="form-group">
                             <label for="email" class="required-label">Email :</label>
-                            <input type="email" id="email" name="email" required>
+                            <input type="email" id="email" name="email" disabled>
                         </div>
 
                         <div class="form-group">
                             <label for="password" class="required-label">Password :</label>
-                            <input type="password" id="password" required>
+                            <input type="password" id="password" name="password" disabled>
                         </div>
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <label for="password-confirm" class="required-label">Confirm Password :</label>
-                            <input type="password" id="password-confirm" required>
-                        </div>
+                            <input type="password" id="password-confirm" name="password-confirm">
+                        </div> -->
 
                         <div class="form-group">
                             <label for="phone" class="required-label">Phone :</label>
-                            <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" maxlength="10" required>
+                            <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" maxlength="10">
                         </div>
 
                         <div class="form-group">
                             <label for="ProfessionalTitle" class="required-label">Professional Title:</label>
-                            <input type="text" id="ProfessionalTitle" placeholder="e.g., Full Stack Developer, UI/UX Designer" required>
+                            <input type="text" id="ProfessionalTitle" name="ProfessionalTitle" placeholder="e.g., Full Stack Developer, UI/UX Designer">
                         </div>
                         <div class="form-group">
                             <label for="facebook" class="required-label">Facebook Name :</label>
-                            <input type="text" id="facebook" required>
+                            <input type="text" id="facebook" name="facebook">
                         </div>
                         <div class="form-group">
                             <label for="facebookUrl" class="required-label">Facebook URL :</label>
-                            <input type="text" id="facebookUrl" placeholder="https://facebook.com/yourname" required>
+                            <input type="text" id="facebookUrl" name="facebookUrl" placeholder="https://facebook.com/yourname">
                         </div>
-                    </div> <!-- grid 2 -->
+                    </div>
 
                     <div class="grid grid-cols-2 mt-24 gap-x-0">
                         <!-- Logo Image Upload -->
@@ -138,7 +118,7 @@ try {
                                     <p>PNG, JPG, GIF up to 10MB</p>
                                 </div>
                             </div>
-                            <input type="file" id="logoImage" name="logoImage" class="file-input" accept="image/*" onchange="handleImageUpload(this, 'logoImageUploader')" required>
+                            <input type="file" id="logoImage" name="logoImage" class="file-input" accept="image/*" onchange="handleImageUpload(this, 'logoImageUploader')">
                         </div>
 
                         <!-- Profile Image Upload -->
@@ -153,7 +133,7 @@ try {
                                     <p>PNG, JPG, GIF up to 10MB</p>
                                 </div>
                             </div>
-                            <input type="file" id="profileImage" name="profileImage" class="file-input" accept="image/*" onchange="handleImageUpload(this, 'profileImageUploader')" required>
+                            <input type="file" id="profileImage" name="profileImage" class="file-input" accept="image/*" onchange="handleImageUpload(this, 'profileImageUploader')">
                         </div>
 
                         <!-- Cover Image Upload -->
@@ -168,13 +148,13 @@ try {
                                     <p>PNG, JPG, GIF up to 10MB</p>
                                 </div>
                             </div>
-                            <input type="file" id="coverImage" name="coverImage" class="file-input" accept="image/*" onchange="handleImageUpload(this, 'coverImageUploader')" required>
+                            <input type="file" id="coverImage" name="coverImage" class="file-input" accept="image/*" onchange="handleImageUpload(this, 'coverImageUploader')">
                         </div>
-                    </div> <!-- grid 2 -->
+                    </div>
 
                     <div class="form-group">
                         <label for="introContent" class="required-label">About Me :</label>
-                        <textarea id="introContent" name="introContent" rows="4" placeholder="Tell us about your professional background, achievements, and career goals." required></textarea>
+                        <textarea id="introContent" name="introContent" rows="4" placeholder="Tell us about your professional background, achievements, and career goals."></textarea>
                         <div class="description-message">Press Enter to separate each item onto a new line.</div>
                     </div>
                 </div>
@@ -187,7 +167,7 @@ try {
 
                     <div class="form-group">
                         <label for="skillsContent" class="required-label">Description my skills :</label>
-                        <textarea id="skillsContent" name="skillsContent" rows="4" placeholder="List your technical skills, programming languages, software, and other relevant abilities." required></textarea>
+                        <textarea id="skillsContent" name="skillsContent" rows="4" placeholder="List your technical skills, programming languages, software, and other relevant abilities."></textarea>
                         <div class="description-message">Press Enter to separate each item onto a new line.</div>
                     </div>
 
@@ -290,7 +270,6 @@ try {
                 <div id="WorkExp"></div>
             </section>
         </div>
-
 
         <!-- 4 -->
         <div class="content-box">
@@ -426,14 +405,34 @@ try {
     </main>
 </div>
 
-<!-- Footer -->
-<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php';  ?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php'; ?>
 
-<!-- Scripts -->
 <script src="/portfolio/portfolio-editor.js"></script>
+<script src="/portfolio/personal/blur.js"></script>
 <script src="/portfolio/toggle-public.js"></script>
 <script src="/portfolio/upload-image.js"></script>
 <script src="/portfolio/upload-skills.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const userData = JSON.parse(localStorage.getItem("userData"));
+
+        if (!userData) {
+            window.location.href = "/login.php";
+            return;
+        }
+
+        $("#firstname").val(userData.firstname);
+        $("#lastname").val(userData.lastname);
+        $("#birthdate").val(userData.birthdate);
+        $("#email").val(userData.email);
+
+        $("#publishToggle").prop("checked", userData.isPublic == 1);
+
+        console.log("Loaded user data into editor:", userData);
+    });
+
+</script>
 
 </body>
 
