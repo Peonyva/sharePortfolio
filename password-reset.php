@@ -11,10 +11,10 @@
     <div class="content-box password-reset">
         <h2 class="heading">Reset Password</h2>
         <p>Enter your email and we will send you a link to reset your password.</p>
-        <form>
+        <form id="password-reset" method="POST">
             <div class="form-group">
                 <label for="email">Email Address :</label>
-                <input type="email" id="email" placeholder="Enter your email" required>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
             </div>
             <button type="submit" class="btn btn-submit">Send Reset Link</button>
         </form>

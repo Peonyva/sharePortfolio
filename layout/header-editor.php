@@ -25,7 +25,7 @@
 
                     <div class="nav-menu">
                         <ul class="menu">
-                            <li><a href="/portfolio/portfolio.php" class="btn-link">Show your Portfolio</a></li>
+                            <li><a href="/portfolio/portfolio.php?user=<?php echo htmlspecialchars($currentUserID);?>" target="_blank" class="btn-link">Show your Portfolio</a></li>
                             <li><a href="#" id="logoutBtn" class="btn-link">Logout</a></li>
                         </ul>
                     </div>

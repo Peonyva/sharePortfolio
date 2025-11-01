@@ -28,7 +28,7 @@
 
           <div class="nav-menu">
             <ul class="menu">
-              <li><a href="/register.php" class="btn-outline">Get Started</a></li>
+              <li><a href="/register.php" target="_blank" class="btn-outline">Get Started</a></li>
               <li><a href="/login.php" class="btn-link">Login</a></li>
             </ul>
           </div>
@@ -45,7 +45,7 @@
           <div class="header-info">
             <h1>SharePortfolio</h1>
             <p>Download free portfolio templates with full HTML, CSS, and JS source code. Fully responsive for both desktop and mobile.</p>
-            <div><a href="/register.php" class="btn-info">Create a portfolio website</a></div>
+            <div><a href="/register.php" target="_blank" class="btn-info">Create a portfolio website</a></div>
           </div>
           <div class="header-image">
             <img src="/assets/images/previewImage2.png" alt="Portfolio Preview">

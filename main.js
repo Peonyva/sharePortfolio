@@ -119,6 +119,23 @@ function validateLoginForm(form) {
 
   return true;
 }
+function validatePasswordResetForm(form) {
+  const email = $(form).find("#email").val().trim();
+
+  if (!email) {
+    showError("Validation Error", "Email is required.");
+    return false;
+  }
+
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email)) {
+    showError("Validation Error", "Invalid email format.");
+    return false;
+  }
+
+  return true;
+}
+
 
 // ============================================
 // 3️⃣ GLOBAL FUNCTIONS (ฟังก์ชันที่ใช้ได้ทุกหน้า)
@@ -185,57 +202,83 @@ $(function () {
     });
   });
 
-$("#login").on("submit", function (e) {
-  e.preventDefault();
+  // 🔸 Login Form Submission Event
+  $("#login").on("submit", function (e) {
+    e.preventDefault();
 
-  if (!validateLoginForm(this)) return;
+    if (!validateLoginForm(this)) return;
 
-  const formData = new FormData(this);
+    const formData = new FormData(this);
 
-  $.ajax({
-    url: "/get-login.php",
-    method: "POST",
-    data: formData,
-    processData: false,
-    contentType: false,
-    dataType: "json",
-    success: function (response) {
-      if (response.status === 1) {
-        showToast("Login successful!");
+    $.ajax({
+      url: "/get-login.php",
+      method: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: "json",
+      success: function (response) {
+        if (response.status === 1) {
+          showToast("Login successful!");
 
-        const userData = response.data;
-        const userID = userData.userID;
-        let redirectURL = '/portfolio/portfolio-editor.php';
+          const userData = response.data;
+          const userID = userData.userID;
 
-        // ✅ เก็บข้อมูลไว้ใน localStorage
-        localStorage.setItem("userData", JSON.stringify(userData));
+          let redirectURL = userData.isEverPublic === 1 ? '/portfolio/portfolio.php' : '/portfolio/portfolio-editor.php';
+          redirectURL += '?user=' + encodeURIComponent(userID);
 
-        // ถ้าเคยเผยแพร่แล้ว -> ไปหน้า portfolio.php
-        if (userData.isEverPublic === 1) {
-          redirectURL = '/portfolio/portfolio.php';
+          // ✅ ไปหน้าต่อหลังล็อกอิน
+          setTimeout(() => {
+            window.location.href = redirectURL;
+          }, 1500);
+        } else {
+          showError("An error occurred", response.message || "Please try again.");
         }
-
-        redirectURL += '?user=' + userID;
-
-        // ✅ ไปหน้าต่อหลังล็อกอิน
-        setTimeout(() => {
-          window.location.href = redirectURL;
-        }, 1500);
-
-      } else {
-        showError("An error occurred", response.message || "Please try again.");
-      }
-    },
-    error: function () {
-      showError("An error has occurred", "The login could not be processed.");
-    },
+      },
+      error: function () {
+        showError("An error has occurred", "The login could not be processed.");
+      },
+    });
   });
-});
 
 
+  // 🔸 Password Reset Form Submission Event
+  $("#password-reset").on("submit", function (e) {
+    e.preventDefault();
+
+    if (!validatePasswordResetForm(this)) return;
+
+    const formData = new FormData(this);
+
+    $.ajax({
+      url: "/send-password-reset.php",
+      method: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: "json",
+      success: function (response) {
+        if (response.status === 1) {
+          showToast("Password reset link has been sent to your email!!");
+
+          // Redirect ไปหน้า Login
+          setTimeout(() => {
+            window.location.href = '/password-reset-link.php';
+          }, 1500);
+
+        } else {
+          showError("Failed to send reset link", response.message || "Please try again.");
+        }
+      },
+      error: function () {
+        showError("An error has occurred", "Unable to send password reset link. Please try again later.");
+      },
+    });
+  });
 
 
   document.querySelectorAll('.toggle-password').forEach(btn => {
     btn.addEventListener('click', togglePassword);
   });
+
 });
