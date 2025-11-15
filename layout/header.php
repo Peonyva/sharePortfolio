@@ -2,6 +2,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://kit.fontawesome.com/92f0aafca7.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="/lib/reset.css" />
     <link rel="stylesheet" href="/styles/root-default.css" />
     <link rel="stylesheet" href="/styles/standard.css" />

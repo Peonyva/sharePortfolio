@@ -1,8 +1,6 @@
-// ============================================
-// 1️⃣ UTILITY FUNCTIONS (ฟังก์ชันช่วยเหลือ)
-// ============================================
+// 1. UTILITY FUNCTIONS (ฟังก์ชันช่วยเหลือ) 
 
-// 🔹 Show Error with SweetAlert2
+// Show Error with SweetAlert2
 async function showError(title, text) {
   return await Swal.fire({
     icon: "error",
@@ -13,7 +11,7 @@ async function showError(title, text) {
   });
 }
 
-// 🔹 Show Toast (Alert Top Right)
+//  Show Toast (Alert Top Right)
 function showToast(title) {
   const Toast = Swal.mixin({
     toast: true,
@@ -27,16 +25,11 @@ function showToast(title) {
     },
   });
 
-  Toast.fire({
-    icon: "success",
-    title: title,
-  });
+  Toast.fire({ icon: "success", title: title, });
 }
 
-// ============================================
-// 2️⃣ VALIDATION FUNCTIONS (ฟังก์ชันตรวจสอบข้อมูล)
-// ============================================
-// ฟังก์ชันนี้ใช้สำหรับหน้า Register
+
+// 2️. VALIDATION FUNCTIONS (ฟังก์ชันตรวจสอบข้อมูล)
 
 function validateRegisterForm(form) {
   const firstname = $(form).find("#firstname").val().trim();
@@ -77,8 +70,6 @@ function validateRegisterForm(form) {
     return false;
   }
 
-  // ✅ รวมการตรวจสอบเงื่อนไขรหัสผ่านทั้งหมดใน Regex เดียว
-  // เงื่อนไข: 8-16 ตัว, มีอักษรตัวเล็ก, ตัวใหญ่, ตัวเลข, และสัญลักษณ์
   const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()])[A-Za-z0-9!@#$%^&*()]{8,16}$/;
 
   if (!passwordPattern.test(password)) {
@@ -106,11 +97,11 @@ function validateLoginForm(form) {
     return false;
   }
 
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailPattern.test(email)) {
-    showError("Validation Error", "Invalid email format.");
-    return false;
-  }
+  // const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // if (!emailPattern.test(email)) {
+  //   showError("Validation Error", "Invalid email format.");
+  //   return false;
+  // }
 
   if (!password) {
     showError("Validation Error", "Password is required.");
@@ -127,19 +118,16 @@ function validatePasswordResetForm(form) {
     return false;
   }
 
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailPattern.test(email)) {
-    showError("Validation Error", "Invalid email format.");
-    return false;
-  }
+  // const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // if (!emailPattern.test(email)) {
+  //   showError("Validation Error", "Invalid email format.");
+  //   return false;
+  // }
 
   return true;
 }
 
-
-// ============================================
-// 3️⃣ GLOBAL FUNCTIONS (ฟังก์ชันที่ใช้ได้ทุกหน้า)
-// ============================================
+// 3️. GLOBAL FUNCTIONS (ฟังก์ชันที่ใช้ได้ทุกหน้า)
 
 function togglePassword() {
 
@@ -162,12 +150,11 @@ function togglePassword() {
   }
 }
 
-// ============================================
-// 4️⃣ EVENTS (จัดการเหตุการณ์เมื่อ DOM พร้อม)
-// ============================================
+
+// 4️. EVENTS (จัดการเหตุการณ์เมื่อ DOM พร้อม)
 
 $(function () {
-  // 🔸 Register Form Submission Event
+  // Register Form Submission Event
   $("#register").on("submit", function (e) {
     e.preventDefault();
 
@@ -187,7 +174,6 @@ $(function () {
           showToast("Register saved!");
           $("#register")[0].reset();
 
-          // Redirect ไปหน้า Login
           setTimeout(() => {
             window.location.href = '/login.php';
           }, 1500);
@@ -202,13 +188,11 @@ $(function () {
     });
   });
 
-  // 🔸 Login Form Submission Event
+  // Login Form Submission Event
   $("#login").on("submit", function (e) {
     e.preventDefault();
 
-    if (!validateLoginForm(this)) return;
-
-    const formData = new FormData(this);
+    const formData = new FormData(this); // เก็บข้อมูลในฟอร์ม
 
     $.ajax({
       url: "/get-login.php",
@@ -217,32 +201,36 @@ $(function () {
       processData: false,
       contentType: false,
       dataType: "json",
+
       success: function (response) {
         if (response.status === 1) {
-          showToast("Login successful!");
+          alert("Login successful!");
 
-          const userData = response.data;
-          const userID = userData.userID;
+          let redirectURL = "/portfolio/portfolio-editor.php";
 
-          let redirectURL = userData.isEverPublic === 1 ? '/portfolio/portfolio.php' : '/portfolio/portfolio-editor.php';
-          redirectURL += '?user=' + encodeURIComponent(userID);
+          // ถ้าเคยเผยแพร่ public แล้ว -> ไปหน้า portfolio.php
+          if (response.isEverPublic === 1) {
+            redirectURL = "/portfolio/portfolio.php";
+          }
 
-          // ✅ ไปหน้าต่อหลังล็อกอิน
+          redirectURL += "?user=" + response.userID;
+
           setTimeout(() => {
             window.location.href = redirectURL;
-          }, 1500);
+          }, 1000);
         } else {
-          showError("An error occurred", response.message || "Please try again.");
+          alert("Login failed: " + (response.message || "Invalid username or password."));
         }
       },
+
       error: function () {
-        showError("An error has occurred", "The login could not be processed.");
+        alert("Error: Cannot connect to the server.");
       },
     });
   });
 
 
-  // 🔸 Password Reset Form Submission Event
+  // Password Reset Form Submission Event
   $("#password-reset").on("submit", function (e) {
     e.preventDefault();
 
@@ -261,7 +249,6 @@ $(function () {
         if (response.status === 1) {
           showToast("Password reset link has been sent to your email!!");
 
-          // Redirect ไปหน้า Login
           setTimeout(() => {
             window.location.href = '/password-reset-link.php';
           }, 1500);

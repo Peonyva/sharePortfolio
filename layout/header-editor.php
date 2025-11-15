@@ -2,7 +2,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://kit.fontawesome.com/92f0aafca7.js" crossorigin="anonymous"></script>
-    <script src="/lib/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="/lib/reset.css" />
     <link rel="stylesheet" href="/styles/root-default.css" />
     <link rel="stylesheet" href="/styles/portfolio-editor.css" />
@@ -25,7 +25,7 @@
 
                     <div class="nav-menu">
                         <ul class="menu">
-                            <li><a href="/portfolio/portfolio.php?user=<?php echo htmlspecialchars($currentUserID);?>" target="_blank" class="btn-link">Show your Portfolio</a></li>
+                            <li><a href="/portfolio/portfolio.php?user=<?php echo htmlspecialchars($currentUserID); ?>" target="_blank" class="btn-link">Show your Portfolio</a></li>
                             <li><a href="#" id="logoutBtn" class="btn-link">Logout</a></li>
                         </ul>
                     </div>

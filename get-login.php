@@ -6,17 +6,6 @@ try {
     $email = $_POST["email"] ?? '';
     $password = $_POST["password"] ?? '';
 
-    if (empty($email)) {
-        echo json_encode(["status" => 0, "message" => "Email is required"]);
-        exit;
-    }
-
-    if (empty($password)) {
-        echo json_encode(["status" => 0, "message" => "Password is required"]);
-        exit;
-    }
-
-    // ✅ ตรวจสอบว่า email มีอยู่จริงไหม
     $stmt = $conn->prepare("SELECT * FROM user WHERE email = :email");
     $stmt->bindParam(":email", $email);
     $stmt->execute();
@@ -28,25 +17,21 @@ try {
 
             $userID = $user['userID'];
 
-            // ✅ ตรวจสอบว่ามี profile ไหม
             $checkProfile = $conn->prepare("SELECT isPublic, isEverPublic FROM profile WHERE userID = ?");
             $checkProfile->execute([$userID]);
             $profileData = $checkProfile->fetch(PDO::FETCH_ASSOC);
 
-            // ✅ ถ้าไม่มี profile -> สร้างใหม่
+            // ถ้าไม่มี profile -> สร้างใหม่
             if ($checkProfile->rowCount() === 0) {
-                $insertProfile = $conn->prepare("
-                    INSERT INTO profile (userID, isPublic, isEverPublic)
-                    VALUES (?, 0, 0)
-                ");
+                $insertProfile = $conn->prepare("INSERT INTO profile (userID, isPublic, isEverPublic) VALUES (?, 0, 0)");
                 $insertProfile->execute([$userID]);
                 $profileData = ['isPublic' => 0, 'isEverPublic' => 0];
             }
 
-            // ✅ รวมข้อมูล profile เข้ากับข้อมูล user
+            // รวมข้อมูล profile เข้ากับข้อมูล user
             $user = array_merge($user, $profileData);
 
-            // ✅ ปลอดภัยขึ้น (ลบรหัสผ่านออกก่อนส่ง)
+            // ปลอดภัยขึ้น (ลบรหัสผ่านออกก่อนส่ง)
             unset($user['password']);
 
             echo json_encode([

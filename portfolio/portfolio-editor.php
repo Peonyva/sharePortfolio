@@ -1,33 +1,33 @@
 <?php
 $title = "Portfolio Editor";
-$currentUserID = $_GET['user'] ?? null;
+// $currentUserID = $_GET['user'] ?? null;
 
-if (empty($currentUserID)) {
-    header('Location: /login.php');
-    exit;
-}
+// if (empty($currentUserID)) {
+//     header('Location: /login.php');
+//     exit;
+// }
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+// require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
-$isPublicFromDB = 0;
+// $isPublicFromDB = 0;
 
-try {
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// try {
+//     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $sqlFetchStatus = "SELECT isPublic FROM profile WHERE userID = :userID";
-    $stmtFetchStatus = $conn->prepare($sqlFetchStatus);
-    $stmtFetchStatus->bindParam(':userID', $currentUserID, PDO::PARAM_INT);
-    $stmtFetchStatus->execute();
+//     $sqlFetchStatus = "SELECT isPublic FROM profile WHERE userID = :userID";
+//     $stmtFetchStatus = $conn->prepare($sqlFetchStatus);
+//     $stmtFetchStatus->bindParam(':userID', $currentUserID, PDO::PARAM_INT);
+//     $stmtFetchStatus->execute();
 
-    $profileStatus = $stmtFetchStatus->fetch(PDO::FETCH_ASSOC);
+//     $profileStatus = $stmtFetchStatus->fetch(PDO::FETCH_ASSOC);
 
-    if ($profileStatus) {
-        $isPublicFromDB = intval($profileStatus['isPublic']);
-    }
-} catch (PDOException $e) {
-    error_log("DB Error fetching public status: " . $e->getMessage());
-    $isPublicFromDB = 0;
-}
+//     if ($profileStatus) {
+//         $isPublicFromDB = intval($profileStatus['isPublic']);
+//     }
+// } catch (PDOException $e) {
+//     error_log("DB Error fetching public status: " . $e->getMessage());
+//     $isPublicFromDB = 0;
+// }
 ?>
 
 <!DOCTYPE html>
