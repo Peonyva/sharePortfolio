@@ -1,43 +1,47 @@
 <?php
 $title = "Portfolio Editor";
+$currentUserID = $_GET['user'] ?? null;
 
-// ตรวจสอบ userID จาก URL
-if (!isset($_GET['user']) || !is_numeric($_GET['user'])) {
+if (empty($currentUserID) || !is_numeric($currentUserID)) {
     header("Location: /login.php");
     exit;
 }
 
-$currentUserID = intval($_GET['user']);
-
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
-// $isPublicFromDB = 0;
-// $isEverPublic = 0;
+// ตรวจสอบว่า user มีอยู่จริงในระบบ
+$isPublicFromDB = 0;
+$userData = null;
 
-// try {
-//     $stmt = $conn->prepare("SELECT userID, isPublic, isEverPublic FROM user WHERE userID = :userID");
-//     $stmt->execute(['userID' => $currentUserID]);
-//     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+try {
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-//     if (!$userData) {
-//         header("Location: /login.php");
-//         exit;
-//     }
+    // ดึงข้อมูล user และ profile
+    $sqlUser = "SELECT u.userID, u.firstname, u.lastname, u.birthdate, u.email, 
+                       p.isPublic, p.position, p.phone, p.facebook, p.facebookUrl,
+                       p.logoImage, p.profileImage, p.coverImage, p.introContent, p.skillsContent
+                FROM user u
+                LEFT JOIN profile p ON u.userID = p.userID
+                WHERE u.userID = :userID";
 
-//     $isPublicFromDB = intval($userData['isPublic'] ?? 0);
-//     $isEverPublic = intval($userData['isEverPublic'] ?? 0);
+    $stmtUser = $conn->prepare($sqlUser);
+    $stmtUser->bindParam(':userID', $currentUserID, PDO::PARAM_INT);
+    $stmtUser->execute();
 
+    $userData = $stmtUser->fetch(PDO::FETCH_ASSOC);
 
-//     if ($isEverPublic === 1) {
-//         header("Location: /portfolio/portfolio.php?user=" . urlencode($currentUserID));
-//         exit;
-//     }
+    // ถ้าไม่พบ user ให้ redirect กลับไป login
+    if (!$userData) {
+        header('Location: /login.php');
+        exit;
+    }
 
-// } catch (PDOException $e) {
-//     error_log("DB Error: " . $e->getMessage());
-//     header('Location: /login.php');
-//     exit;
-// }
+    $isPublicFromDB = intval($userData['isPublic'] ?? 0);
+} catch (PDOException $e) {
+    error_log("DB Error: " . $e->getMessage());
+    header('Location: /login.php');
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -417,6 +421,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 <script src="/portfolio/toggle-public.js"></script>
 <script src="/portfolio/upload-image.js"></script>
 <script src="/portfolio/upload-skills.js"></script>
+
 
 </body>
 

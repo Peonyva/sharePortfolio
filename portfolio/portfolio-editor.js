@@ -15,7 +15,7 @@ async function showError(title, text) {
 }
 
 // 🔹 Show Toast (Alert Top Right)
-function showToast(title) {
+function showSuccess(title) {
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -395,7 +395,7 @@ function updateWorkItem(itemId, container) {
     dataType: "json",
     success: function (response) {
       if (response.status === 1) {
-        showToast("Work Experience updated successfully!");
+        showSuccess("Work Experience updated successfully!");
       } else {
         showError("Update failed", response.message || "Please try again.");
       }
@@ -431,7 +431,7 @@ function deleteWorkItem(itemId, container) {
         dataType: "json",
         success: function (response) {
           if (response.status === 1) {
-            showToast("Work Experience deleted successfully!");
+            showSuccess("Work Experience deleted successfully!");
 
             // ✅ Reload ข้อมูลใหม่ของ user เดียวกัน
             loadWorkExp(userID);
@@ -676,7 +676,7 @@ function updateEducationItem(itemId, container) {
     dataType: "json",
     success: function (response) {
       if (response.status === 1) {
-        showToast("Education updated successfully!");
+        showSuccess("Education updated successfully!");
       } else {
         showError("Update failed", response.message || "Please try again.");
       }
@@ -711,7 +711,7 @@ function deleteEducationItem(itemId, container) {
         dataType: "json",
         success: function (response) {
           if (response.status === 1) {
-            showToast("Education deleted successfully!");
+            showSuccess("Education deleted successfully!");
 
             // ✅ Reload ข้อมูลใหม่ของ user เดียวกัน
             loadEducation(userID);
@@ -1061,7 +1061,7 @@ function updateProjectItem(itemId, container) {
         success: function (response) {
             console.log("✅ UPDATE SUCCESS:", response);
             if (response.status === 1) {
-                showToast("Project updated successfully!");
+                showSuccess("Project updated successfully!");
                 loadProject($("#userID").val());
             } else {
                 showError("Update failed", response.message || "Please try again.");
@@ -1120,7 +1120,7 @@ function deleteProjectItem(itemId, container) {
         success: function (response) {
           console.log("✅ DELETE SUCCESS:", response);
           if (response.status === 1) {
-            showToast("Project deleted successfully!");
+            showSuccess("Project deleted successfully!");
             loadProject(safeUserID);
           } else {
             showError("Deletion failed", response.message || "Please try again.");
@@ -1363,7 +1363,7 @@ function handleProjectImageChange(input, itemId) {
       }
 
       $previewContainer.attr("src", imageUrl);
-      showToast("Image preview updated");
+      showSuccess("Image preview updated");
     };
 
     reader.readAsDataURL(file);
@@ -1420,7 +1420,7 @@ $(document).ready(function () {
         $("#AddWorkExp").addClass("hidden");
         $("#AddWorkExp")[0].reset();
         $("#workEndDate").prop("disabled", false);
-        showToast("Work Experience form has been cleared.");
+        showSuccess("Work Experience form has been cleared.");
       }
     });
   });
@@ -1460,7 +1460,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (response) {
         if (response.status === 1) {
-          showToast("Work Experience saved!");
+          showSuccess("Work Experience saved!");
           $("#AddWorkExp").addClass("hidden");
           $("#AddWorkExp")[0].reset();
           $("#workEndDate").prop("disabled", false);
@@ -1496,7 +1496,7 @@ $(document).ready(function () {
       if (result.isConfirmed) {
         $("#AddEducation").addClass("hidden");
         $("#AddEducation")[0].reset();
-        showToast("Education form has been cleared.");
+        showSuccess("Education form has been cleared.");
       }
     });
   });
@@ -1527,7 +1527,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (response) {
         if (response.status === 1) {
-          showToast("Education saved!");
+          showSuccess("Education saved!");
           $("#AddEducation").addClass("hidden");
           $("#AddEducation")[0].reset();
 
@@ -1564,7 +1564,7 @@ $(document).ready(function () {
       if (result.isConfirmed) {
         $("#AddProject").addClass("hidden");
         $("#AddProject")[0].reset();
-        showToast("Project form has been cleared.");
+        showSuccess("Project form has been cleared.");
       }
     });
   });
@@ -1591,7 +1591,7 @@ $(document).ready(function () {
       dataType: "json",
       success: function (response) {
         if (response.status === 1) {
-          showToast("Project saved!");
+          showSuccess("Project saved!");
           $("#AddProject")[0].reset();
           $("#AddProject").addClass("hidden");
           $("#projectSkillsList").empty();

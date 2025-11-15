@@ -1,10 +1,11 @@
-// toggle-public.js
+// portfolio-toggle.js - สำหรับ toggle บนหน้า portfolio.php
 $(document).ready(function() {
-  const publishToggle = $("#publishToggle");
-  const userID = $("#userID").val();
+  const portfolioToggle = $("#portfolioPublishToggle");
+  const userID = $("#portfolioUserID").val();
+  const statusText = $(".status-text");
 
   // เมื่อมีการเปลี่ยนสถานะ toggle
-  publishToggle.on("change", function() {
+  portfolioToggle.on("change", function() {
     const isPublic = this.checked ? 1 : 0;
 
     $.ajax({
@@ -19,23 +20,26 @@ $(document).ready(function() {
         if (response.status === 1) {
           console.log("Public status updated successfully");
           
-          // ถ้าเปิดเผยแพร่ครั้งแรก (isEverPublic เปลี่ยนจาก 0 เป็น 1)
-          if (response.isEverPublic === 1 && response.justPublished === true) {
-            alert("Portfolio published successfully! Redirecting to your portfolio page...");
-            setTimeout(() => {
-              window.location.href = "/portfolio/portfolio.php?user=" + encodeURIComponent(userID);
-            }, 1000);
+          // อัปเดตข้อความสถานะ
+          if (isPublic === 1) {
+            statusText.text("Public");
+            alert("Your portfolio is now public!");
+          } else {
+            statusText.text("Private");
+            alert("Your portfolio is now private!");
           }
         } else {
           console.error("Failed to update public status:", response.message);
           // ย้อนกลับ toggle ถ้าอัปเดตไม่สำเร็จ
-          publishToggle.prop("checked", !isPublic);
+          portfolioToggle.prop("checked", !isPublic);
+          alert("Failed to update status. Please try again.");
         }
       },
       error: function(xhr, status, error) {
         console.error("Error updating public status:", error);
         // ย้อนกลับ toggle ถ้าเกิดข้อผิดพลาด
-        publishToggle.prop("checked", !isPublic);
+        portfolioToggle.prop("checked", !isPublic);
+        alert("Error updating status. Please try again.");
       }
     });
   });

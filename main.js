@@ -1,33 +1,24 @@
 // 1. UTILITY FUNCTIONS (ฟังก์ชันช่วยเหลือ) 
 
 // Show Error with SweetAlert2
+
 async function showError(title, text) {
   return await Swal.fire({
     icon: "error",
     title: title,
     text: text,
-    confirmButtonText: "Confirmed",
-    confirmButtonColor: "#ef4444",
   });
 }
+
+
 
 //  Show Toast (Alert Top Right)
-function showToast(title) {
-  const Toast = Swal.mixin({
-    toast: true,
-    position: "top-end",
-    showConfirmButton: false,
-    timer: 2500,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener("mouseenter", Swal.stopTimer);
-      toast.addEventListener("mouseleave", Swal.resumeTimer);
-    },
-  });
-
-  Toast.fire({ icon: "success", title: title, });
+async function showSuccess(title) {
+  return await Swal.fire({
+    icon: "success",
+    title: title,
+});
 }
-
 
 // 2️. VALIDATION FUNCTIONS (ฟังก์ชันตรวจสอบข้อมูล)
 
@@ -171,7 +162,7 @@ $(function () {
       dataType: "json",
       success: function (response) {
         if (response.status === 1) {
-          showToast("Register saved!");
+          showSuccess("Register saved!");
           $("#register")[0].reset();
 
           setTimeout(() => {
@@ -189,46 +180,49 @@ $(function () {
   });
 
   // Login Form Submission Event
-  $("#login").on("submit", function (e) {
-    e.preventDefault();
+$("#login").on("submit", function (e) {
+  e.preventDefault();
 
-    const formData = new FormData(this); // เก็บข้อมูลในฟอร์ม
+  const formData = new FormData(this);
 
-    $.ajax({
-      url: "/get-login.php",
-      method: "POST",
-      data: formData,
-      processData: false,
-      contentType: false,
-      dataType: "json",
+  $.ajax({
+    url: "/get-login.php",
+    method: "POST",
+    data: formData,
+    processData: false,
+    contentType: false,
+    dataType: "json",
 
-      success: function (response) {
-        if (response.status === 1) {
-          alert("Login successful!");
-
-          let redirectURL = "/portfolio/portfolio-editor.php";
-
-          // ถ้าเคยเผยแพร่ public แล้ว -> ไปหน้า portfolio.php
-          if (response.isEverPublic === 1) {
-            redirectURL = "/portfolio/portfolio.php";
-          }
-
-          redirectURL += "?user=" + response.userID;
-
-          setTimeout(() => {
-            window.location.href = redirectURL;
-          }, 1000);
-        } else {
-          alert("Login failed: " + (response.message || "Invalid username or password."));
+    success: function (response) {
+      if (response.status === 1) {
+        const user = response.data;
+        
+        // ตรวจสอบข้อมูล user
+        if (!user || !user.userID) {
+          showError("Error: user data missing.");
+          return;
         }
-      },
 
-      error: function () {
-        alert("Error: Cannot connect to the server.");
-      },
-    });
+        showSuccess("Login successful!");
+
+        // ส่ง userID ผ่าน URL - เริ่มต้นที่หน้า editor เสมอ
+        let redirectURL = "/portfolio/portfolio-editor.php?user=" + encodeURIComponent(user.userID);
+
+        setTimeout(() => {
+          window.location.href = redirectURL;
+        }, 1000);
+
+      } else {
+        showError("Login failed: " + (response.message || "Invalid username or password."));
+      }
+    },
+
+    error: function (xhr, status, error) {
+      console.error("Login error:", error);
+      showError("Error: Cannot connect to the server.");
+    },
   });
-
+});
 
   // Password Reset Form Submission Event
   $("#password-reset").on("submit", function (e) {
@@ -247,7 +241,7 @@ $(function () {
       dataType: "json",
       success: function (response) {
         if (response.status === 1) {
-          showToast("Password reset link has been sent to your email!!");
+          showSuccess("Password reset link has been sent to your email!!");
 
           setTimeout(() => {
             window.location.href = '/password-reset-link.php';
