@@ -10,7 +10,10 @@
 
 [14/11/2025]
 - Do to list for working 15/11/2025 (change blur/forgotten password/login-logout/check all)
------------------------------
+
+[15/11/2025]
+- Missing userID because write incorrect (Login)
+//-----------------------------//
 1. Register
 2. Login
 3. write data for resume
