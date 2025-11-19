@@ -10,10 +10,10 @@
 </head>
 
 <body>
-
     <!-- Navbar -->
     <header>
         <nav>
+            
             <div class="container">
                 <div class="nav-con">
                     <div class="nav-logo">
@@ -31,5 +31,6 @@
 
                 </div>
             </div>
+
         </nav>
     </header>
