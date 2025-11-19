@@ -3,22 +3,14 @@
 // Show Error with SweetAlert2
 
 async function showError(title, text) {
-  return await Swal.fire({
-    icon: "error",
-    title: title,
-    text: text,
-  });
+  return await Swal.fire({ icon: "error", title: title, text: text, });
 }
-
-
 
 //  Show Toast (Alert Top Right)
 async function showSuccess(title) {
-  return await Swal.fire({
-    icon: "success",
-    title: title,
-});
+  return await Swal.fire({ icon: "success", title: title, });
 }
+
 
 // 2️. VALIDATION FUNCTIONS (ฟังก์ชันตรวจสอบข้อมูล)
 
@@ -98,9 +90,9 @@ function validateLoginForm(form) {
     showError("Validation Error", "Password is required.");
     return false;
   }
-
   return true;
 }
+
 function validatePasswordResetForm(form) {
   const email = $(form).find("#email").val().trim();
 
@@ -118,28 +110,28 @@ function validatePasswordResetForm(form) {
   return true;
 }
 
+
 // 3️. GLOBAL FUNCTIONS (ฟังก์ชันที่ใช้ได้ทุกหน้า)
 
-function togglePassword() {
+// function togglePassword() {
 
-  var clickedIcon = this;
+//   var clickedIcon = this;
 
-  // หา input ที่อยู่ใกล้ที่สุด (หรือใน div เดียวกัน)
-  var container = clickedIcon.closest('.password-container');
-  var input = container ? container.querySelector('input[type="password"], input[type="text"]') : null;
+//   var container = clickedIcon.closest('.password-container');
+//   var input = container ? container.querySelector('input[type="password"], input[type="text"]') : null;
 
-  if (!input) return;
+//   if (!input) return;
 
-  if (input.type === 'password') {
-    input.type = 'text';
-    clickedIcon.classList.remove('fa-eye');
-    clickedIcon.classList.add('fa-eye-slash');
-  } else {
-    input.type = 'password';
-    clickedIcon.classList.remove('fa-eye-slash');
-    clickedIcon.classList.add('fa-eye');
-  }
-}
+//   if (input.type === 'password') {
+//     input.type = 'text';
+//     clickedIcon.classList.remove('fa-eye');
+//     clickedIcon.classList.add('fa-eye-slash');
+//   } else {
+//     input.type = 'password';
+//     clickedIcon.classList.remove('fa-eye-slash');
+//     clickedIcon.classList.add('fa-eye');
+//   }
+// }
 
 
 // 4️. EVENTS (จัดการเหตุการณ์เมื่อ DOM พร้อม)
@@ -150,11 +142,10 @@ $(function () {
     e.preventDefault();
 
     if (!validateRegisterForm(this)) return;
-
     const formData = new FormData(this);
 
     $.ajax({
-      url: "/insert-register.php",
+      url: "/register-insert.php",
       method: "POST",
       data: formData,
       processData: false,
@@ -180,56 +171,55 @@ $(function () {
   });
 
   // Login Form Submission Event
-$("#login").on("submit", function (e) {
-  e.preventDefault();
+  $("#login").on("submit", function (e) {
+    e.preventDefault();
 
-  const formData = new FormData(this);
+    const formData = new FormData(this);
 
-  $.ajax({
-    url: "/get-login.php",
-    method: "POST",
-    data: formData,
-    processData: false,
-    contentType: false,
-    dataType: "json",
+    $.ajax({
+      url: "/get-login.php",
+      method: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: "json",
 
-    success: function (response) {
-      if (response.status === 1) {
-        const user = response.data;
-        
-        // ตรวจสอบข้อมูล user
-        if (!user || !user.userID) {
-          showError("Error: user data missing.");
-          return;
+      success: function (response) {
+        if (response.status === 1) {
+          const user = response.data;
+
+          // ตรวจสอบข้อมูล user
+          if (!user || !user.userID) {
+            showError("Error: user data missing.");
+            return;
+          }
+
+          showSuccess("Login successful!");
+
+          // ส่ง userID ผ่าน URL - เริ่มต้นที่หน้า editor เสมอ
+          let redirectURL = "/portfolio/portfolio-editor.php?user=" + encodeURIComponent(user.userID);
+
+          setTimeout(() => {
+            window.location.href = redirectURL;
+          }, 1000);
+
+        } else {
+          showError("Login failed: " + (response.message || "Invalid username or password."));
         }
+      },
 
-        showSuccess("Login successful!");
-
-        // ส่ง userID ผ่าน URL - เริ่มต้นที่หน้า editor เสมอ
-        let redirectURL = "/portfolio/portfolio-editor.php?user=" + encodeURIComponent(user.userID);
-
-        setTimeout(() => {
-          window.location.href = redirectURL;
-        }, 1000);
-
-      } else {
-        showError("Login failed: " + (response.message || "Invalid username or password."));
-      }
-    },
-
-    error: function (xhr, status, error) {
-      console.error("Login error:", error);
-      showError("Error: Cannot connect to the server.");
-    },
+      error: function (xhr, status, error) {
+        console.error("Login error:", error);
+        showError("Error: Cannot connect to the server.");
+      },
+    });
   });
-});
 
   // Password Reset Form Submission Event
   $("#password-reset").on("submit", function (e) {
     e.preventDefault();
 
     if (!validatePasswordResetForm(this)) return;
-
     const formData = new FormData(this);
 
     $.ajax({
@@ -258,8 +248,8 @@ $("#login").on("submit", function (e) {
   });
 
 
-  document.querySelectorAll('.toggle-password').forEach(btn => {
-    btn.addEventListener('click', togglePassword);
-  });
+  // document.querySelectorAll('.toggle-password').forEach(btn => {
+  //   btn.addEventListener('click', togglePassword);
+  // });
 
 });

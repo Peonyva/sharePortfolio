@@ -1,14 +1,43 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
-
 $title = "Portfolio Editor";
 
+// ตรวจสอบ userID จาก URL
 if (!isset($_GET['user']) || !is_numeric($_GET['user'])) {
     header("Location: /login.php");
     exit;
 }
 
 $currentUserID = intval($_GET['user']);
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+
+// $isPublicFromDB = 0;
+// $isEverPublic = 0;
+
+// try {
+//     $stmt = $conn->prepare("SELECT userID, isPublic, isEverPublic FROM user WHERE userID = :userID");
+//     $stmt->execute(['userID' => $currentUserID]);
+//     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+//     if (!$userData) {
+//         header("Location: /login.php");
+//         exit;
+//     }
+
+//     $isPublicFromDB = intval($userData['isPublic'] ?? 0);
+//     $isEverPublic = intval($userData['isEverPublic'] ?? 0);
+
+
+//     if ($isEverPublic === 1) {
+//         header("Location: /portfolio/portfolio.php?user=" . urlencode($currentUserID));
+//         exit;
+//     }
+
+// } catch (PDOException $e) {
+//     error_log("DB Error: " . $e->getMessage());
+//     header('Location: /login.php');
+//     exit;
+// }
 ?>
 
 <!DOCTYPE html>
@@ -29,10 +58,10 @@ $currentUserID = intval($_GET['user']);
                 <div class="content-box">
                     <div class="heading-container">
                         <h2 class="title">Would you like to publish your portfolio?</h2>
-                        <!-- <label class="switch">
+                        <label class="switch">
                             <input type="checkbox" id="publishToggle" <?php echo ($isPublicFromDB == 1) ? 'checked' : ''; ?>>
                             <span class="slider round"></span>
-                        </label> -->
+                        </label>
                     </div>
 
                     <h2 class="title">
