@@ -15,13 +15,9 @@ if (empty($email) || empty($password)) {
 }
 
 try {
-    // ดึงข้อมูล user พร้อม isEverPublic จากตาราง profile
-    $stmt = $conn->prepare("
-        SELECT u.userID, u.email, p.isPublic, p.isEverPublic 
-        FROM user u
+    $stmt = $conn->prepare("SELECT u.userID, u.email, p.isPublic, p.isEverPublic FROM user u
         LEFT JOIN profile p ON u.userID = p.userID
-        WHERE u.email = :email
-    ");
+        WHERE u.email = :email");
     $stmt->execute(['email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -33,18 +29,13 @@ try {
         exit;
     }
 
-    // ตรวจสอบรหัสผ่าน (สมมติว่ามีการเข้ารหัสด้วย password_hash)
-    // ถ้าใช้ plain text ให้เปรียบเทียบตรงๆ
-    // if ($password !== $user['password']) { ... }
-    
+
     // ถ้ายังไม่มี profile record ให้ตั้งค่าเริ่มต้น
     if ($user['isEverPublic'] === null) {
         // สร้าง profile record ใหม่
-        $createStmt = $conn->prepare("
-            INSERT INTO profile (userID, isPublic, isEverPublic) 
-            VALUES (:userID, 0, 0)
-        ");
-        $createStmt->execute(['userID' => $user['userID']]);
+        $stmt = $conn->prepare("INSERT INTO profile (userID, isPublic, isEverPublic) 
+        VALUES (:userID, 0, 0)");
+        $stmt->execute(['userID' => $user['userID']]);
         
         $user['isPublic'] = 0;
         $user['isEverPublic'] = 0;

@@ -9,6 +9,7 @@ if (!isset($_GET['user']) || !is_numeric($_GET['user'])) {
 }
 
 $currentUserID = intval($_GET['user']);
+
 ?>
 
 <!DOCTYPE html>
@@ -24,15 +25,10 @@ $currentUserID = intval($_GET['user']);
 
         <section id="personal" class="personal">
             <form id="personalForm" method="POST" enctype="multipart/form-data">
-
-                <!-- 1 -->
                 <div class="content-box">
+                    <!-- 1 -->
                     <div class="heading-container">
                         <h2 class="title">Would you like to publish your portfolio?</h2>
-                        <!-- <label class="switch">
-                            <input type="checkbox" id="publishToggle" <?php echo ($isPublicFromDB == 1) ? 'checked' : ''; ?>>
-                            <span class="slider round"></span>
-                        </label> -->
                     </div>
 
                     <h2 class="title">
@@ -134,10 +130,8 @@ $currentUserID = intval($_GET['user']);
                         <textarea id="introContent" name="introContent" rows="4" placeholder="Tell us about your professional background, achievements, and career goals."></textarea>
                         <div class="description-message">Press Enter to separate each item onto a new line.</div>
                     </div>
-                </div>
 
-                <!-- 2 -->
-                <div class="content-box">
+                    <!-- 2 -->
                     <h2 class="title">
                         <span class="number">2</span>Skills
                     </h2>
@@ -171,6 +165,10 @@ $currentUserID = intval($_GET['user']);
                         No skills selected yet. Use the dropdown above to add skills.
                     </div>
                     <input type="hidden" name="mySkills" id="mySkillsInput" />
+
+                    <div class="btn-wrapper">
+                        <button type="submit" id="btnSavePersonal" class="btn btn-success btn-manage">Save</button>
+                    </div>
                 </div>
             </form>
         </section>
@@ -385,7 +383,6 @@ $currentUserID = intval($_GET['user']);
 <?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php'; ?>
 
 <script src="/portfolio/portfolio-editor.js"></script>
-<script src="/portfolio/toggle-public.js"></script>
 <script src="/portfolio/upload-image.js"></script>
 <script src="/portfolio/upload-skills.js"></script>
 

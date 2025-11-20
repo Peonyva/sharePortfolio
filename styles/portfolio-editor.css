@@ -175,6 +175,12 @@ main.page-con {
   min-width: var(--spacing-100);
 }
 
+
+.personal .btn-wrapper{
+  display: flex;
+  justify-content: flex-end;
+}
+
 .workExperience .btn-wrapper,
 .education .btn-wrapper,
 .project .btn-wrapper {
