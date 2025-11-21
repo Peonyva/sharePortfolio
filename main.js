@@ -113,25 +113,25 @@ function validatePasswordResetForm(form) {
 
 // 3️. GLOBAL FUNCTIONS (ฟังก์ชันที่ใช้ได้ทุกหน้า)
 
-// function togglePassword() {
+function togglePassword() {
 
-//   var clickedIcon = this;
+  var clickedIcon = this;
 
-//   var container = clickedIcon.closest('.password-container');
-//   var input = container ? container.querySelector('input[type="password"], input[type="text"]') : null;
+  var container = clickedIcon.closest('.password-container');
+  var input = container ? container.querySelector('input[type="password"], input[type="text"]') : null;
 
-//   if (!input) return;
+  if (!input) return;
 
-//   if (input.type === 'password') {
-//     input.type = 'text';
-//     clickedIcon.classList.remove('fa-eye');
-//     clickedIcon.classList.add('fa-eye-slash');
-//   } else {
-//     input.type = 'password';
-//     clickedIcon.classList.remove('fa-eye-slash');
-//     clickedIcon.classList.add('fa-eye');
-//   }
-// }
+  if (input.type === 'password') {
+    input.type = 'text';
+    clickedIcon.classList.remove('fa-eye');
+    clickedIcon.classList.add('fa-eye-slash');
+  } else {
+    input.type = 'password';
+    clickedIcon.classList.remove('fa-eye-slash');
+    clickedIcon.classList.add('fa-eye');
+  }
+}
 
 
 // 4️. EVENTS (จัดการเหตุการณ์เมื่อ DOM พร้อม)
@@ -248,8 +248,8 @@ $(function () {
   });
 
 
-  // document.querySelectorAll('.toggle-password').forEach(btn => {
-  //   btn.addEventListener('click', togglePassword);
-  // });
+  document.querySelectorAll('.toggle-password').forEach(btn => {
+    btn.addEventListener('click', togglePassword);
+  });
 
 });

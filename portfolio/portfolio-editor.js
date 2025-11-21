@@ -12,25 +12,6 @@ async function showSuccess(title) {
   return await Swal.fire({ icon: "success", title: title, });
 }
 
-async function showConfirm(title) {
-  return await Swal.fire({
-    title: "Are you sure?",
-    text: "Do you want to save this data?",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, save it!"
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: "Deleted!",
-        text: "Your file has been deleted.",
-        icon: "success"
-      });
-    }
-  });
-}
 
 // ============================================
 // 2️⃣ VALIDATION FUNCTIONS (ฟังก์ชันตรวจสอบข้อมูล)
@@ -1384,37 +1365,41 @@ $(document).ready(function () {
   // =====================
   const userID = $("#userID").val();
   if (userID) {
-    loadWorkExp(userID);     
-    loadProject(userID);     
+    loadWorkExp(userID);
+    loadProject(userID);
   }
 
-  $("#personalForm").on("submit", function (e) {
-    e.preventDefault();
 
-    const formData = new FormData(this);
-    formData.append("userID", $("#userID").val());
+$("#personalForm").on("submit", function (e) {
+  e.preventDefault();
 
-    const mySkills = $("#mySkillsInput").val();
-    formData.append("mySkills", mySkills);
+  const formData = new FormData(this);
 
-    $.ajax({
-        url: "/portfolio/personal/save-personal.php",
-        method: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        dataType: "json",
-        success: function (response) {
-            if (response.status === 1) {
-                showSuccess("Personal saved!");
-            } else {
-                showError("An error occurred", response.message || "Please try again.");
-            }
-        },
-        error: function () {
-            showError("An error has occurred", "The Personal could not be saved.");
-        },
-    });
+  formData.append("userID", $("#userID").val());
+
+  const mySkills = $("#mySkillsInput").val()?.trim() || "";
+  formData.append("mySkills", mySkills);
+
+  $.ajax({
+    url: "/portfolio/personal/save-personal.php",
+    method: "POST",
+    data: formData,
+    processData: false,
+    contentType: false,
+    dataType: "json",
+    success: function (response) {
+
+      // ตัวนี้คือส่วนที่ต้องแก้
+      if (response.status) {    
+        showSuccess("Personal saved!");
+      } else {
+        showError("An error occurred", response.message || "Please try again.");
+      }
+    },
+    error: function () {
+      showError("An error has occurred", "The Personal could not be saved.");
+    },
+  });
 });
 
 

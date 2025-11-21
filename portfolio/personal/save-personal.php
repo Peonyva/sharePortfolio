@@ -2,6 +2,35 @@
 header('Content-Type: application/json');
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
+// upload & check image
+
+function uploadImage($file, $dir, $filename)
+{
+    $maxSize = 10 * 1024 * 1024;
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+    if ($file['size'] > $maxSize) {
+        throw new Exception("File size exceeds 10MB limit");
+    }
+    if (!in_array($file['type'], $allowedTypes)) {
+        throw new Exception("Invalid file type");
+    }
+
+    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    $finalName = $filename . '.' . $ext;
+
+    // safe path
+    $finalPath = rtrim($dir, "/") . "/" . $finalName;
+
+    if (!move_uploaded_file($file['tmp_name'], $finalPath)) {
+        throw new Exception("Failed to upload file");
+    }
+
+    return $finalName;
+}
+
+// get userID
+
 $userID = intval($_POST['userID'] ?? 0);
 
 if (!$userID) {
@@ -11,59 +40,47 @@ if (!$userID) {
 
 try {
 
-    // Start Transaction
+    // prepare folder
+    $dir = $_SERVER['DOCUMENT_ROOT'] . "/uploads/portfolio/$userID/";
+    if (!is_dir($dir)) mkdir($dir, 0755, true);
 
+    $uploaded = [];
 
-    // ===============================
-    // 🔹 Upload Directory
-    // ===============================
-    $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/portfolio/' . $userID . '/';
-    if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0755, true);
-    }
-
-    $logoImage = null;
-    $profileImage = null;
-    $coverImage = null;
-
+    // upload images
     if (!empty($_FILES['logoImage']['size'])) {
-        $logoImage = uploadImage($_FILES['logoImage'], $uploadDir, 'logo');
+        $uploaded['logoImage'] = uploadImage($_FILES['logoImage'], $dir, 'logo');
     }
     if (!empty($_FILES['profileImage']['size'])) {
-        $profileImage = uploadImage($_FILES['profileImage'], $uploadDir, 'profile');
+        $uploaded['profileImage'] = uploadImage($_FILES['profileImage'], $dir, 'profile');
     }
     if (!empty($_FILES['coverImage']['size'])) {
-        $coverImage = uploadImage($_FILES['coverImage'], $uploadDir, 'cover');
+        $uploaded['coverImage'] = uploadImage($_FILES['coverImage'], $dir, 'cover');
     }
 
-    // ===============================
-    // 🔹 UPDATE USER TABLE
-    // ===============================
-    $userFields = ['firstname', 'lastname', 'birthdate', 'email'];
-    $updateUserFields = [];
+
+    // update user table
+
+    $userFields = ['firstname', 'lastname', 'birthdate'];
+    $updateUser = [];
     $paramsUser = [':userID' => $userID];
 
-    foreach ($userFields as $field) {
-        if (isset($_POST[$field])) {
-            $updateUserFields[] = "$field = :$field";
-            $paramsUser[":$field"] = $_POST[$field];
+    foreach ($userFields as $key) {
+        if (isset($_POST[$key]) && $_POST[$key] !== "") {
+            $updateUser[] = "$key = :$key";
+            $paramsUser[":$key"] = $_POST[$key];
         }
     }
 
-    if (!empty($password)) {
-        $updateUserFields[] = "password = :password";
-        $paramsUser[':password'] = password_hash($password, PASSWORD_DEFAULT);
+    if ($updateUser) {
+        $sql = "UPDATE user SET " . implode(", ", $updateUser) . " WHERE userID = :userID";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($paramsUser);
     }
 
-    if (!empty($updateUserFields)) {
-        $sql = "UPDATE user SET " . implode(', ', $updateUserFields) . " WHERE userID = :userID";
-        $conn->prepare($sql)->execute($paramsUser);
-    }
 
-    // ===============================
-    // 🔹 UPDATE PROFILE TABLE
-    // ===============================
-    $profileFields = [
+    // update profile table
+
+    $profileMap = [
         'phone' => 'phone',
         'ProfessionalTitle' => 'professionalTitle',
         'facebook' => 'facebook',
@@ -72,110 +89,59 @@ try {
         'skillsContent' => 'skillsContent'
     ];
 
-    $updateProfileFields = [];
+    $updateProfile = [];
     $paramsProfile = [':userID' => $userID];
 
-    foreach ($profileFields as $post => $db) {
-        if (isset($_POST[$post])) {
-            $updateProfileFields[] = "$db = :$db";
+    foreach ($profileMap as $post => $db) {
+        if (isset($_POST[$post]) && $_POST[$post] !== "") {
+            $updateProfile[] = "$db = :$db";
             $paramsProfile[":$db"] = $_POST[$post];
         }
     }
 
-    if ($logoImage) {
-        $updateProfileFields[] = "logoImage = :logoImage";
-        $paramsProfile[':logoImage'] = $logoImage;
-    }
-    if ($profileImage) {
-        $updateProfileFields[] = "profileImage = :profileImage";
-        $paramsProfile[':profileImage'] = $profileImage;
-    }
-    if ($coverImage) {
-        $updateProfileFields[] = "coverImage = :coverImage";
-        $paramsProfile[':coverImage'] = $coverImage;
+    foreach ($uploaded as $field => $filename) {
+        $updateProfile[] = "$field = :$field";
+        $paramsProfile[":$field"] = $filename;
     }
 
-    if (!empty($updateProfileFields)) {
-        $sql = "UPDATE profile SET " . implode(', ', $updateProfileFields) . " WHERE userID = :userID";
-        $conn->prepare($sql)->execute($paramsProfile);
+    if ($updateProfile) {
+        $sql = "UPDATE profile SET " . implode(", ", $updateProfile) . " WHERE userID = :userID";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($paramsProfile);
     }
 
-    // ===============================
-    // 🔹 UPDATE SKILLS
-    // ===============================
+
+    // update skills
+
     if (isset($_POST['mySkills'])) {
 
-        // ถ้ามาจาก hidden input → เป็น JSON
-        $selectedSkills = json_decode($_POST['mySkills'], true);
+        $skills = array_filter(array_map('intval', explode(",", $_POST['mySkills'])));
 
-        if (!is_array($selectedSkills)) {
-            $selectedSkills = [];
-        }
-
-        // ลบทิ้งก่อน
         $conn->prepare("DELETE FROM profileskill WHERE userID = :userID")
             ->execute([':userID' => $userID]);
 
-        // insert ใหม่
-        if (!empty($selectedSkills)) {
+        if (!empty($skills)) {
             $sql = "INSERT INTO profileskill (userID, skillsID) VALUES (:userID, :skillsID)";
             $stmt = $conn->prepare($sql);
 
-            foreach ($selectedSkills as $id) {
+            foreach ($skills as $id) {
                 $stmt->execute([
                     ':userID' => $userID,
-                    ':skillsID' => intval($id)
+                    ':skillsID' => $id
                 ]);
             }
         }
     }
 
-
     echo json_encode([
-        'success' => true,
-        'message' => 'Personal saved successfully'
+        'status' => true,
+        'message' => 'Personal data saved successfully'
     ]);
 
 } catch (Exception $e) {
-
-    $conn->rollBack();
-
-    error_log("Save Personal Error: " . $e->getMessage());
-
     echo json_encode([
-        'success' => false,
+        'status' => false,
         'message' => $e->getMessage()
     ]);
 }
-
-
-/**
- * ===============================
- *  🔹 Image Upload Function
- * ===============================
- */
-function uploadImage($file, $dir, $prefix)
-{
-    $allowed = ['image/jpeg', 'image/png', 'image/webp'];
-    $maxSize = 10 * 1024 * 1024; // 10MB
-
-    if (!in_array($file['type'], $allowed)) {
-        throw new Exception("Invalid file type");
-    }
-    if ($file['size'] > $maxSize) {
-        throw new Exception("File too large (max 10MB)");
-    }
-
-    // random filename เพื่อแก้ cache
-    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-    $filename = $prefix . '_' . time() . '_' . rand(1000, 9999) . '.' . $ext;
-    $filepath = $dir . $filename;
-
-    if (!move_uploaded_file($file['tmp_name'], $filepath)) {
-        throw new Exception("File upload failed");
-    }
-
-    return '/uploads/portfolio/' . basename(dirname($filepath)) . '/' . $filename;
-}
-
 ?>
