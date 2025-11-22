@@ -1398,7 +1398,6 @@ $(document).ready(async function () {
       dataType: "json",
       success: function (response) {
 
-        // ตัวนี้คือส่วนที่ต้องแก้
         if (response.status) {
           showSuccess("Personal saved!");
         } else {
@@ -1493,128 +1492,126 @@ $(document).ready(async function () {
 
   $("#btnCancelEducation").click(function () {
 
-      Swal.fire({
-        title: "Confirm cancellation?",
-        text: "All entered information will be cleared.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes"
-      }).then((result) => {
-        if (result.isConfirmed) {
-          $("#AddEducation").addClass("hidden");
-          $("#AddEducation")[0].reset();
-          showSuccess("Education form has been cleared.");
-        }
-      });
-    });
-
-    $("#eduIsCurrent").change(function () {
-      if ($(this).is(":checked")) {
-        $("#eduEndDate").val("").prop("disabled", true);
-      } else {
-        $("#eduEndDate").prop("disabled", false);
+    Swal.fire({
+      title: "Confirm cancellation?",
+      text: "All entered information will be cleared.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $("#AddEducation").addClass("hidden");
+        $("#AddEducation")[0].reset();
+        showSuccess("Education form has been cleared.");
       }
     });
+  });
 
-    $("#AddEducation").on("submit", function (e) {
-      e.preventDefault();
+  $("#eduIsCurrent").change(function () {
+    if ($(this).is(":checked")) {
+      $("#eduEndDate").val("").prop("disabled", true);
+    } else {
+      $("#eduEndDate").prop("disabled", false);
+    }
+  });
 
-      if (!validateEducationForm(this)) return;
+  $("#AddEducation").on("submit", function (e) {
+    e.preventDefault();
 
-      const formData = new FormData(this);
-      formData.append("userID", $("#userID").val());
+    if (!validateEducationForm(this)) return;
 
-      $.ajax({
-        url: "/portfolio/education/insert-education.php",
-        method: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        dataType: "json",
-        success: function (response) {
-          if (response.status === 1) {
-            showSuccess("Education saved!");
-            $("#AddEducation").addClass("hidden");
-            $("#AddEducation")[0].reset();
+    const formData = new FormData(this);
+    formData.append("userID", $("#userID").val());
 
-            let userID = $("#userID").val();
-            loadEducation(userID);
-          } else {
-            showError("An error occurred", response.message || "Please try again.");
-          }
-        },
-        error: function () {
-          showError("An error has occurred", "The Education could not be saved.");
-        },
-      });
-    });
+    $.ajax({
+      url: "/portfolio/education/insert-education.php",
+      method: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: "json",
+      success: function (response) {
+        if (response.status === 1) {
+          showSuccess("Education saved!");
+          $("#AddEducation").addClass("hidden");
+          $("#AddEducation")[0].reset();
 
-    // Project Events
-
-    $("#btnCancelProject").click(function () {
-      Swal.fire({
-        title: "Confirm cancellation?",
-        text: "All entered information will be cleared.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Confirm",
-        cancelButtonText: "Cancel",
-        confirmButtonColor: "#3b82f6",
-        cancelButtonColor: "#ef4444",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          $("#AddProject").addClass("hidden");
-          $("#AddProject")[0].reset();
-          showSuccess("Project form has been cleared.");
+          let userID = $("#userID").val();
+          loadEducation(userID);
+        } else {
+          showError("An error occurred", response.message || "Please try again.");
         }
-      });
+      },
+      error: function () {
+        showError("An error has occurred", "The Education could not be saved.");
+      },
     });
+  });
 
+  // Project Events
 
-    $("#AddProject").on("submit", function (e) {
-      e.preventDefault();
-
-      if (!validateProjectForm(this)) return;
-
-      const formData = new FormData(this);
-      formData.append("userID", $("#userID").val());
-
-      // ✅ ส่ง skills เป็น JSON array (ปลอดภัยสุด)
-      const skillValues = $("#myProjectSkillsInput").val();
-      formData.append("myProjectSkills", JSON.stringify(skillValues ? skillValues.split(",") : []));
-
-      $.ajax({
-        url: "/portfolio/project/insert-project.php",
-        method: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        dataType: "json",
-        success: function (response) {
-          if (response.status === 1) {
-            showSuccess("Project saved!");
-            $("#AddProject")[0].reset();
-            $("#AddProject").addClass("hidden");
-            $("#projectSkillsList").empty();
-            $("#projectSkillCount").text("0");
-            $("#emptyProjectSkillsState").show();
-
-            let userID = $("#userID").val();
-            loadProject(userID);
-          } else {
-            showError("An error occurred", response.message || "Please try again.");
-          }
-        },
-        error: function () {
-          showError("An error has occurred", "The Project could not be saved.");
-        },
-      });
+  $("#btnCancelProject").click(function () {
+    Swal.fire({
+      title: "Confirm cancellation?",
+      text: "All entered information will be cleared.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $("#AddProject").addClass("hidden");
+        $("#AddProject")[0].reset();
+        showSuccess("Project form has been cleared.");
+      }
     });
+  });
+
+  $("#AddProject").on("submit", function (e) {
+    e.preventDefault();
+
+    if (!validateProjectForm(this)) return;
+
+    const formData = new FormData(this);
+    formData.append("userID", $("#userID").val());
+
+    // ส่ง skills เป็น JSON array (ปลอดภัยสุด)
+    const skillValues = $("#myProjectSkillsInput").val();
+    formData.append("myProjectSkills", JSON.stringify(skillValues ? skillValues.split(",") : []));
+
+    $.ajax({
+      url: "/portfolio/project/insert-project.php",
+      method: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: "json",
+      success: function (response) {
+        if (response.status === 1) {
+          showSuccess("Project saved!");
+          $("#AddProject")[0].reset();
+          $("#AddProject").addClass("hidden");
+          $("#projectSkillsList").empty();
+          $("#projectSkillCount").text("0");
+          $("#emptyProjectSkillsState").show();
+
+          let userID = $("#userID").val();
+          loadProject(userID);
+        } else { 
+          showError("An error occurred", response.message || "Please try again.");
+        }
+      },
+      error: function () {
+        showError("An error has occurred", "The Project could not be saved.");
+      },
+    });
+  });
 
 
-  }); // ✅ ปิด $(document).ready()
+}); // ปิด $(document).ready()
 
 
 

@@ -31,7 +31,6 @@ function removeImage(divPreviewID, inputFileID) {
   }
 }
 
-
 // ===== HELPER FUNCTIONS =====
 function isValidImageFile(file) {
   if (!file) return false;
@@ -45,7 +44,7 @@ function isValidImageFile(file) {
 function createImagePreviewHTML(imageSrc, inputFileID, divPreviewID, fileName = "") {
   return `
     <div class="image-preview">
-        <img src="${imageSrc}" alt="Preview">
+      <img src="${imageSrc}" alt="Preview">
         ${fileName ? `<p>${fileName}</p>` : ""}
     </div>
     <div class="preview-actions">
