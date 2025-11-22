@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 19, 2025 at 04:18 PM
+-- Generation Time: Nov 22, 2025 at 04:32 PM
 -- Server version: 9.1.0
 -- PHP Version: 8.3.14
 
@@ -65,7 +65,14 @@ CREATE TABLE IF NOT EXISTS `profile` (
   `isPublic` tinyint(1) NOT NULL DEFAULT '0',
   `isEverPublic` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `profile`
+--
+
+INSERT INTO `profile` (`id`, `userID`, `professionalTitle`, `phone`, `facebook`, `facebookUrl`, `logoImage`, `profileImage`, `coverImage`, `introContent`, `skillsContent`, `isPublic`, `isEverPublic`) VALUES
+(1, 1, 'UI/UX Designer', '0972497203', 'Nadwars Pronvootikul', 'https://www.facebook.com/Nadwara1512', 'logo.jpg', 'profile.jpg', 'cover.jpg', 'I need a nooddle.', 'Eat and Sleep.', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -79,7 +86,14 @@ CREATE TABLE IF NOT EXISTS `profileskill` (
   `userID` int NOT NULL,
   `skillsID` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `profileskill`
+--
+
+INSERT INTO `profileskill` (`id`, `userID`, `skillsID`) VALUES
+(7, 1, 4);
 
 -- --------------------------------------------------------
 
@@ -96,7 +110,7 @@ CREATE TABLE IF NOT EXISTS `project` (
   `sortOrder` int NOT NULL,
   `userID` int NOT NULL,
   PRIMARY KEY (`projectID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -110,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `projectskill` (
   `projectID` int NOT NULL,
   `skillsID` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -175,7 +189,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 --
 
 INSERT INTO `user` (`userID`, `firstname`, `lastname`, `birthdate`, `email`, `password`, `timestamp`) VALUES
-(1, 'Siratchara', 'Pronvootikul', '2000-09-14', 'siratchara88@gmail.com', 'HelloWord123!', '2025-11-15 14:17:38');
+(1, 'Nadwara', 'Pronvootikul', '2002-11-01', 'siratchara88@gmail.com', 'HelloWord123!', '2025-11-15 14:17:38');
 
 -- --------------------------------------------------------
 
@@ -197,7 +211,16 @@ CREATE TABLE IF NOT EXISTS `workexperience` (
   `sortOrder` int NOT NULL,
   `remarks` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `workexperience`
+--
+
+INSERT INTO `workexperience` (`id`, `userID`, `companyName`, `position`, `employeeType`, `startDate`, `endDate`, `isCurrent`, `jobDescription`, `sortOrder`, `remarks`) VALUES
+(1, 1, 'BrightCode Co., Ltd.123', 'Junior Web Developer', 'Part-time', '2025-09-01', NULL, 1, '123', 3, ''),
+(2, 1, 'KMUTT IT Solutions', 'xxx', 'Contract', '2025-11-02', '2025-11-19', 0, '123', 2, ''),
+(3, 1, 'Tech Innovation Co., Ltd.', 'xxx', 'Contract', '2025-11-18', NULL, 1, 'xx', 1, '');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
