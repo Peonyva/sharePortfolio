@@ -3,10 +3,6 @@ let allSkills = [];
 let mySkills = [];
 let projectSkills = [];
 
-if (addProjectSkillBtn) {
-  addProjectSkillBtn.addEventListener("click", addProjectSkill);
-}
-
 // ===== INITIALIZATION =====
 document.addEventListener("DOMContentLoaded", async function () {
   await initializeApp();
@@ -19,9 +15,9 @@ async function initializeApp() {
     populateProjectSkillsDropdown();
     setupEventListeners();
 
-    console.log("Application initialized successfully");
+    console.log("✅ Application initialized successfully");
   } catch (error) {
-    console.error("Failed to initialize application:", error);
+    console.error("❌ Failed to initialize application:", error);
     await showError(
       "Initialization Error",
       "Unable to load skills data. Please refresh the page."
@@ -49,11 +45,11 @@ async function loadSkillsFromServer() {
     }
 
     allSkills = data;
-    console.log(`Loaded ${allSkills.length} skills from server`);
+    console.log(`✅ Loaded ${allSkills.length} skills from server`);
 
     return allSkills;
   } catch (error) {
-    console.error("Failed to load skills from server:", error);
+    console.error("❌ Failed to load skills from server:", error);
     await showError(
       "Error Loading Skills",
       `Unable to load skills data: ${error.message}`
@@ -67,7 +63,7 @@ async function loadSkillsFromServer() {
 function populateSkillsDropdown() {
   const dropdownSkills = document.getElementById("dropdownSkills");
   if (!dropdownSkills) {
-    console.warn("Dropdown Skills element not found");
+    console.warn("⚠️ Dropdown Skills element not found");
     return;
   }
 
@@ -92,7 +88,7 @@ function populateSkillsDropdown() {
 function populateProjectSkillsDropdown() {
   const dropdownProjectSkills = document.getElementById("dropdownProjectSkills");
   if (!dropdownProjectSkills) {
-    console.warn("Dropdown Project Skills element not found");
+    console.warn("⚠️ Dropdown Project Skills element not found");
     return;
   }
 
@@ -118,6 +114,8 @@ function populateProjectSkillsDropdown() {
 function setupEventListeners() {
   const dropdownSkills = document.getElementById("dropdownSkills");
   const dropdownProjectSkills = document.getElementById("dropdownProjectSkills");
+  const addSkillBtn = document.getElementById("addSkillBtn");
+  const addProjectSkillBtn = document.getElementById("addProjectSkillBtn");
 
   if (dropdownSkills) {
     dropdownSkills.addEventListener("change", handleSkillSelectChange);
@@ -125,6 +123,15 @@ function setupEventListeners() {
 
   if (dropdownProjectSkills) {
     dropdownProjectSkills.addEventListener("change", handleProjectSkillSelectChange);
+  }
+
+  // ✅ เพิ่ม event listener สำหรับปุ่ม Add
+  if (addSkillBtn) {
+    addSkillBtn.addEventListener("click", addSkill);
+  }
+
+  if (addProjectSkillBtn) {
+    addProjectSkillBtn.addEventListener("click", addProjectSkill);
   }
 }
 
@@ -160,67 +167,68 @@ function handleProjectSkillSelectChange(event) {
   }
 }
 
-
 // ===== SKILL MANAGEMENT =====
 function addSkill() {
   const dropdownSkills = document.getElementById("dropdownSkills");
   if (!dropdownSkills) {
-    console.error("Skill select element not found");
+    console.error("❌ Skill select element not found");
     return;
   }
 
   const skillsNum = parseInt(dropdownSkills.value);
-  console.log("Adding skill:", skillsNum);
+  console.log("➕ Adding skill:", skillsNum);
 
   if (skillsNum && !isNaN(skillsNum) && !mySkills.includes(skillsNum)) {
     mySkills.push(skillsNum);
     updateSkillsDisplay();
     populateSkillsDropdown();
-    populateProjectSkillsDropdown();
     updateMySkillsInput();
-    console.log("Selected skills:", mySkills);
+    console.log("✅ Selected skills:", mySkills);
   } else {
-    console.log("Invalid skill ID or skill already selected:", skillsNum);
+    console.log("⚠️ Invalid skill ID or skill already selected:", skillsNum);
   }
 }
 
 function removeSkill(skillsNum) {
-  const skillId = parseInt(skillsNum);
-  mySkills = mySkills.filter((id) => parseInt(id) !== skillId);
+  const skillsId = parseInt(skillsNum);
+  mySkills = mySkills.filter((id) => parseInt(id) !== skillsId);
   updateSkillsDisplay();
   populateSkillsDropdown();
-  populateProjectSkillsDropdown();
   updateMySkillsInput();
+  console.log("🗑️ Removed skill:", skillsId);
+  console.log("Current skills:", mySkills);
 }
 
 // ===== PROJECT SKILL MANAGEMENT =====
 function addProjectSkill() {
   const dropdownProjectSkills = document.getElementById("dropdownProjectSkills");
   if (!dropdownProjectSkills) {
-    console.error("Project Skill select element not found");
+    console.error("❌ Project Skill select element not found");
     return;
   }
 
   const skillsNum = parseInt(dropdownProjectSkills.value);
-  console.log("Adding project skill:", skillsNum);
+  console.log("➕ Adding project skill:", skillsNum);
 
   if (skillsNum && !isNaN(skillsNum) && !projectSkills.includes(skillsNum)) {
     projectSkills.push(skillsNum);
     updateProjectSkillsDisplay();
     populateProjectSkillsDropdown();
     updateProjectSkillsInput();
-    console.log("Selected project skills:", projectSkills);
+    console.log("✅ Selected project skills:", projectSkills);
   } else {
-    console.log("Invalid project skill ID or already selected:", skillsNum);
+    console.log("⚠️ Invalid project skill ID or already selected:", skillsNum);
   }
 }
 
 function removeProjectSkill(skillsNum) {
-  const skillId = parseInt(skillsNum);
-  projectSkills = projectSkills.filter((id) => parseInt(id) !== skillId);
+  const skillsId = parseInt(skillsNum);
+  projectSkills = projectSkills.filter((id) => parseInt(id) !== skillsId);
   updateProjectSkillsDisplay();
   populateProjectSkillsDropdown();
   updateProjectSkillsInput();
+  console.log("🗑️ Removed project skill:", skillsId);
+  console.log("Current project skills:", projectSkills);
 }
 
 // ===== UI UPDATES =====
@@ -230,7 +238,10 @@ function updateSkillsDisplay() {
   const skillsList = document.getElementById("skillsList");
   const skillCount = document.getElementById("skillCount");
 
-  if (!box || !emptyState || !skillsList || !skillCount) return;
+  if (!box || !emptyState || !skillsList || !skillCount) {
+    console.warn("⚠️ Skills display elements not found");
+    return;
+  }
 
   if (mySkills.length > 0) {
     box.style.display = "block";
@@ -258,7 +269,10 @@ function updateProjectSkillsDisplay() {
   const skillsList = document.getElementById("projectSkillsList");
   const skillCount = document.getElementById("projectSkillCount");
 
-  if (!box || !emptyState || !skillsList || !skillCount) return;
+  if (!box || !emptyState || !skillsList || !skillCount) {
+    console.warn("⚠️ Project skills display elements not found");
+    return;
+  }
 
   if (projectSkills.length > 0) {
     box.style.display = "block";
@@ -284,6 +298,7 @@ function updateMySkillsInput() {
   const mySkillsInput = document.getElementById("mySkillsInput");
   if (mySkillsInput) {
     mySkillsInput.value = mySkills.join(",");
+    console.log("💾 Updated mySkillsInput:", mySkillsInput.value);
   }
 }
 
@@ -291,6 +306,7 @@ function updateProjectSkillsInput() {
   const myProjectSkillsInput = document.getElementById("myProjectSkillsInput");
   if (myProjectSkillsInput) {
     myProjectSkillsInput.value = projectSkills.join(",");
+    console.log("💾 Updated myProjectSkillsInput:", myProjectSkillsInput.value);
   }
 }
 

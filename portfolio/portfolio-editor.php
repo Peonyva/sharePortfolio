@@ -382,9 +382,10 @@ $currentUserID = intval($_GET['user']);
 
 <?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php'; ?>
 
+<script src="/portfolio/upload-skills.js"></script>
 <script src="/portfolio/portfolio-editor.js"></script>
 <script src="/portfolio/upload-image.js"></script>
-<script src="/portfolio/upload-skills.js"></script>
+
 
 </body>
 

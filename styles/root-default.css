@@ -210,6 +210,11 @@ nav {
   color: var(--color-accent);
 }
 
+.btn-link.text {
+    font-weight: var(--font-weight-medium);
+}
+
+
 /* Navbar Menu */
 .menu {
   display: flex;

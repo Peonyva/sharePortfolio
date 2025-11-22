@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="/lib/reset.css" />
     <link rel="stylesheet" href="/styles/root-default.css" />
     <link rel="stylesheet" href="/styles/portfolio-editor.css" />
+    <script src="/lib/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title><?php echo isset($title) ? $title : 'Documents'; ?></title>
 </head>
@@ -26,7 +27,7 @@
                     <div class="nav-menu">
                         <ul class="menu">
                             <li><a href="/portfolio/portfolio.php?user=<?php echo htmlspecialchars($currentUserID); ?>" target="_blank" class="btn-link">Show your Portfolio</a></li>
-                            <li><a href="#" id="logoutBtn" class="btn-link">Logout</a></li>
+                            <li><a href="#" id="logoutBtn" class="btn-link text">Logout</a></li>
                         </ul>
                     </div>
 
@@ -37,28 +38,30 @@
 
     <script>
         $(document).ready(function() {
-            $("#logoutBtn").on("click", function(e) {
+            $("#logoutBtn").on("click", async function(e) {
                 e.preventDefault();
 
                 Swal.fire({
-                    title: 'Confirm Logout',
-                    text: 'Are you sure you want to log out? Any unsaved changes may be lost.',
-                    icon: 'warning',
+                    title: "Are you sure?",
+                    text: "Do you want to log out?",
+                    icon: "warning",
                     showCancelButton: true,
-                    confirmButtonColor: '#dc3545',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Yes, Logout',
-                    cancelButtonText: 'Cancel',
-                    backdrop: true,
-                    allowOutsideClick: false,
-                    allowEscapeKey: true
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes"
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // ✅ Clear localStorage
-                        localStorage.removeItem("userData");
+                        Swal.fire({
+                            title: "Logged out",
+                            text: "Redirecting...",
+                            icon: "success",
+                            timer: 1000,
+                            showConfirmButton: false
+                        });
 
-                        // เปลี่ยนหน้าไปยัง login
-                        window.location.href = "/login.php";
+                        setTimeout(() => {
+                            window.location.href = "/login.php";
+                        }, 1000);
                     }
                 });
             });

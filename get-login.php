@@ -9,19 +9,24 @@ $password = $_POST['password'] ?? '';
 if (empty($email) || empty($password)) {
     echo json_encode([
         'status' => 0,
-        'message' => 'Please provide email and password'
+        'message' => 'Please enter your email and password.'
     ]);
     exit;
 }
 
 try {
-    $stmt = $conn->prepare("SELECT u.userID, u.email, p.isPublic, p.isEverPublic FROM user u
+    $stmt = $conn->prepare("SELECT u.firstname, u.lastname, u.birthdate, u.email, p.userID  FROM user u
         LEFT JOIN profile p ON u.userID = p.userID
-        WHERE u.email = :email");
-    $stmt->execute(['email' => $email]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        WHERE u.email = :email AND u.password = :password");
+    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+    $stmt->bindParam(':password', $password, PDO::PARAM_STR);
+    $stmt->execute();
 
-    if (!$user) {
+    if ($stmt->rowCount() === 1) {
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    if (!$row) {
         echo json_encode([
             'status' => 0,
             'message' => 'Invalid email or password'
@@ -29,27 +34,21 @@ try {
         exit;
     }
 
-
-    // ถ้ายังไม่มี profile record ให้ตั้งค่าเริ่มต้น
-    if ($user['isEverPublic'] === null) {
-        // สร้าง profile record ใหม่
-        $stmt = $conn->prepare("INSERT INTO profile (userID, isPublic, isEverPublic) 
-        VALUES (:userID, 0, 0)");
-        $stmt->execute(['userID' => $user['userID']]);
-        
-        $user['isPublic'] = 0;
-        $user['isEverPublic'] = 0;
+    if ($row['userID'] === null) {
+        $stmt = $conn->prepare("INSERT INTO profile (userID) VALUES (:userID)");
+        $stmt->execute(['userID' => $row['userID']]);
     }
 
-    // ส่งข้อมูลกลับ
     echo json_encode([
         'status' => 1,
         'message' => 'Login successful',
         'data' => [
-            'userID' => $user['userID'],
-            'email' => $user['email'],
-            'isPublic' => intval($user['isPublic'] ?? 0),
-            'isEverPublic' => intval($user['isEverPublic'] ?? 0)
+            'userID' => $row['userID'],
+            'firstname' => $row['firstname'],
+            'lastname' => $row['lastname'],
+            'lastname' => $row['lastname'],
+            'birthdate' => $row['birthdate'],
+            'email' => $row['email']
         ]
     ]);
 

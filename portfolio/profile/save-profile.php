@@ -41,7 +41,7 @@ if (!$userID) {
 try {
 
     // prepare folder
-    $dir = $_SERVER['DOCUMENT_ROOT'] . "/uploads/portfolio/$userID/";
+    $dir = $_SERVER['DOCUMENT_ROOT'] . "/uploads/$userID/";
     if (!is_dir($dir)) mkdir($dir, 0755, true);
 
     $uploaded = [];

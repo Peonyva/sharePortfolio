@@ -1,18 +1,24 @@
-// 1. UTILITY FUNCTIONS (ฟังก์ชันช่วยเหลือ) 
+// 1. UTILITY FUNCTIONS
 
 // Show Error with SweetAlert2
 
 async function showError(title, text) {
-  return await Swal.fire({ icon: "error", title: title, text: text, });
+  return await Swal.fire({
+    title: title,
+    text: text,
+    icon: "error"
+  });
 }
 
-//  Show Toast (Alert Top Right)
 async function showSuccess(title) {
-  return await Swal.fire({ icon: "success", title: title, });
+  return await Swal.fire({
+    icon: "success",
+    title: title
+  });
 }
 
 
-// 2️. VALIDATION FUNCTIONS (ฟังก์ชันตรวจสอบข้อมูล)
+// 2️. VALIDATION FUNCTIONS 
 
 function validateRegisterForm(form) {
   const firstname = $(form).find("#firstname").val().trim();
@@ -111,8 +117,9 @@ function validatePasswordResetForm(form) {
 }
 
 
-// 3️. GLOBAL FUNCTIONS (ฟังก์ชันที่ใช้ได้ทุกหน้า)
+// 3️. GLOBAL FUNCTIONS 
 
+// ใช้กับหน้า login และ Register
 function togglePassword() {
 
   var clickedIcon = this;
@@ -188,30 +195,24 @@ $(function () {
         if (response.status === 1) {
           const user = response.data;
 
-          // ตรวจสอบข้อมูล user
           if (!user || !user.userID) {
-            showError("Error: user data missing.");
+            showError("Login failed","user data missing.");
             return;
           }
 
           showSuccess("Login successful!");
-
-          // ส่ง userID ผ่าน URL - เริ่มต้นที่หน้า editor เสมอ
           let redirectURL = "/portfolio/portfolio-editor.php?user=" + encodeURIComponent(user.userID);
-
           setTimeout(() => {
             window.location.href = redirectURL;
           }, 1000);
-
         } else {
-          showError("Login failed: " + (response.message || "Invalid username or password."));
+          showError("Login failed" ,(response.message || "Invalid username or password."));
         }
       },
-
       error: function (xhr, status, error) {
         console.error("Login error:", error);
-        showError("Error: Cannot connect to the server.");
-      },
+        showError("Login failed","Invalid username or password.");
+      }
     });
   });
 
