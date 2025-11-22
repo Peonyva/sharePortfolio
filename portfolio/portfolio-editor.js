@@ -1377,6 +1377,33 @@ $(document).ready(async function () {
     }
   }
 
+  // toggle form buttons (เปิด/ปิดฟอร์ม)
+
+  $(".btn-toggle").click(function () {
+    const targetId = $(this).data("target");
+    const $targetForm = $(targetId);
+
+    if ($targetForm.length) {
+      const $icon = $(this).find("i");
+
+      if ($targetForm.hasClass("hidden")) {
+        // เปิดฟอร์ม
+        $targetForm.removeClass("hidden").hide().slideDown(300);
+        $icon.removeClass("fa-plus").addClass("fa-minus");
+
+      } else {
+        // ปิดฟอร์ม
+        $targetForm.slideUp(300, function () {
+          $(this).addClass("hidden");
+        });
+        $icon.removeClass("fa-minus").addClass("fa-plus");
+      }
+    } else {
+      console.warn(`Target form not found: ${targetId}`);
+    }
+  });
+
+
   // save profile to db
 
   $("#personalForm").on("submit", function (e) {
@@ -1427,9 +1454,19 @@ $(document).ready(async function () {
       confirmButtonText: "Yes"
     }).then((result) => {
       if (result.isConfirmed) {
-        $("#AddWorkExp").addClass("hidden");
         $("#AddWorkExp")[0].reset();
         $("#workEndDate").prop("disabled", false);
+
+        // ปิดฟอร์มหลัง Cancel
+        $("#AddWorkExp").slideUp(300, function () {
+          $(this).addClass("hidden");
+        });
+
+        // เปลี่ยนไอคอนกลับเป็น +
+        $(".btn-toggle[data-target='#AddWorkExp'] i")
+          .removeClass("fa-minus")
+          .addClass("fa-plus");
+
         showSuccess("Work Experience form has been cleared.");
       }
     });
@@ -1475,6 +1512,16 @@ $(document).ready(async function () {
           $("#AddWorkExp")[0].reset();
           $("#workEndDate").prop("disabled", false);
 
+          // ปิดฟอร์มหลัง Save
+          $("#AddWorkExp").slideUp(300, function () {
+            $(this).addClass("hidden");
+          });
+
+          // เปลี่ยนไอคอนกลับเป็น +
+          $(".btn-toggle[data-target='#AddWorkExp'] i")
+            .removeClass("fa-minus")
+            .addClass("fa-plus");
+
           let userID = $("#userID").val();
           loadWorkExp(userID); // เรียกใช้ฟังก์ชัน load
         } else {
@@ -1502,8 +1549,18 @@ $(document).ready(async function () {
       confirmButtonText: "Yes"
     }).then((result) => {
       if (result.isConfirmed) {
-        $("#AddEducation").addClass("hidden");
         $("#AddEducation")[0].reset();
+
+        // ปิดฟอร์มหลัง Cancel
+        $("#AddEducation").slideUp(300, function () {
+          $(this).addClass("hidden");
+        });
+
+        // เปลี่ยนไอคอนกลับเป็น +
+        $(".btn-toggle[data-target='#AddEducation'] i")
+          .removeClass("fa-minus")
+          .addClass("fa-plus");
+
         showSuccess("Education form has been cleared.");
       }
     });
@@ -1538,6 +1595,16 @@ $(document).ready(async function () {
           $("#AddEducation").addClass("hidden");
           $("#AddEducation")[0].reset();
 
+          // ปิดฟอร์มหลัง Save
+          $("#AddEducation").slideUp(300, function () {
+            $(this).addClass("hidden");
+          });
+
+          // เปลี่ยนไอคอนกลับเป็น +
+          $(".btn-toggle[data-target='#AddEducation'] i")
+            .removeClass("fa-minus")
+            .addClass("fa-plus");
+
           let userID = $("#userID").val();
           loadEducation(userID);
         } else {
@@ -1563,8 +1630,18 @@ $(document).ready(async function () {
       confirmButtonText: "Yes"
     }).then((result) => {
       if (result.isConfirmed) {
-        $("#AddProject").addClass("hidden");
         $("#AddProject")[0].reset();
+
+        // ปิดฟอร์มหลัง Cancel
+        $("#AddProject").slideUp(300, function() {
+          $(this).addClass("hidden");
+        });
+        
+        // เปลี่ยนไอคอนกลับเป็น +
+        $(".btn-toggle[data-target='#AddProject'] i")
+          .removeClass("fa-minus")
+          .addClass("fa-plus");
+
         showSuccess("Project form has been cleared.");
       }
     });
@@ -1598,9 +1675,19 @@ $(document).ready(async function () {
           $("#projectSkillCount").text("0");
           $("#emptyProjectSkillsState").show();
 
+          // ปิดฟอร์มหลัง Save
+          $("#AddProject").slideUp(300, function() {
+            $(this).addClass("hidden");
+          });
+          
+          // เปลี่ยนไอคอนกลับเป็น +
+          $(".btn-toggle[data-target='#AddProject'] i")
+            .removeClass("fa-minus")
+            .addClass("fa-plus");
+
           let userID = $("#userID").val();
           loadProject(userID);
-        } else { 
+        } else {
           showError("An error occurred", response.message || "Please try again.");
         }
       },
