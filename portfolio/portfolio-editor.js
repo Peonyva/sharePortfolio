@@ -224,7 +224,11 @@ function loadUserProfile(userID) {
       }
     },
     error: function (xhr, status, error) {
-      showError("Error", "Cannot load profile data. Please refresh the page.");
+      let msg = "Cannot load profile data.";
+      if (xhr.responseJSON && xhr.responseJSON.message) {
+        msg = xhr.responseJSON.message;
+      }
+      showError("Error", msg);
     }
   });
 }
@@ -466,9 +470,16 @@ function updateWorkItem(itemId, container) {
         showError("Update failed", response.message || "Please try again.");
       }
     },
-    error: function () {
-      showError("An error occurred", "Could not update Work Experience.");
+    error: function (xhr, status, error) {
+      let errorMessage = "Could not update item.";
+      // ดึงข้อความที่ PHP ส่งมา (เช่น "End date must be after start date")
+      if (xhr.responseJSON && xhr.responseJSON.message) {
+        errorMessage = xhr.responseJSON.message;
+      }
+      showError("Update Failed", errorMessage);
     },
+
+
   });
 }
 
@@ -504,8 +515,12 @@ function deleteWorkItem(itemId, container) {
             showError("Deletion failed", response.message || "Please try again.");
           }
         },
-        error: function () {
-          showError("An error occurred", "Could not delete Work Experience.");
+        error: function (xhr, status, error) {
+          let errorMessage = "Could not delete item.";
+          if (xhr.responseJSON && xhr.responseJSON.message) {
+            errorMessage = xhr.responseJSON.message;
+          }
+          showError("Deletion Failed", errorMessage);
         },
       });
     }
@@ -541,6 +556,12 @@ function moveWorkItem(currentId, currentSort, newSort) {
     },
     error: function (xhr, status, error) {
       console.error("AJAX Error:", error);
+      // เพิ่มส่วนนี้เข้าไปให้เหมือน function move อื่นๆ
+      let msg = "Failed to move item.";
+      if (xhr.responseJSON && xhr.responseJSON.message) {
+        msg = xhr.responseJSON.message;
+      }
+      showError("Error", msg);
     },
   });
 }
@@ -567,6 +588,11 @@ function loadEducation(userID) {
     },
     error: function (xhr, status, error) {
       console.error("AJAX Error:", error);
+      let msg = "Failed to load education data.";
+      if (xhr.responseJSON && xhr.responseJSON.message) {
+        msg = xhr.responseJSON.message;
+      }
+      showError("Error", msg);
     },
   });
 }
@@ -732,8 +758,13 @@ function updateEducationItem(itemId, container) {
         showError("Update failed", response.message || "Please try again.");
       }
     },
-    error: function () {
-      showError("An error occurred", "Could not update Education.");
+    error: function (xhr, status, error) {
+      let errorMessage = "Could not update item.";
+      // ดึงข้อความที่ PHP ส่งมา (เช่น "End date must be after start date")
+      if (xhr.responseJSON && xhr.responseJSON.message) {
+        errorMessage = xhr.responseJSON.message;
+      }
+      showError("Update Failed", errorMessage);
     },
   });
 }
@@ -769,8 +800,12 @@ function deleteEducationItem(itemId, container) {
             showError("Deletion failed", response.message || "Please try again.");
           }
         },
-        error: function () {
-          showError("An error occurred", "Could not delete Education.");
+        error: function (xhr, status, error) {
+          let errorMessage = "Could not delete item.";
+          if (xhr.responseJSON && xhr.responseJSON.message) {
+            errorMessage = xhr.responseJSON.message;
+          }
+          showError("Deletion Failed", errorMessage);
         },
       });
     }
@@ -797,6 +832,11 @@ function moveEducationItem(currentId, currentSort, newSort) {
     },
     error: function (xhr, status, error) {
       console.error("AJAX Error:", error);
+      let msg = "Failed to move item.";
+      if (xhr.responseJSON && xhr.responseJSON.message) {
+        msg = xhr.responseJSON.message;
+      }
+      showError("Error", msg);
     },
   });
 }
@@ -1063,8 +1103,13 @@ function updateProjectItem(itemId, container) {
         showError("Update failed", response.message || "Please try again.");
       }
     },
-    error: function () {
-      showError("An error occurred", "Could not update Project.");
+    error: function (xhr, status, error) {
+      let errorMessage = "Could not update item.";
+      // ดึงข้อความที่ PHP ส่งมา
+      if (xhr.responseJSON && xhr.responseJSON.message) {
+        errorMessage = xhr.responseJSON.message;
+      }
+      showError("Update Failed", errorMessage);
     },
   });
 }
@@ -1115,14 +1160,12 @@ function deleteProjectItem(itemId, container) {
             showError("Deletion failed", response.message || "Please try again.");
           }
         },
-        error: function (xhr, status, error) {
-          console.error("Delete Error:", { status, error, response: xhr.responseText });
-          try {
-            const errorResponse = JSON.parse(xhr.responseText);
-            showError("An error occurred", errorResponse.message || "Could not delete Project.");
-          } catch (e) {
-            showError("An error occurred", "Could not delete Project.");
+        error: function (xhr, status, error) { 
+          let errorMessage = "Could not delete item.";
+          if (xhr.responseJSON && xhr.responseJSON.message) {
+            errorMessage = xhr.responseJSON.message;
           }
+          showError("Deletion Failed", errorMessage);
         },
       });
     }
@@ -1149,6 +1192,11 @@ function moveProjectItem(currentId, currentSort, newSort) {
     },
     error: function (xhr, status, error) {
       console.error("AJAX Error:", error);
+      let msg = "Failed to move item.";
+      if (xhr.responseJSON && xhr.responseJSON.message) {
+        msg = xhr.responseJSON.message;
+      }
+      showError("Error", msg);
     },
   });
 }
@@ -1431,8 +1479,13 @@ $(document).ready(async function () {
           showError("An error occurred", response.message || "Please try again.");
         }
       },
-      error: function () {
-        showError("An error has occurred", "The Personal could not be saved.");
+      error: function (xhr, status, error) {
+        let errorMessage = "The Work Experience could not be saved.";
+        // นี่คือจุดสำคัญ! PHP จะส่ง Validation Error มาทางนี้
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+          errorMessage = xhr.responseJSON.message;
+        }
+        showError("Save Failed", errorMessage);
       },
     });
   });
@@ -1528,8 +1581,13 @@ $(document).ready(async function () {
           showError("An error occurred", response.message || "Please try again.");
         }
       },
-      error: function () {
-        showError("An error has occurred", "The Work Experience could not be saved.");
+      error: function (xhr, status, error) {
+        let errorMessage = "The Work Experience could not be saved.";
+        // นี่คือจุดสำคัญ! PHP จะส่ง Validation Error มาทางนี้
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+          errorMessage = xhr.responseJSON.message;
+        }
+        showError("Save Failed", errorMessage);
       },
     });
   });
@@ -1611,8 +1669,13 @@ $(document).ready(async function () {
           showError("An error occurred", response.message || "Please try again.");
         }
       },
-      error: function () {
-        showError("An error has occurred", "The Education could not be saved.");
+      error: function (xhr, status, error) {
+        let errorMessage = "The Education could not be saved.";
+        // นี่คือจุดสำคัญ! PHP จะส่ง Validation Error มาทางนี้
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+          errorMessage = xhr.responseJSON.message;
+        }
+        showError("Save Failed", errorMessage);
       },
     });
   });
@@ -1633,10 +1696,10 @@ $(document).ready(async function () {
         $("#AddProject")[0].reset();
 
         // ปิดฟอร์มหลัง Cancel
-        $("#AddProject").slideUp(300, function() {
+        $("#AddProject").slideUp(300, function () {
           $(this).addClass("hidden");
         });
-        
+
         // เปลี่ยนไอคอนกลับเป็น +
         $(".btn-toggle[data-target='#AddProject'] i")
           .removeClass("fa-minus")
@@ -1676,10 +1739,10 @@ $(document).ready(async function () {
           $("#emptyProjectSkillsState").show();
 
           // ปิดฟอร์มหลัง Save
-          $("#AddProject").slideUp(300, function() {
+          $("#AddProject").slideUp(300, function () {
             $(this).addClass("hidden");
           });
-          
+
           // เปลี่ยนไอคอนกลับเป็น +
           $(".btn-toggle[data-target='#AddProject'] i")
             .removeClass("fa-minus")
@@ -1691,8 +1754,13 @@ $(document).ready(async function () {
           showError("An error occurred", response.message || "Please try again.");
         }
       },
-      error: function () {
-        showError("An error has occurred", "The Project could not be saved.");
+      error: function (xhr, status, error) {
+        let errorMessage = "The Project could not be saved.";
+        // นี่คือจุดสำคัญ! PHP จะส่ง Validation Error มาทางนี้
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+          errorMessage = xhr.responseJSON.message;
+        }
+        showError("Save Failed", errorMessage);
       },
     });
   });

@@ -19,8 +19,7 @@
       <div class="container">
         <div class="nav-con">
           <div class="nav-logo">
-            <!-- ใส่ a href รอบทั้งรูปและข้อความ -->
-            <a href="index.php"> <!-- เปลี่ยนเป็น URL ที่ต้องการ -->
+            <a href="index.php">
               <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40' fill='%23333'%3E%3Crect width='40' height='40' rx='8' fill='%23f8f9fa' stroke='%23333' stroke-width='2'/%3E%3Ctext x='20' y='26' text-anchor='middle' font-family='Arial' font-size='14' font-weight='bold'%3EL%3C/text%3E%3C/svg%3E" alt="logo" />
               SharePortfolio
             </a>
@@ -48,7 +47,7 @@
             <div><a href="/register.php" target="_blank" class="btn-info">Create a portfolio website</a></div>
           </div>
           <div class="header-image">
-            <img src="/assets/images/previewImage2.png" alt="Portfolio Preview">
+            <img src="/assets/images/previewImage.png" alt="Portfolio Preview">
             <!-- <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='550' height='400' viewBox='0 0 550 400' fill='none'%3E%3Crect width='550' height='400' rx='12' fill='%23f8f9fa' stroke='%23e9ecef'/%3E%3Ctext x='275' y='210' text-anchor='middle' font-family='Arial' font-size='18' fill='%23666'%3EPreview System Image%3C/text%3E%3Crect x='50' y='50' width='100' height='60' rx='8' fill='%23e9ecef'/%3E%3Crect x='50' y='130' width='200' height='20' rx='4' fill='%23e9ecef'/%3E%3Crect x='50' y='170' width='150' height='20' rx='4' fill='%23e9ecef'/%3E%3Crect x='400' y='50' width='100' height='100' rx='12' fill='%23e9ecef'/%3E%3Crect x='50' y='250' width='80' height='80' rx='8' fill='%23e9ecef'/%3E%3Crect x='150' y='250' width='80' height='80' rx='8' fill='%23e9ecef'/%3E%3Crect x='250' y='250' width='80' height='80' rx='8' fill='%23e9ecef'/%3E%3C/svg%3E" alt="Portfolio Preview"> -->
           </div>
         </div>
@@ -90,7 +89,7 @@
   </main>
 
   <!-- Footer -->
-<?php  require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php';  ?>
+  <?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php';  ?>
 
 
 </body>
