@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                        : $oldData['endDate'];
         }
         
-        $remarks = isset($_POST['remarks']) ? trim($_POST['remarks']) : $oldData['remarks'];
+        $remark = isset($_POST['remark']) ? trim($_POST['remark']) : $oldData['remark'];
         
         // Validation
         if (empty($educationName) || empty($degree) || empty($facultyName) || empty($majorName) || empty($startDate)) {
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 startDate = :startDate,
                 endDate = :endDate,
                 isCurrent = :isCurrent,
-                remarks = :remarks
+                remark = :remark
                 WHERE id = :id AND userID = :userID";
         
         $stmt = $conn->prepare($sql);
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindParam(':startDate', $startDate);
         $stmt->bindParam(':endDate', $endDate);
         $stmt->bindParam(':isCurrent', $isCurrent, PDO::PARAM_INT);
-        $stmt->bindParam(':remarks', $remarks);
+        $stmt->bindParam(':remark', $remark);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
         

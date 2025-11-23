@@ -1,368 +1,313 @@
 <?php
-$title = "My Portfolio";
-
-if (!isset($_GET['user']) || !is_numeric($_GET['user'])) {
-    header("Location: /login.php");
-    exit;
-}
-$currentUserID = intval($_GET['user']);
-
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
-// เริ่มต้นตัวแปร
-$profile = null;
-$profileSkills = [];
-$workExperience = [];
-$education = [];
-$projects = [];
-$isPublicFromDB = 0;
-$isEverPublic = 0;
+$userID = intval($_GET['user']);
 
 try {
-    // ตรวจสอบว่าผู้ใช้มีอยู่จริง และดึงสถานะการเผยแพร่จากตาราง profile
-    $stmt = $conn->prepare("SELECT p.userID, p.isPublic, p.isEverPublic 
-                            FROM profile p 
-                            WHERE p.userID = :userID");
-    $stmt->execute(['userID' => $currentUserID]);
-    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$userData) {
-        // ถ้าไม่มี profile ให้ไปหน้า editor
-        header("Location: /portfolio/portfolio-editor.php?user=" . urlencode($currentUserID));
-        exit;
+  // Query 1: User
+  $stmt = $conn->prepare("SELECT userID, firstname, lastname, birthdate, email
+        FROM user WHERE userID = :userID");
+  $stmt->execute(['userID' => $userID]);
+  $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  // Query 2: Profile
+  $stmt = $conn->prepare("SELECT professionalTitle, phone, facebook, facebookUrl,
+            logoImage, profileImage, coverImage, introContent, skillsContent
+        FROM profile WHERE userID = :userID");
+  $stmt->execute(['userID' => $userID]);
+  $profileData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+  // Merge user + profile
+  $data = array_merge($userData, $profileData ?: []);
+
+  // Full path images
+  foreach (['logoImage', 'profileImage', 'coverImage'] as $img) {
+    if (!empty($data[$img])) {
+      $data[$img] = "/uploads/{$userID}/" . $data[$img];
     }
+  }
 
-    $isPublicFromDB = intval($userData['isPublic'] ?? 0);
-    $isEverPublic = intval($userData['isEverPublic'] ?? 0);
+  // Query 3: ProfileSkill
+  $stmt = $conn->prepare("SELECT s.skillsID, s.skillsName 
+        FROM profileskill ps
+        INNER JOIN skills s ON s.skillsID = ps.skillsID
+        WHERE ps.userID = :userID
+        ORDER BY s.skillsName ASC");
+  $stmt->execute(['userID' => $userID]);
+  $selectedSkills = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // ถ้ายังไม่เคยเผยแพร่ (isEverPublic = 0) ให้ redirect ไป editor
-    if ($isEverPublic === 0) {
-        header("Location: /portfolio/portfolio-editor.php?user=" . urlencode($currentUserID));
-        exit;
+  // Query 4: Work Experience
+  $stmt = $conn->prepare("SELECT * FROM workexperience WHERE userID = :userID ORDER BY sortOrder ASC");
+  $stmt->execute(['userID' => $userID]);
+  $workExperience = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  // Query 5: Education
+  $stmt = $conn->prepare("SELECT * FROM education WHERE userID = :userID ORDER BY sortOrder ASC");
+  $stmt->execute(['userID' => $userID]);
+  $education = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  // Query 6: Project
+  $sql = "SELECT p.projectID, p.projectTitle, p.projectImage, p.keyPoint, p.sortOrder, 
+                   JSON_ARRAYAGG(s.skillsName) AS skills
+            FROM project AS p
+            LEFT JOIN projectSkill ps ON p.projectID = ps.projectID
+            LEFT JOIN skills s ON ps.skillsID = s.skillsID
+            WHERE p.userID = :userID
+            GROUP BY p.projectID
+            ORDER BY p.sortOrder ASC";
+
+  $stmt = $conn->prepare($sql);
+  $stmt->execute(['userID' => $userID]);
+
+  $project = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  // full path ให้รูป project
+  foreach ($project as &$projectItem) {
+    if (!empty($projectItem['projectImage'])) {
+      $projectItem['projectImage'] = "/uploads/{$userID}/" . $projectItem['projectImage'];
     }
-
-    // ดึงข้อมูล Profile และ Skills
-    $stmt = $conn->prepare("SELECT p.firstname, p.lastname, p.position, p.email, p.phone, p.facebook,
-                 p.facebookUrl, p.logoImage, p.profileImage, p.coverImage, 
-                 p.introContent, p.skillsContent, s.skillsName, s.skillsUrl
-        FROM profile p
-        LEFT JOIN profileSkill ps ON p.userID = ps.userID
-        LEFT JOIN skills s ON ps.skillsID = s.skillsID
-        WHERE p.userID = :userID");
-    $stmt->execute(['userID' => $currentUserID]);
-    $profileSkills = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    $profile = !empty($profileSkills) ? $profileSkills[0] : null;
-
-    // ดึงข้อมูล Work Experience
-    $stmt = $conn->prepare("SELECT id, companyName, position, jobDescription, employeeType, startDate, endDate, IsCurrent, remarks
-        FROM workexperience
-        WHERE userID = :userID
-        ORDER BY sortOrder ASC");
-    $stmt->execute(['userID' => $currentUserID]);
-    $workExperience = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // ดึงข้อมูล Education
-    $stmt = $conn->prepare("SELECT id, educationName, degree, facultyName, majorName, startDate, endDate, IsCurrent, remarks
-        FROM education
-        WHERE userID = :userID
-        ORDER BY sortOrder ASC");
-    $stmt->execute(['userID' => $currentUserID]);
-    $education = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // ดึงข้อมูล Projects
-    $stmt = $conn->prepare("SELECT p.projectID, p.projectTitle, p.projectImage, p.keyPoint, s.skillsUrl
-        FROM project p
-        LEFT JOIN project_skill ps ON p.projectID = ps.projectID
-        LEFT JOIN skills s ON ps.skillsID = s.skillsID
-        WHERE p.userID = :userID");
-    $stmt->execute(['userID' => $currentUserID]);
-    $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+  }
 } catch (PDOException $e) {
-    error_log("Error: " . $e->getMessage());
-    die("An error occurred. Please try again later.");
+  echo "Error: " . $e->getMessage();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
 
-<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/header-portfolio.php'; ?>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Portfolio</title>
+  <script src="https://kit.fontawesome.com/92f0aafca7.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/styles/portfolio.css" />
 
-<!-- ส่วนควบคุม Portfolio -->
-<div class="portfolio-controls">
-    <!-- ปุ่มแก้ไข Portfolio -->
-    <div class="edit-portfolio-button">
-        <a href="/portfolio/portfolio-editor.php?user=<?php echo $currentUserID; ?>" 
-           class="btn btn-primary">
-            <i class="fa-solid fa-pen-to-square"></i> Edit Portfolio
-        </a>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <nav class="nav-container">
+        <div class="logo">
+          <img src="<?=htmlspecialchars($data['logoImage']);?>" alt="Logo" />My Portfolio
+        </div>
+        <ul class="nav-menu" id="nav-menu">
+          <li><a href="#aboutme" class="nav-link active">About Me</a></li>
+          <li><a href="#skills" class="nav-link">Skills</a></li>
+          <li><a href="#projects" class="nav-link">Projects</a></li>
+          <li><a href="#experience" class="nav-link">Work Experience</a></li>
+          <li><a href="#education" class="nav-link">Education</a></li>
+        </ul>
+        <div class="hamburger" id="hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </nav>
     </div>
+  </header>
+  <!-- End Header -->
 
-    <!-- Toggle สถานะ Public/Private -->
-    <div class="portfolio-status-toggle">
-        <label class="switch-container">
-            <span class="status-label">Status: </span>
-            <label class="switch">
-                <input type="checkbox" id="portfolioPublishToggle" <?php echo ($isPublicFromDB == 1) ? 'checked' : ''; ?>>
-                <span class="slider round"></span>
-            </label>
-            <span class="status-text"><?php echo ($isPublicFromDB == 1) ? 'Public' : 'Private'; ?></span>
-        </label>
-    </div>
-</div>
+  <div class="container">
+    <section class="hero" id="aboutme">
+      <div class="cover-photo">
+        <img src="<?=htmlspecialchars($data['coverImage']);?>" alt="cover photo">
+      </div>
 
-<input type="hidden" id="portfolioUserID" value="<?php echo htmlspecialchars($currentUserID); ?>">
+      <!-- Profile -->
+      <div class="profile">
+        <div class="profile-content">
+          <div class="profile-image">
+            <img src="<?=htmlspecialchars($data['profileImage']);?>" alt="Profile Image" />
+          </div>
+          <div class="profile-info">
+            <h1>John Doe</h1>
+            <p class="subtitle">Full-Stack Developer</p>
+          </div>
+          <div class="divider"></div>
+          <div class="contact-info">
+            <a href="mailto:<?=htmlspecialchars($data['email']);?>" target="_blank" class="contact-item">
+              <i class="fas fa-envelope"></i><?= htmlspecialchars($data['email']); ?>
+            </a>
+            <a href="<?=htmlspecialchars($data['facebookUrl']);?>" target="_blank" class="contact-item">
+              <i class="fab fa-facebook"></i><?=htmlspecialchars($data['facebook']);?>
+            </a>
+            <a href="#" class="share-btn" target="_blank"><i class="fas fa-share"></i>Share Profile</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- End Section -->
 
-<div class="container">
-    <main class="portfolio-content">
-        
-        <?php if ($profile): ?>
-            <!-- Cover Image -->
-            <?php if (!empty($profile['coverImage'])): ?>
-                <section class="portfolio-cover">
-                    <img src="<?php echo htmlspecialchars($profile['coverImage']); ?>" alt="Cover Image">
-                </section>
-            <?php endif; ?>
+    <main>
+      <!-- Intro -->
+      <section>
+        <h2>Intro</h2>
+        <div class="intro-content">
+          <p><?=htmlspecialchars($data['introContent']);?></p>
+        </div>
+      </section>
 
-            <!-- Header Section -->
-            <section class="portfolio-header">
-                <?php if (!empty($profile['profileImage'])): ?>
-                    <div class="profile-image">
-                        <img src="<?php echo htmlspecialchars($profile['profileImage']); ?>" alt="Profile">
-                    </div>
-                <?php endif; ?>
-
-                <div class="profile-info">
-                    <h1 class="name"><?php echo htmlspecialchars($profile['firstname'] . ' ' . $profile['lastname']); ?></h1>
-                    <?php if (!empty($profile['position'])): ?>
-                        <h2 class="position"><?php echo htmlspecialchars($profile['position']); ?></h2>
-                    <?php endif; ?>
-                    
-                    <div class="contact-info">
-                        <?php if (!empty($profile['email'])): ?>
-                            <span class="email"><i class="fa-solid fa-envelope"></i> <?php echo htmlspecialchars($profile['email']); ?></span>
-                        <?php endif; ?>
-                        
-                        <?php if (!empty($profile['phone'])): ?>
-                            <span class="phone"><i class="fa-solid fa-phone"></i> <?php echo htmlspecialchars($profile['phone']); ?></span>
-                        <?php endif; ?>
-                        
-                        <?php if (!empty($profile['facebookUrl'])): ?>
-                            <a href="<?php echo htmlspecialchars($profile['facebookUrl']); ?>" target="_blank" class="facebook">
-                                <i class="fa-brands fa-facebook"></i> <?php echo htmlspecialchars($profile['facebook'] ?? 'Facebook'); ?>
-                            </a>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </section>
-
-            <!-- About Me Section -->
-            <?php if (!empty($profile['introContent'])): ?>
-                <section class="portfolio-section about-me">
-                    <h2 class="section-title">About Me</h2>
-                    <div class="content">
-                        <?php 
-                        $introLines = explode("\n", $profile['introContent']);
-                        foreach ($introLines as $line) {
-                            if (!empty(trim($line))) {
-                                echo '<p>' . htmlspecialchars($line) . '</p>';
-                            }
-                        }
-                        ?>
-                    </div>
-                </section>
-            <?php endif; ?>
-
-            <!-- Skills Section -->
-            <?php if (!empty($profile['skillsContent']) || !empty($profileSkills)): ?>
-                <section class="portfolio-section skills">
-                    <h2 class="section-title">Skills</h2>
-                    
-                    <?php if (!empty($profile['skillsContent'])): ?>
-                        <div class="skills-description">
-                            <?php 
-                            $skillLines = explode("\n", $profile['skillsContent']);
-                            foreach ($skillLines as $line) {
-                                if (!empty(trim($line))) {
-                                    echo '<p>' . htmlspecialchars($line) . '</p>';
-                                }
-                            }
-                            ?>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if (!empty($profileSkills)): ?>
-                        <div class="skills-list">
-                            <?php 
-                            $displayedSkills = [];
-                            foreach ($profileSkills as $skill): 
-                                if (!empty($skill['skillsName']) && !in_array($skill['skillsName'], $displayedSkills)):
-                                    $displayedSkills[] = $skill['skillsName'];
-                            ?>
-                                <div class="skill-item">
-                                    <?php if (!empty($skill['skillsUrl'])): ?>
-                                        <img src="<?php echo htmlspecialchars($skill['skillsUrl']); ?>" 
-                                             alt="<?php echo htmlspecialchars($skill['skillsName']); ?>">
-                                    <?php endif; ?>
-                                    <span><?php echo htmlspecialchars($skill['skillsName']); ?></span>
-                                </div>
-                            <?php 
-                                endif;
-                            endforeach; 
-                            ?>
-                        </div>
-                    <?php endif; ?>
-                </section>
-            <?php endif; ?>
-
-            <!-- Work Experience Section -->
-            <?php if (!empty($workExperience)): ?>
-                <section class="portfolio-section work-experience">
-                    <h2 class="section-title">Work Experience</h2>
-                    <div class="timeline">
-                        <?php foreach ($workExperience as $work): ?>
-                            <div class="timeline-item">
-                                <div class="timeline-content">
-                                    <h3 class="position"><?php echo htmlspecialchars($work['position']); ?></h3>
-                                    <h4 class="company"><?php echo htmlspecialchars($work['companyName']); ?></h4>
-                                    <p class="employment-type"><?php echo htmlspecialchars($work['employeeType']); ?></p>
-                                    <p class="date-range">
-                                        <?php 
-                                        echo date('M Y', strtotime($work['startDate']));
-                                        echo ' - ';
-                                        echo $work['IsCurrent'] ? 'Present' : date('M Y', strtotime($work['endDate']));
-                                        ?>
-                                    </p>
-                                    <?php if (!empty($work['jobDescription'])): ?>
-                                        <div class="description">
-                                            <?php 
-                                            $descLines = explode("\n", $work['jobDescription']);
-                                            echo '<ul>';
-                                            foreach ($descLines as $line) {
-                                                if (!empty(trim($line))) {
-                                                    echo '<li>' . htmlspecialchars($line) . '</li>';
-                                                }
-                                            }
-                                            echo '</ul>';
-                                            ?>
-                                        </div>
-                                    <?php endif; ?>
-                                    <?php if (!empty($work['remarks'])): ?>
-                                        <p class="remarks"><?php echo htmlspecialchars($work['remarks']); ?></p>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </section>
-            <?php endif; ?>
-
-            <!-- Education Section -->
-            <?php if (!empty($education)): ?>
-                <section class="portfolio-section education">
-                    <h2 class="section-title">Education</h2>
-                    <div class="timeline">
-                        <?php foreach ($education as $edu): ?>
-                            <div class="timeline-item">
-                                <div class="timeline-content">
-                                    <h3 class="degree"><?php echo htmlspecialchars($edu['degree']); ?></h3>
-                                    <h4 class="institution"><?php echo htmlspecialchars($edu['educationName']); ?></h4>
-                                    <p class="field"><?php echo htmlspecialchars($edu['facultyName'] . ' - ' . $edu['majorName']); ?></p>
-                                    <p class="date-range">
-                                        <?php 
-                                        echo date('M Y', strtotime($edu['startDate']));
-                                        echo ' - ';
-                                        echo $edu['IsCurrent'] ? 'Present' : date('M Y', strtotime($edu['endDate']));
-                                        ?>
-                                    </p>
-                                    <?php if (!empty($edu['remarks'])): ?>
-                                        <p class="remarks"><?php echo htmlspecialchars($edu['remarks']); ?></p>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </section>
-            <?php endif; ?>
-
-            <!-- Projects Section -->
-            <?php if (!empty($projects)): ?>
-                <section class="portfolio-section projects">
-                    <h2 class="section-title">Projects</h2>
-                    <div class="projects-grid">
-                        <?php 
-                        $groupedProjects = [];
-                        foreach ($projects as $project) {
-                            $projectID = $project['projectID'];
-                            if (!isset($groupedProjects[$projectID])) {
-                                $groupedProjects[$projectID] = [
-                                    'projectTitle' => $project['projectTitle'],
-                                    'projectImage' => $project['projectImage'],
-                                    'keyPoint' => $project['keyPoint'],
-                                    'skills' => []
-                                ];
-                            }
-                            if (!empty($project['skillsUrl'])) {
-                                $groupedProjects[$projectID]['skills'][] = $project['skillsUrl'];
-                            }
-                        }
-
-                        foreach ($groupedProjects as $project): 
-                        ?>
-                            <div class="project-card">
-                                <?php if (!empty($project['projectImage'])): ?>
-                                    <div class="project-image">
-                                        <img src="<?php echo htmlspecialchars($project['projectImage']); ?>" 
-                                             alt="<?php echo htmlspecialchars($project['projectTitle']); ?>">
-                                    </div>
-                                <?php endif; ?>
-                                
-                                <div class="project-content">
-                                    <h3 class="project-title"><?php echo htmlspecialchars($project['projectTitle']); ?></h3>
-                                    
-                                    <?php if (!empty($project['keyPoint'])): ?>
-                                        <div class="project-description">
-                                            <?php 
-                                            $keyPoints = explode("\n", $project['keyPoint']);
-                                            echo '<ul>';
-                                            foreach ($keyPoints as $point) {
-                                                if (!empty(trim($point))) {
-                                                    echo '<li>' . htmlspecialchars($point) . '</li>';
-                                                }
-                                            }
-                                            echo '</ul>';
-                                            ?>
-                                        </div>
-                                    <?php endif; ?>
-                                    
-                                    <?php if (!empty($project['skills'])): ?>
-                                        <div class="project-skills">
-                                            <?php foreach ($project['skills'] as $skillUrl): ?>
-                                                <img src="<?php echo htmlspecialchars($skillUrl); ?>" alt="Skill">
-                                            <?php endforeach; ?>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </section>
-            <?php endif; ?>
-
-        <?php else: ?>
-            <div class="no-profile-message">
-                <p>No portfolio data available. Please <a href="/portfolio/portfolio-editor.php?user=<?php echo $currentUserID; ?>">edit your portfolio</a> to add information.</p>
+      <!-- Skills  -->
+      <section id="skills">
+        <h2>Skills</h2>
+        <!-- <ul> -->
+         <p><?=htmlspecialchars($data['skillsContent']);?></p>
+        <!-- </ul> -->
+        <div class="skills-grid">
+          <!-- php -->
+          <div class="skill-item">
+            <div class="skill-icon">
+              <i class="fab fa-php skill-icon icon-php"></i>
             </div>
-        <?php endif; ?>
+            <div class="skill-name">PHP</div>
+          </div>
+          <!-- javascript -->
+          <div class="skill-item">
+            <div class="skill-icon">
+              <i class="fab fa-js-square skill-icon icon-javascript"></i>
+            </div>
+            <div class="skill-name">JavaScript</div>
+          </div>
+          <!-- html -->
+          <div class="skill-item">
+            <div class="skill-icon">
+              <i class="fab fa-html5 skill-icon icon-html"></i>
+            </div>
+            <div class="skill-name">HTML</div>
+          </div>
+          <!-- css -->
+          <div class="skill-item">
+            <div class="skill-icon">
+              <i class="fab fa-css3-alt skill-icon icon-css"></i>
+            </div>
+            <div class="skill-name">CSS</div>
+          </div>
+          <!-- mysql -->
+          <div class="skill-item">
+            <div class="skill-icon">
+              <i class="fas fa-database skill-icon icon-mysql"></i>
+            </div>
+            <div class="skill-name">MySQL</div>
+          </div>
+          <!-- figma -->
+          <div class="skill-item">
+            <div class="skill-icon">
+              <img src="image/figma.png" alt="Figma" style="width: 40px; height: 40px;">
+            </div>
+            <div class="skill-name">Figma</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Projects  -->
+      <section class="projects" id="projects">
+        <h2>Projects</h2>
+        <!-- no.1 -->
+        <div class="project-card">
+          <img src="image/african-american-distribution-warehouse-worker-arm-scanning-box-code.jpg" alt="Project 1" />
+          <div class="project-content">
+            <h3>Inventory Management System</h3>
+            <ul>
+              <li>Developed a responsive inventory system for small businesses.</li>
+              <li>Backend built with PHP and MySQL.</li>
+              <li>Frontend using HTML, CSS, and JavaScript.</li>
+            </ul>
+            <div class="tech-grid">
+              <span class="tech-item"><i class="fab fa-php icon-php"></i></span>
+              <span class="tech-item"><i class="fab fa-html5 icon-html"></i></span>
+              <span class="tech-item"><i class="fab fa-js-square icon-javascript"></i></span>
+              <span class="tech-item"><i class="fas fa-database icon-mysql"></i></span>
+            </div>
+          </div>
+        </div>
+        <!-- no.2 -->
+        <div class="project-card">
+          <img src="image/6599112.jpg" alt="Project 2" />
+          <div class="project-content">
+            <h3>Portfolio Template Generator</h3>
+            <ul>
+              <li>Created a web-based tool for generating free portfolio templates.</li>
+              <li>Integrated free hosting for user portfolios.</li>
+            </ul>
+            <div class="tech-grid">
+              <span class="tech-item"><i class="fab fa-php icon-php"></i></span>
+              <span class="tech-item"><i class="fab fa-html5 icon-html"></i></span>
+              <span class="tech-item"><i class="fab fa-css3-alt icon-css"></i></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Work Experience -->
+      <section class="experience" id="experience">
+        <h2>Work Experience</h2>
+
+        <div class="timeline-card">
+          <div class="timeline-item">
+            <div class="title">2024 — Full-Time Developer</div>
+            <ul>
+              <li>Company: Tech Solutions Co., Ltd.</li>
+              <li>Position: Full-Stack Developer</li>
+              <li>Developed ERP systems and APIs for internal use.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="timeline-card">
+          <div class="timeline-item">
+            <div class="title">2022 — Internship (6 months)</div>
+            <ul>
+              <li>Company: ABC Software</li>
+              <li>Position: Web Application Intern</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Education -->
+      <section class="education" id="education">
+        <h2>Education</h2>
+
+        <div class="timeline-card">
+          <div class="timeline-item">
+            <div class="title">2020 – 2024 Bachelor's Degree</div>
+            <ul>
+              <li>University of Technology</li>
+              <li>Faculty of Information Technology</li>
+              <li>Major: Computer Science</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="timeline-card">
+          <div class="timeline-item">
+            <div class="title">2018 – 2020 High School</div>
+            <ul>
+              <li>XYZ High School</li>
+              <li>Science and Mathematics Program</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
 
     </main>
-</div>
+  </div>
 
-<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/layout/footer.php'; ?>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 John Doe. All rights reserved.</p>
+    </div>
+  </footer>
 
-<script src="/portfolio/portfolio-toggle.js"></script>
 
+  <script src="/portfolio/portfolio.js"></script>
 </body>
+
 </html>

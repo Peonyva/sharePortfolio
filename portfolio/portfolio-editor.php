@@ -232,8 +232,8 @@ $currentUserID = intval($_GET['user']);
                     </div>
 
                     <div class="form-group">
-                        <label for="remarks">Remarks :</label>
-                        <textarea id="workRemarks" name="remarks"></textarea>
+                        <label for="remark">Remark :</label>
+                        <textarea id="workremark" name="remark"></textarea>
                     </div>
 
                     <div class="btn-wrapper">
@@ -295,8 +295,8 @@ $currentUserID = intval($_GET['user']);
                     </div>
 
                     <div class="form-group">
-                        <label for="remarks">Remarks :</label>
-                        <textarea id="eduRemarks" name="remarks"></textarea>
+                        <label for="remark">Remark :</label>
+                        <textarea id="eduremark" name="remark"></textarea>
                     </div>
 
                     <div class="btn-wrapper">

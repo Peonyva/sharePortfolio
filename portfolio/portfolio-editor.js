@@ -382,8 +382,8 @@ function appendWorkItem(data, allData) {
             </div>
 
             <div class="form-group">
-                <label>Remarks :</label>
-                <textarea class="work-remarks" data-id="${itemId}" name="remarks">${data.remarks || ""}</textarea>
+                <label>Remark :</label>
+                <textarea class="work-remark" data-id="${itemId}" name="remark">${data.remark || ""}</textarea>
             </div>
 
             <div class="btn-wrapper">
@@ -441,7 +441,7 @@ function updateWorkItem(itemId, container) {
   const endDate = container.find(".work-end-date").val();
   const isCurrent = container.find(".work-is-current").is(":checked");
   const jobDescription = container.find(".work-job-description").val();
-  const remarks = container.find(".work-remarks").val();
+  const remark = container.find(".work-remark").val();
 
   $.ajax({
     url: "/portfolio/workExperience/update-work.php",
@@ -456,7 +456,7 @@ function updateWorkItem(itemId, container) {
       endDate: endDate,
       isCurrent: isCurrent ? 1 : 0,
       jobDescription: jobDescription,
-      remarks: remarks,
+      remark: remark,
     },
     dataType: "json",
     success: function (response) {
@@ -640,8 +640,8 @@ function appendEducationItem(data, allData) {
       </div>
 
       <div class="form-group">
-        <label>Remarks :</label>
-        <textarea class="edu-remarks" data-id="${itemId}">${data.remarks || ""}</textarea>
+        <label>Remark :</label>
+        <textarea class="edu-remark" data-id="${itemId}">${data.remark || ""}</textarea>
       </div>
 
       <div class="btn-wrapper">
@@ -701,7 +701,7 @@ function updateEducationItem(itemId, container) {
   const startDate = container.find(".edu-start-date").val();
   const endDate = container.find(".edu-end-date").val();
   const isCurrent = container.find(".edu-is-current").is(":checked");
-  const remarks = container.find(".edu-remarks").val().trim();
+  const remark = container.find(".edu-remark").val().trim();
 
   // Validation เพิ่มเติม
   if (!educationName || !degree || !facultyName || !majorName || !startDate) {
@@ -722,7 +722,7 @@ function updateEducationItem(itemId, container) {
       startDate: startDate,
       endDate: endDate,
       isCurrent: isCurrent ? 1 : 0,
-      remarks: remarks,
+      remark: remark,
     },
     dataType: "json",
     success: function (response) {

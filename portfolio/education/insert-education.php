@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $startDate = isset($_POST['startDate']) ? trim($_POST['startDate']) : '';
     $endDate = isset($_POST['endDate']) ? trim($_POST['endDate']) : null;
     $isCurrent = isset($_POST['isCurrent']) ? intval($_POST['isCurrent']) : 0;
-    $remarks = isset($_POST['remarks']) ? trim($_POST['remarks']) : '';
+    $remark = isset($_POST['remark']) ? trim($_POST['remark']) : '';
     
     // Validation
     if (empty($userID) || empty($educationName) || empty($degree) || empty($facultyName) || empty($majorName) || empty($startDate)) {
@@ -43,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $newSort = $stmtMaxSort->fetch(PDO::FETCH_ASSOC)['newSort'];
         
         // Insert ข้อมูล
-        $sql = "INSERT INTO education (userID, educationName, degree, facultyName, majorName, startDate, endDate, isCurrent, remarks, sortOrder) 
-                VALUES (:userID, :educationName, :degree, :facultyName, :majorName, :startDate, :endDate, :isCurrent, :remarks, :sortOrder)";
+        $sql = "INSERT INTO education (userID, educationName, degree, facultyName, majorName, startDate, endDate, isCurrent, remark, sortOrder) 
+                VALUES (:userID, :educationName, :degree, :facultyName, :majorName, :startDate, :endDate, :isCurrent, :remark, :sortOrder)";
         
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindParam(':startDate', $startDate);
         $stmt->bindParam(':endDate', $endDate);
         $stmt->bindParam(':isCurrent', $isCurrent, PDO::PARAM_INT);
-        $stmt->bindParam(':remarks', $remarks);
+        $stmt->bindParam(':remark', $remark);
         $stmt->bindParam(':sortOrder', $newSort, PDO::PARAM_INT);
         
         if ($stmt->execute()) {

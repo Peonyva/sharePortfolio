@@ -10,17 +10,20 @@ if (!isset($_GET['userID'])) {
 $userID = intval($_GET['userID']);
 
 try {
-    $sql = "SELECT * FROM education WHERE userID = :userID ORDER BY sortOrder ASC";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
-    $stmt->execute();
-    
-    $education = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    echo json_encode(['status' => 1, 'data' => $education]);
-    
+    $stmt = $conn->prepare("SELECT * FROM education WHERE userID = :userID ORDER BY sortOrder ASC");
+    $stmt->execute(['userID' => $userID]);
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    echo json_encode([
+        'status' => 1,
+        'data' => $rows
+    ]);
+
 } catch (PDOException $e) {
-    echo json_encode(['status' => 0, 'message' => 'Database Error: ' . $e->getMessage()]);
+    echo json_encode([
+        'status' => 0, 
+        'message' => 'Database Error: ' . $e->getMessage()
+    ]);
 }
 
 $conn = null;
