@@ -5,7 +5,6 @@
     <link rel="stylesheet" href="/lib/reset.css" />
     <link rel="stylesheet" href="/styles/root-default.css" />
     <link rel="stylesheet" href="/styles/standard.css" />
-    <script src="/lib/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title><?php echo isset($title) ? $title : 'Documents'; ?></title>
 </head>

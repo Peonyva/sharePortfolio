@@ -11,7 +11,7 @@ try {
     $startDate = $_POST["startDate"] ?? '';
     $endDate = $_POST["endDate"] ?? null;
     $isCurrent = isset($_POST["isCurrent"]) ? 1 : 0;
-    $remarks = $_POST["remarks"] ?? null; 
+    $remark = $_POST["remark"] ?? null; 
 
     // Validation
     if (!$userID) {
@@ -67,8 +67,8 @@ try {
     // Insert ข้อมูล
     $stmt = $conn->prepare("
         INSERT INTO workexperience
-        (userID, companyName, position, jobDescription, employeeType, startDate, endDate, isCurrent, sortOrder, remarks)
-        VALUES (:userID, :companyName, :position, :jobDescription, :employeeType, :startDate, :endDate, :isCurrent, :sortOrder, :remarks)
+        (userID, companyName, position, jobDescription, employeeType, startDate, endDate, isCurrent, sortOrder, remark)
+        VALUES (:userID, :companyName, :position, :jobDescription, :employeeType, :startDate, :endDate, :isCurrent, :sortOrder, :remark)
     ");
 
     $stmt->execute([
@@ -81,7 +81,7 @@ try {
         ':endDate' => $endDate,
         ':isCurrent' => $isCurrent,
         ':sortOrder' => $sortOrder,
-        ':remarks' => $remarks
+        ':remark' => $remark
     ]);
 
     echo json_encode([
