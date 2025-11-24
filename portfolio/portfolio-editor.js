@@ -1774,8 +1774,3 @@ $(document).ready(async function () {
 
 }); // ปิด $(document).ready()
 
-
-
-
-
-

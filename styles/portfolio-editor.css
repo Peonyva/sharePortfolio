@@ -26,6 +26,9 @@
   /* --- Dimensions --- */
   --height-preview-image: 10rem;    /* 160px */
   --height-uploader-image: 17.5rem; /* 280px */
+  
+  /* Note: ตัวแปรอื่นๆ เช่น --color-text-primary, --spacing-XX, --font-size-XX
+     ควรถูกประกาศไว้ในไฟล์ Global CSS หรือนำมาเพิ่มในส่วนนี้เพื่อให้โค้ดทำงานสมบูรณ์ */
 }
 
 /* =========================================
@@ -57,14 +60,14 @@ main.page-con {
 }
 
 .content-box {
-  margin-top: var(--spacing-40);
   min-width: var(--container-wide);
+  margin-top: var(--spacing-40);
   padding: var(--spacing-32);
+  background: var(--color-background-content);
   border: var(--spacing-1) solid var(--color-border);
   border-radius: var(--spacing-8);
-  background: var(--color-background-content);
-  text-align: center;
   box-shadow: 0 var(--spacing-4) var(--spacing-12) rgba(0, 0, 0, 0.05);
+  text-align: center;
 }
 
 /* --- Typography --- */
@@ -76,23 +79,23 @@ main.page-con {
 }
 
 .title {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-medium);
-  margin-bottom: var(--spacing-18);
   display: flex;
   align-items: center;
+  margin-bottom: var(--spacing-18);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
 }
 
 .title .number {
-  background-color: var(--color-accent);
-  color: var(--color-white);
-  border-radius: var(--border-radius-full);
-  width: var(--spacing-24);
-  height: var(--spacing-24);
   display: flex;
   align-items: center;
   justify-content: center;
+  width: var(--spacing-24);
+  height: var(--spacing-24);
   margin-right: var(--spacing-8);
+  background-color: var(--color-accent);
+  color: var(--color-white);
+  border-radius: var(--border-radius-full);
 }
 
 /* Section Headers inside Content Box */
@@ -102,25 +105,22 @@ section .header {
 }
 
 section h4 {
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
   margin-bottom: var(--spacing-16);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
 }
 
 section h5 {
-  font-weight: 500;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
   margin-bottom: var(--spacing-12);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
 }
 
 /* =========================================
    4. UTILITIES
    ========================================= */
-.hidden {
-  display: none !important;
-}
-
+.hidden { display: none !important; }
 .mt-16 { margin-top: var(--spacing-16); }
 
 .grid {
@@ -137,11 +137,11 @@ section h5 {
    5. FORMS
    ========================================= */
 .form-group {
-  margin-bottom: var(--spacing-16);
-  text-align: left;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-8);
+  margin-bottom: var(--spacing-16);
+  text-align: left;
 }
 
 .form-group label {
@@ -162,19 +162,19 @@ section h5 {
 
 .form-Add-data {
   margin-top: var(--spacing-16);
-  background-color: var(--color-background-card);
-  border-radius: var(--border-radius-8);
   padding: var(--spacing-24);
+  background-color: var(--color-background-card);
   border: var(--spacing-1) solid var(--color-border);
+  border-radius: var(--border-radius-8);
   transition: var(--transition-fast);
 }
 
 /* Form Validation Styles */
 .required-label::after {
   content: "*";
+  margin-left: var(--spacing-4);
   color: var(--color-required);
   font-size: small;
-  margin-left: var(--spacing-4);
 }
 
 .input-error {
@@ -194,8 +194,8 @@ section h5 {
 }
 
 .disabled-text {
-  font-size: var(--font-size-xs);
   color: var(--color-text-disabled);
+  font-size: var(--font-size-xs);
 }
 
 /* Checkbox Styles */
@@ -207,14 +207,14 @@ section h5 {
 .form-checkbox {
   width: var(--spacing-16);
   height: var(--spacing-16);
+  margin-right: var(--spacing-8);
   accent-color: var(--color-accent);
   cursor: pointer;
-  margin-right: var(--spacing-8);
 }
 
 .form-group label[for="isCurrent"] {
-  font-size: var(--font-size-base);
   color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
   cursor: pointer;
   user-select: none;
 }
@@ -225,25 +225,25 @@ section h5 {
 .btn {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-medium);
-  border-radius: var(--spacing-6);
   border: var(--spacing-1) solid var(--color-border);
+  border-radius: var(--spacing-6);
   cursor: pointer;
 }
 
 .btn.upload-image {
   width: 80%;
-  padding: var(--spacing-10);
   margin-top: var(--spacing-8);
+  padding: var(--spacing-10);
 }
 
 .btn.btn-addSkill {
-  padding: var(--spacing-10) var(--spacing-20);
   min-width: var(--spacing-100);
+  padding: var(--spacing-10) var(--spacing-20);
 }
 
 .btn-manage {
-  padding: var(--spacing-8) var(--spacing-20);
   min-width: var(--spacing-100);
+  padding: var(--spacing-8) var(--spacing-20);
 }
 
 .btn.add-data {
@@ -272,8 +272,8 @@ section h5 {
 .education .btn-wrapper,
 .project .btn-wrapper {
   display: flex;
-  gap: var(--spacing-8);
   justify-content: flex-end;
+  gap: var(--spacing-8);
 }
 
 /* =========================================
@@ -288,25 +288,25 @@ section h5 {
   flex-direction: column;
   justify-content: center;
   height: var(--height-uploader-image);
+  padding: var(--spacing-16);
+  background-color: var(--color-background-upload-image);
   border: 2px dashed var(--color-border);
   border-radius: var(--border-radius-8);
-  padding: var(--spacing-16);
   text-align: center;
-  background-color: var(--color-background-upload-image);
   transition: border-color var(--transition-fast);
 }
 
 .image-uploader p {
-  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
 }
 
 .upload-placeholder {
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  height: 100%;
   gap: var(--spacing-8);
   color: var(--color-text-secondary);
 }
@@ -318,8 +318,8 @@ section h5 {
 }
 
 .upload-hint {
-  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
 }
 
 /* Image Preview */
@@ -331,9 +331,9 @@ section h5 {
 }
 
 .image-preview p {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
   margin-top: var(--spacing-8);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
   word-break: break-all;
 }
 
@@ -367,13 +367,13 @@ section h5 {
 
 .selected-skills,
 .project-skills-container {
-  border: var(--spacing-1) solid var(--color-border);
-  border-radius: var(--border-radius-8);
+  display: none;
+  margin: var(--spacing-16) 0;
   padding: var(--spacing-16);
   background-color: var(--color-background);
-  display: none;
+  border: var(--spacing-1) solid var(--color-border);
+  border-radius: var(--border-radius-8);
   text-align: left;
-  margin: var(--spacing-16) 0;
 }
 
 .skills-list,
@@ -385,25 +385,25 @@ section h5 {
 }
 
 .skill-tag,
-.skill-tag-edit { /* Added .skill-tag-edit for compatibility */
+.skill-tag-edit {
   display: flex;
   align-items: center;
+  padding: var(--spacing-4) var(--spacing-12);
   background-color: var(--color-background-skill-tag);
   color: var(--color-text-skill-tag);
-  padding: var(--spacing-4) var(--spacing-12);
-  border-radius: var(--border-radius-24);
   font-size: var(--font-size-sm);
+  border-radius: var(--border-radius-24);
 }
 
 .skill-remove, 
-.remove-skill-btn { /* Added .remove-skill-btn for compatibility */
+.remove-skill-btn {
+  margin-left: var(--spacing-8);
   background: none;
   border: none;
   color: var(--color-icon-skill-tag);
-  margin-left: var(--spacing-8);
-  cursor: pointer;
-  font-weight: bold;
   font-size: var(--font-size-base);
+  font-weight: bold;
+  cursor: pointer;
   transition: color var(--transition-fast);
 }
 
@@ -414,18 +414,18 @@ section h5 {
 
 .empty-state,
 .project-skills-empty {
-  border: var(--spacing-1) solid var(--color-border);
-  border-radius: var(--border-radius-8);
+  margin: var(--spacing-16) 0;
   padding: var(--spacing-16);
   background-color: var(--color-white);
-  text-align: center;
+  border: var(--spacing-1) solid var(--color-border);
+  border-radius: var(--border-radius-8);
   color: var(--color-text-secondary);
-  margin: var(--spacing-16) 0;
+  text-align: center;
 }
 
 .skill-editor-container .selected-skills-box {
-  text-align: left;
   margin: var(--spacing-16) 0;
+  text-align: left;
 }
 
 /* =========================================
@@ -435,10 +435,10 @@ section h5 {
 .education-item,
 .project-item {
   margin-top: var(--spacing-16);
-  background-color: var(--color-background-card);
-  border-radius: var(--border-radius-8);
   padding: var(--spacing-24);
+  background-color: var(--color-background-card);
   border: var(--spacing-1) solid var(--color-border);
+  border-radius: var(--border-radius-8);
   transition: var(--transition-fast);
 }
 
@@ -477,12 +477,12 @@ section h5 {
 }
 
 .heading-container .title {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-medium);
+  flex-grow: 1;
   display: flex;
   align-items: center;
-  flex-grow: 1;
   margin-bottom: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
 }
 
 /* Switch Container */
@@ -561,13 +561,13 @@ input:checked + .slider:before {
   align-items: center;
   gap: 10px;
   padding: 15px 20px;
-  border-radius: 8px;
+  background-color: #757575; /* Default */
   color: white;
+  border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   font-size: 14px;
   font-weight: 500;
   animation: slideIn 0.3s ease-out;
-  background-color: #757575; /* Default */
 }
 
 .auto-save-notification.success { background-color: #4caf50; }

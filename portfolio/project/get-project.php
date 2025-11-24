@@ -18,50 +18,51 @@ if (!$userID || $userID <= 0) {
 }
 
 try {
-    // 3. Query
-    $sql = "SELECT p.projectID, p.projectTitle, p.projectImage, p.keyPoint, p.sortOrder, 
-                   JSON_ARRAYAGG(s.skillsName) AS skills
-            FROM project AS p
-            LEFT JOIN projectSkill ps ON p.projectID = ps.projectID
-            LEFT JOIN skills s ON ps.skillsID = s.skillsID
-            WHERE p.userID = :userID
-            GROUP BY p.projectID
-            ORDER BY p.sortOrder ASC";
+    // 3. Query Projects
+    $sql = "SELECT projectID, projectTitle, projectImage, keyPoint, sortOrder
+            FROM project
+            WHERE userID = :userID
+            ORDER BY sortOrder ASC";
 
     $stmt = $conn->prepare($sql);
     $stmt->execute(['userID' => $userID]);
+    $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $project = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // 4. Query Skills สำหรับแต่ละ Project
+    $skillSql = "SELECT ps.projectID, s.skillsID, s.skillsName
+                 FROM projectSkill ps
+                 INNER JOIN skills s ON ps.skillsID = s.skillsID
+                 WHERE ps.projectID = :projectID";
+    
+    $skillStmt = $conn->prepare($skillSql);
 
-    // 4. Loop เพื่อจัดการ Data Type และ Path
-    foreach ($project as &$item) {
-
-        // 4.1 จัดการ Path รูปภาพ
-        if (!empty($item['projectImage'])) {
-            $item['projectImage'] = $item['projectImage'];
+    // 5. Loop เพื่อเติม Skills ใน Project แต่ละตัว
+    foreach ($projects as &$project) {
+        // จัดการ Path รูปภาพ
+        if (!empty($project['projectImage'])) {
+            $project['projectImage'] = $project['projectImage'];
         } else {
-            $item['projectImage'] = null;
+            $project['projectImage'] = null;
         }
 
-        // 4.2 แก้ปัญหา JSON Double Encoding และ [null]
-        if (!empty($item['skills'])) {
-            $decodedSkills = json_decode($item['skills']);
+        // ดึง Skills
+        $skillStmt->execute(['projectID' => $project['projectID']]);
+        $skills = $skillStmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // ถ้า decode แล้วได้ [null] (เกิดจาก Left Join แล้วไม่เจอคู่) ให้เปลี่ยนเป็น []
-            if (is_array($decodedSkills) && count($decodedSkills) === 1 && $decodedSkills[0] === null) {
-                $item['skills'] = [];
-            } else {
-                $item['skills'] = $decodedSkills; // คืนค่าเป็น Array จริงๆ
-            }
-        } else {
-            $item['skills'] = [];
-        }
+        // สร้าง Array ของ Skills ในรูปแบบที่ต้องการ
+        $project['skills'] = array_map(function($skill) {
+            return [
+                'skillsID' => (int)$skill['skillsID'],
+                'skillsName' => $skill['skillsName']
+            ];
+        }, $skills);
     }
 
     echo json_encode([
         'status' => 1,
-        'data' => $project
-    ]);
+        'data' => $projects
+    ], JSON_UNESCAPED_UNICODE);
+
 } catch (PDOException $e) {
     error_log("Get Project Error: " . $e->getMessage());
     http_response_code(500);
