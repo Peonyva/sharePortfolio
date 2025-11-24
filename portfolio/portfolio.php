@@ -1,7 +1,5 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
-
-// ตรวจสอบว่ามีค่า userID ส่งมาหรือไม่
 $userID = isset($_GET['user']) ? intval($_GET['user']) : 0;
 
 if ($userID <= 0) {
@@ -28,16 +26,17 @@ try {
     // Merge user + profile
     $data = array_merge($userData, $profileData ?: []);
 
-    // Full path images (Profile) -> ใช้ /upload/ ตามมาตรฐานใหม่
+    // Full path images (Profile) -> ใช้ Logic เช็ค Path เพื่อป้องกัน Path ซ้อน
     foreach (['logoImage', 'profileImage', 'coverImage'] as $img) {
         if (!empty($data[$img])) {
-            $data[$img] = "/upload/{$userID}/" . $data[$img];
+            // เช็คว่ามี / นำหน้า หรือเป็น http อยู่แล้วหรือยัง ถ้ายังค่อยเติม
+            if (strpos($data[$img], '/') !== 0 && strpos($data[$img], 'http') !== 0) {
+                $data[$img] = "/upload/{$userID}/" . $data[$img];
+            }
         }
     }
 
-    // ---------------------------------------------------------
-    // ✅ แก้ไข Query 3: เพิ่ม s.skillsUrl เพื่อดึง Class ไอคอน
-    // ---------------------------------------------------------
+    //  Query 3: เพิ่ม s.skillsUrl เพื่อดึง Class ไอคอน
     $stmt = $conn->prepare("SELECT s.skillsID, s.skillsName, s.skillsUrl 
         FROM profileskill ps
         INNER JOIN skills s ON s.skillsID = ps.skillsID
@@ -56,9 +55,7 @@ try {
     $stmt->execute(['userID' => $userID]);
     $education = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // ---------------------------------------------------------
-    // ✅ แก้ไข Query 6: ใช้ JSON_OBJECT เพื่อเก็บทั้ง ชื่อ และ Url
-    // ---------------------------------------------------------
+    // Query 6: Projects (ใช้ JSON_OBJECT และ GROUP BY ให้ครบ)
     $sql = "SELECT p.projectID, p.projectTitle, p.projectImage, p.keyPoint, p.sortOrder, 
                    JSON_ARRAYAGG(
                        JSON_OBJECT('name', s.skillsName, 'url', s.skillsUrl)
@@ -67,7 +64,7 @@ try {
             LEFT JOIN projectSkill ps ON p.projectID = ps.projectID
             LEFT JOIN skills s ON ps.skillsID = s.skillsID
             WHERE p.userID = :userID
-            GROUP BY p.projectID
+            GROUP BY p.projectID, p.projectTitle, p.projectImage, p.keyPoint, p.sortOrder
             ORDER BY p.sortOrder ASC";
 
     $stmt = $conn->prepare($sql);
@@ -76,36 +73,39 @@ try {
 
     // Process Project Data
     foreach ($projects as &$item) {
-        // ใส่ Path รูปภาพ -> ใช้ /upload/
+        // เช็ค Path รูปภาพ ไม่ให้เติมซ้ำหากมี path อยู่แล้ว
         if (!empty($item['projectImage'])) {
-            $item['projectImage'] = "/upload/{$userID}/" . $item['projectImage'];
+            if (strpos($item['projectImage'], '/') !== 0 && strpos($item['projectImage'], 'http') !== 0) {
+                $item['projectImage'] = "/upload/{$userID}/" . $item['projectImage'];
+            }
         }
 
-        // ✅ แก้ไข: Decode JSON Object
+        // Decode JSON Object
         $item['skillsArray'] = [];
         if (!empty($item['skills'])) {
             $decoded = json_decode($item['skills'], true);
             if (is_array($decoded)) {
                 // กรองค่าที่ name เป็น null ออก
-                $item['skillsArray'] = array_filter($decoded, function($k) {
+                $item['skillsArray'] = array_filter($decoded, function ($k) {
                     return !empty($k['name']);
                 });
             }
         }
     }
-    unset($item);
+    unset($item); // ป้องกันบั๊กจากการใช้ reference
 
     // Helper functions
-    function formatLineBreaks($text) {
+    function formatLineBreaks($text)
+    {
         if (empty($text)) return '';
         return nl2br(htmlspecialchars($text));
     }
 
-    function formatDate($date) {
+    function formatDate($date)
+    {
         if (empty($date)) return '';
         return date('M Y', strtotime($date));
     }
-
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
     exit;
@@ -114,6 +114,7 @@ try {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -121,6 +122,7 @@ try {
   <script src="https://kit.fontawesome.com/92f0aafca7.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="/styles/portfolio.css" />
 </head>
+
 <body>
   <header class="header">
     <div class="container">
@@ -166,9 +168,9 @@ try {
             <h1><?= htmlspecialchars($data['firstname'] ?? '') . ' ' . htmlspecialchars($data['lastname'] ?? '') ?></h1>
             <p class="subtitle"><?= htmlspecialchars($data['professionalTitle'] ?? '') ?></p>
           </div>
-          
+
           <div class="divider"></div>
-          
+
           <div class="contact-info">
             <?php if (!empty($data['email'])): ?>
               <a href="mailto:<?= htmlspecialchars($data['email']); ?>" target="_blank" class="contact-item">
@@ -210,14 +212,14 @@ try {
 
         <div class="skills-grid">
           <?php if (!empty($selectedSkills)): ?>
-            <?php foreach ($selectedSkills as $skill): 
-                $skillName = htmlspecialchars($skill['skillsName']);
-                // ใช้ Class จาก DB ถ้าไม่มีให้ใช้ default
-                $iconClass = !empty($skill['skillsUrl']) ? htmlspecialchars($skill['skillsUrl']) : 'fas fa-code';
+            <?php foreach ($selectedSkills as $skill):
+              $skillName = htmlspecialchars($skill['skillsName']);
+              // ใช้ Class จาก DB ถ้าไม่มีให้ใช้ default
+              $iconClass = !empty($skill['skillsUrl']) ? htmlspecialchars($skill['skillsUrl']) : 'fas fa-code';
             ?>
               <div class="skill-item">
                 <div class="skill-icon">
-                   <i class="<?= $iconClass ?>"></i>
+                  <i class="<?= $iconClass ?>"></i>
                 </div>
                 <div class="skill-name"><?= $skillName ?></div>
               </div>
@@ -255,9 +257,10 @@ try {
 
                 <?php if (!empty($proj['skillsArray'])): ?>
                   <div class="tech-grid">
-                    <?php foreach ($proj['skillsArray'] as $skillObj): 
-                        $sName = htmlspecialchars($skillObj['name']);
-                        $sUrl  = !empty($skillObj['url']) ? htmlspecialchars($skillObj['url']) : 'fas fa-code';
+                    <?php foreach ($proj['skillsArray'] as $skillObj):
+                      $sName = htmlspecialchars($skillObj['name']);
+                      // ถ้าไม่มี URL icon ให้ใช้รูป Code แทน
+                      $sUrl  = !empty($skillObj['url']) ? htmlspecialchars($skillObj['url']) : 'fas fa-code';
                     ?>
                       <span class="tech-item" title="<?= $sName ?>">
                         <i class="<?= $sUrl ?>"></i>
@@ -288,10 +291,11 @@ try {
                   <li><strong>Company:</strong> <?= htmlspecialchars($work['companyName']) ?></li>
                   <li><strong>Position:</strong> <?= htmlspecialchars($work['position']) ?></li>
                   <?php if (!empty($work['jobDescription'])): ?>
-                    <?php foreach (explode("\n", $work['jobDescription']) as $desc): 
-                        if (trim($desc)): ?>
+                    <?php foreach (explode("\n", $work['jobDescription']) as $desc):
+                      if (trim($desc)): ?>
                         <li><?= htmlspecialchars(trim($desc)) ?></li>
-                    <?php endif; endforeach; ?>
+                    <?php endif;
+                    endforeach; ?>
                   <?php endif; ?>
                   <?php if (!empty($work['remark'])): ?>
                     <li><em><?= htmlspecialchars($work['remark']) ?></em></li>
@@ -343,4 +347,5 @@ try {
 
   <script src="/portfolio/portfolio.js"></script>
 </body>
+
 </html>

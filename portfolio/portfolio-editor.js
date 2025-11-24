@@ -952,11 +952,41 @@ function appendProjectItem(data, allData) {
       </div>
 
       <div class="form-group">
-        <label class="required-label">Skills :</label>
-        <div class="skills-list project-skills-display" data-id="${itemId}">
-          ${skillsDisplayHTML}
+    <label class="required-label">Skills :</label>
+
+    <div class="input-group mb-2">
+        <div class="form-group dropdown w-100">
+            <select class="project-skill-dropdown form-select" data-id="${itemId}">
+                <option value="">Choose a skill...</option>
+            </select>
         </div>
-      </div>
+
+        <div class="btn-wrapper">
+            <button type="button" class="btn btn-success btn-add-project-skill btn-manage" data-id="${itemId}" disabled>
+                Add Skill
+            </button>
+        </div>
+    </div>
+
+    <div class="selected-skills" id="myProjectSkillsBox-${itemId}">
+        <h5>Selected Skills (<span class="project-skill-count" data-id="${itemId}">${skillsArray.length}</span>)</h5>
+        <div class="project-skills-list skills-list" data-id="${itemId}">
+            ${skillsArray.length
+      ? skillsArray.map((skill, i) =>
+        `<span class="skill-tag" data-skill-id="${skillsIdsArray[i]}">${skill}</span>`
+      ).join("")
+      : ""
+    }
+        </div>
+    </div>
+
+    <div class="empty-state" id="emptyProjectSkillsState-${itemId}" 
+        ${skillsArray.length ? 'style="display:none;"' : ''}>
+        No skills selected yet. Use the dropdown above to add skills.
+    </div>
+
+    <input type="hidden" class="project-skills-data" data-id="${itemId}" value='${JSON.stringify(skillsIdsArray)}'>
+</div>
 
       <div class="project-skills-editor hidden" data-id="${itemId}" style="display:none;">
           <div class="skill-editor-container card p-3 bg-light">
@@ -1635,7 +1665,7 @@ $(document).ready(async function () {
     // ดึงค่า Skills จาก Input (ซึ่งเป็น "1,2,3") แปลงเป็น Array JSON String ["1","2","3"]
     const skillValues = $("#myProjectSkillsInput").val();
     const skillsArray = skillValues ? skillValues.split(",").filter(s => s.trim() !== "") : [];
-    
+
     formData.append("myProjectSkills", JSON.stringify(skillsArray));
 
     $.ajax({
@@ -1650,13 +1680,13 @@ $(document).ready(async function () {
           showSuccess("Project saved!");
           $("#AddProject")[0].reset();
           $("#AddProject").addClass("hidden").slideUp();
-          
+
           // Reset Create Form UI
           $("#projectSkillsList").empty();
           $("#projectSkillCount").text("0");
           $("#emptyProjectSkillsState").show();
           // Reset Global Variable for Create Form (Important!)
-          if(typeof projectSkills !== 'undefined') projectSkills = [];
+          if (typeof projectSkills !== 'undefined') projectSkills = [];
           $("#myProjectSkillsInput").val("");
 
           // Reload List
