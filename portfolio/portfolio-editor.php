@@ -27,7 +27,7 @@ $currentUserID = intval($_GET['user']);
             <form id="personalForm" method="POST" enctype="multipart/form-data">
                 <div class="content-box">
                     <!-- 1 -->
-
+                     
                     <!-- <div class="heading-container">
                         <h2 class="title">Would you like to publish your portfolio?</h2>
                     </div> -->
