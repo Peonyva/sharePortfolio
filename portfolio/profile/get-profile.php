@@ -44,7 +44,7 @@ try {
     // Full path images
     foreach (['logoImage', 'profileImage', 'coverImage'] as $img) {
         if (!empty($data[$img])) {
-            $data[$img] = "/uploads/{$userID}/" . $data[$img];
+            $data[$img] = "/upload/{$userID}/" . $data[$img];
         }
     }
 

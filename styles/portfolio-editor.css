@@ -1,31 +1,37 @@
+/* =========================================
+   1. VARIABLES (:root)
+   ========================================= */
 :root {
-  /* Skill Tag */
+  /* --- Colors: Skill Tags --- */
   --color-text-skill-tag: #3b82f6;
   --color-background-skill-tag: #dbeafe;
   --color-icon-skill-tag: #3b82f6;
 
-  /* Error */
+  /* --- Colors: Status & Feedback --- */
   --color-text-disabled: #808080;
   --color-text-description: #808080;
   --color-text-error: #dc3545;
   --color-border-error: #dc3545;
+  --color-required: #dc3545;
 
-  /* Background */
+  /* --- Colors: Backgrounds --- */
   --color-background-content: #f8f9fa;
   --color-background-upload-image: #fff;
   --color-background-card: #fff;
 
-  /* Icon */
+  /* --- Colors: Icons & UI --- */
   --color-icon-uploadImage: #9ca3af;
+  --color-hr: #e5e7eb;
 
-  /* Image Preview */
-  --height-preview-image: 10rem; /* 160px */
+  /* --- Dimensions --- */
+  --height-preview-image: 10rem;    /* 160px */
   --height-uploader-image: 17.5rem; /* 280px */
 }
 
-/* Global Styles */
-html,
-body {
+/* =========================================
+   2. BASE STYLES & RESET
+   ========================================= */
+html, body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -37,17 +43,17 @@ body {
   background-color: var(--color-background);
 }
 
-
-/* Main */
-main.page-con {
-  padding: var(--spacing-40) 0;
+hr {
+  margin: var(--spacing-24) 0;
+  border: none;
+  border-top: var(--spacing-1) solid var(--color-hr);
 }
 
-.heading {
-  margin-top: var(--spacing-96);
-  font-size: var(--font-size-3xl);
-  font-weight: var(--font-weight-medium);
-  text-align: center;
+/* =========================================
+   3. LAYOUT & CONTAINERS
+   ========================================= */
+main.page-con {
+  padding: var(--spacing-40) 0;
 }
 
 .content-box {
@@ -61,175 +67,12 @@ main.page-con {
   box-shadow: 0 var(--spacing-4) var(--spacing-12) rgba(0, 0, 0, 0.05);
 }
 
-.hidden {
-  display: none !important;
-}
-
-/* Grid */
-.grid {
-  display: grid;
-  gap: var(--spacing-16);
-}
-
-.gap-x-0 {
-  gap: 0 var(--spacing-16);
-}
-
-.grid-cols-2 {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-.grid-cols-3 {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.mt-16 {
-  margin-top: var(--spacing-16);
-}
-
-
-
-/* Form */
-.form-group {
-  margin-bottom: var(--spacing-16);
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-8);
-}
-
-.form-group label {
+/* --- Typography --- */
+.heading {
+  margin-top: var(--spacing-96);
+  font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-medium);
-}
-
-.form-group .forgot {
-  display: block;
-  text-align: right;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
-  text-decoration: none;
-}
-
-.form-group .forgot:hover {
-  color: var(--color-accent);
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  padding: var(--spacing-10);
-  border: var(--spacing-1) solid var(--color-border);
-  border-radius: var(--spacing-6);
-  font-size: var(--font-size-base);
-  resize: vertical; /* อนุญาตให้ขยายเฉพาะแนวตั้ง */
-}
-
-/* Checkbox */
-
-.form-checkbox-group {
-  margin-bottom: var(--spacing-16);
-  text-align: left;
-}
-
-.form-checkbox {
-  width: var(--spacing-16);
-  height: var(--spacing-16);
-  accent-color: var(--color-accent);
-  cursor: pointer;
-  margin-right: var(--spacing-8);
-}
-
-.form-group label[for="isCurrent"] {
-  font-size: var(--font-size-base);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  user-select: none;
-}
-
-/* Buttons */
-.btn {
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
-  border-radius: var(--spacing-6);
-  border: var(--spacing-1) solid var(--color-border);
-  cursor: pointer;
-}
-
-.btn.upload-image {
-  width: 80%;
-  padding: var(--spacing-10);
-  margin-top: var(--spacing-8);
-}
-
-.btn-wrapper.addskills,
-.project .btn-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-}
-
-.btn.btn-addSkill {
-  padding: var(--spacing-10) var(--spacing-20);
-  min-width: var(--spacing-100);
-}
-
-
-.personal .btn-wrapper{
-  display: flex;
-  justify-content: flex-end;
-}
-
-.workExperience .btn-wrapper,
-.education .btn-wrapper,
-.project .btn-wrapper {
-  display: flex;
-  gap: var(--spacing-8);
-  justify-content: flex-end;
-}
-
-.btn.add-data {
-  padding: var(--spacing-10);
-}
-
-.btn-submit {
-  align-self: center;
-  text-decoration: none;
-}
-
-/* HR */
-hr {
-  margin: var(--spacing-24) 0;
-  border: none;
-  border-top: var(--spacing-1) solid var(--color-hr);
-}
-
-/* Required Label */
-.required-label::after {
-  content: "*";
-  color: var(--color-required);
-  font-size: small;
-  margin-left: var(--spacing-4);
-}
-
-/* Portfolio Information */
-section .header {
-  display: flex;
-  justify-content: space-between;
-}
-
-section h4 {
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-16);
-}
-
-section h5 {
-  font-weight: 500;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-12);
+  text-align: center;
 }
 
 .title {
@@ -252,6 +95,71 @@ section h5 {
   margin-right: var(--spacing-8);
 }
 
+/* Section Headers inside Content Box */
+section .header {
+  display: flex;
+  justify-content: space-between;
+}
+
+section h4 {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-16);
+}
+
+section h5 {
+  font-weight: 500;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-12);
+}
+
+/* =========================================
+   4. UTILITIES
+   ========================================= */
+.hidden {
+  display: none !important;
+}
+
+.mt-16 { margin-top: var(--spacing-16); }
+
+.grid {
+  display: grid;
+  gap: var(--spacing-16);
+}
+
+.gap-x-0 { gap: 0 var(--spacing-16); }
+
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+/* =========================================
+   5. FORMS
+   ========================================= */
+.form-group {
+  margin-bottom: var(--spacing-16);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+.form-group label {
+  font-weight: var(--font-weight-medium);
+}
+
+/* Form Inputs */
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: var(--spacing-10);
+  border: var(--spacing-1) solid var(--color-border);
+  border-radius: var(--spacing-6);
+  font-size: var(--font-size-base);
+  resize: vertical;
+}
+
 .form-Add-data {
   margin-top: var(--spacing-16);
   background-color: var(--color-background-card);
@@ -259,6 +167,14 @@ section h5 {
   padding: var(--spacing-24);
   border: var(--spacing-1) solid var(--color-border);
   transition: var(--transition-fast);
+}
+
+/* Form Validation Styles */
+.required-label::after {
+  content: "*";
+  color: var(--color-required);
+  font-size: small;
+  margin-left: var(--spacing-4);
 }
 
 .input-error {
@@ -282,7 +198,87 @@ section h5 {
   color: var(--color-text-disabled);
 }
 
-/* Image Upload */
+/* Checkbox Styles */
+.form-checkbox-group {
+  margin-bottom: var(--spacing-16);
+  text-align: left;
+}
+
+.form-checkbox {
+  width: var(--spacing-16);
+  height: var(--spacing-16);
+  accent-color: var(--color-accent);
+  cursor: pointer;
+  margin-right: var(--spacing-8);
+}
+
+.form-group label[for="isCurrent"] {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* =========================================
+   6. BUTTONS
+   ========================================= */
+.btn {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--spacing-6);
+  border: var(--spacing-1) solid var(--color-border);
+  cursor: pointer;
+}
+
+.btn.upload-image {
+  width: 80%;
+  padding: var(--spacing-10);
+  margin-top: var(--spacing-8);
+}
+
+.btn.btn-addSkill {
+  padding: var(--spacing-10) var(--spacing-20);
+  min-width: var(--spacing-100);
+}
+
+.btn-manage {
+  padding: var(--spacing-8) var(--spacing-20);
+  min-width: var(--spacing-100);
+}
+
+.btn.add-data {
+  padding: var(--spacing-10);
+}
+
+.btn-submit {
+  align-self: center;
+  text-decoration: none;
+}
+
+/* Button Wrappers */
+.btn-wrapper.addskills,
+.project .btn-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.personal .btn-wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.workExperience .btn-wrapper,
+.education .btn-wrapper,
+.project .btn-wrapper {
+  display: flex;
+  gap: var(--spacing-8);
+  justify-content: flex-end;
+}
+
+/* =========================================
+   7. COMPONENTS: IMAGE UPLOAD
+   ========================================= */
 .file-input {
   display: none;
 }
@@ -321,8 +317,12 @@ section h5 {
   color: var(--color-icon-uploadImage);
 }
 
-/* Image Preview JS */
+.upload-hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
 
+/* Image Preview */
 .image-preview img {
   max-width: 100%;
   max-height: var(--height-preview-image);
@@ -348,15 +348,16 @@ section h5 {
   padding: var(--spacing-8) var(--spacing-16);
 }
 
-.upload-hint {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
+.project-image-preview.image-preview {
+  text-align: center;
 }
 
-/* Select Skills */
+/* =========================================
+   8. COMPONENTS: SKILLS
+   ========================================= */
 .input-group {
   display: grid;
-  grid-template-columns: 1fr auto; /* ซ้าย dropdown, ขวา ปุ่ม */
+  grid-template-columns: 1fr auto; /* Dropdown Left, Button Right */
   gap: var(--spacing-8);
 }
 
@@ -383,7 +384,8 @@ section h5 {
   margin-top: var(--spacing-12);
 }
 
-.skill-tag {
+.skill-tag,
+.skill-tag-edit { /* Added .skill-tag-edit for compatibility */
   display: flex;
   align-items: center;
   background-color: var(--color-background-skill-tag);
@@ -393,7 +395,8 @@ section h5 {
   font-size: var(--font-size-sm);
 }
 
-.skill-remove {
+.skill-remove, 
+.remove-skill-btn { /* Added .remove-skill-btn for compatibility */
   background: none;
   border: none;
   color: var(--color-icon-skill-tag);
@@ -404,7 +407,8 @@ section h5 {
   transition: color var(--transition-fast);
 }
 
-.skill-remove:hover {
+.skill-remove:hover,
+.remove-skill-btn:hover {
   color: var(--color-btn-primary-hover);
 }
 
@@ -419,8 +423,14 @@ section h5 {
   margin: var(--spacing-16) 0;
 }
 
-/* show data after save button */
+.skill-editor-container .selected-skills-box {
+  text-align: left;
+  margin: var(--spacing-16) 0;
+}
 
+/* =========================================
+   9. COMPONENTS: ITEMS (Work/Edu/Project)
+   ========================================= */
 .work-item,
 .education-item,
 .project-item {
@@ -455,44 +465,27 @@ section h5 {
   font-weight: var(--font-weight-medium);
 }
 
-.btn-manage {
-  padding: var(--spacing-8) var(--spacing-20);
-  min-width: var(--spacing-100);
-}
-
-.project-image-preview.image-preview {
-  text-align: center;
-}
-
-.htmlforSkills {
-  color: var(--color-text-secondary);
-  font-weight: var(--font-weight-medium);
-}
-
-.skill-editor-container .selected-skills-box {
-  text-align: left;
-  margin: var(--spacing-16) 0;
-}
-
+/* =========================================
+   10. COMPONENTS: TOGGLE SWITCH
+   ========================================= */
 .heading-container {
-  display: flex; /* ใช้ Flexbox */
-  align-items: center; /* จัดให้อยู่กึ่งกลางแนวตั้ง (เพื่อให้ข้อความและสวิตช์ตรงกัน) */
-  justify-content: space-between; /* แยกข้อความ (title) และสวิตช์ (switch) ให้ห่างกันมากที่สุด */
-  width: 100%; /* สำคัญ: กำหนดความกว้างเต็มที่ของคอนเทนเนอร์ */
-  margin-bottom: var(--spacing-24); /* เพิ่มระยะห่างด้านล่างเล็กน้อย */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: var(--spacing-24);
 }
 
-/* 2. จัดการกับข้อความ (title) ภายใน heading-container */
 .heading-container .title {
-    font-size: var(--font-size-lg);
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-medium);
   display: flex;
   align-items: center;
-  flex-grow: 1; /* ให้ h2 กินพื้นที่ที่เหลือทั้งหมด */
+  flex-grow: 1;
   margin-bottom: 0;
 }
 
-/* The switch - สวิตช์หลัก */
+/* Switch Container */
 .switch {
   position: relative;
   display: inline-block;
@@ -500,14 +493,13 @@ section h5 {
   height: 34px;
 }
 
-/* Hide default HTML checkbox */
 .switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-/* The slider - พื้นหลังของสวิตช์ */
+/* Slider */
 .slider {
   position: absolute;
   cursor: pointer;
@@ -516,11 +508,9 @@ section h5 {
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  -webkit-transition: 0.4s;
   transition: 0.4s;
 }
 
-/* วงกลมสวิตช์ */
 .slider:before {
   position: absolute;
   content: "";
@@ -529,11 +519,10 @@ section h5 {
   left: 4px;
   bottom: 4px;
   background-color: white;
-  -webkit-transition: 0.4s;
   transition: 0.4s;
 }
 
-/* สีเมื่อเปิด (สถานะ checked) */
+/* Checked State */
 input:checked + .slider {
   background-color: #2196f3;
 }
@@ -542,113 +531,57 @@ input:focus + .slider {
   box-shadow: 0 0 1px #2196f3;
 }
 
-/* ตำแหน่งวงกลมเมื่อเปิด */
 input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
   transform: translateX(26px);
 }
 
-/* Rounded sliders - ทำให้สวิตช์เป็นวงกลม */
-.slider.round {
-  border-radius: 34px;
-}
+/* Rounded */
+.slider.round { border-radius: 34px; }
+.slider.round:before { border-radius: 50%; }
 
-.slider.round:before {
-  border-radius: 50%;
-}
-
-/* ==================================== */
-/* 1. KEYFRAME ANIMATIONS (From original JS) */
-/* ==================================== */
+/* =========================================
+   11. ANIMATIONS & NOTIFICATIONS
+   ========================================= */
 @keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 @keyframes slideOut {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateX(100%);
-        opacity: 0;
-    }
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
 }
 
-/* ==================================== */
-/* 2. AUTO-SAVE NOTIFICATION STYLES */
-/* ==================================== */
 .auto-save-notification {
-    /* Positioning & Layering */
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-    
-    /* Layout */
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    
-    /* Look & Feel */
-    padding: 15px 20px;
-    border-radius: 8px;
-    color: white;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    
-    /* Typography */
-    font-size: 14px;
-    font-weight: 500;
-    
-    /* Animation (Entry) */
-    animation: slideIn 0.3s ease-out;
-    
-    /* Default background for safety */
-    background-color: #757575; 
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 20px;
+  border-radius: 8px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  font-size: 14px;
+  font-weight: 500;
+  animation: slideIn 0.3s ease-out;
+  background-color: #757575; /* Default */
 }
 
-/* Modifier Classes for background color (Set by JS) */
-.auto-save-notification.success {
-    background-color: #4caf50;
-}
+.auto-save-notification.success { background-color: #4caf50; }
+.auto-save-notification.error { background-color: #f44336; }
+.auto-save-notification.info { background-color: #2196F3; }
 
-.auto-save-notification.error {
-    background-color: #f44336;
-}
-
-.auto-save-notification.info {
-    background-color: #2196F3;
-}
-
-
-
-/* Responsive */
+/* =========================================
+   12. RESPONSIVE DESIGN
+   ========================================= */
 @media (max-width: 57.5rem) {
-  .container {
-    padding: 0 var(--spacing-64);
-  }
-
-  .nav-con {
-    padding: var(--spacing-16) 0;
-  }
-
-  main.page-con {
-    padding: var(--spacing-40) 0;
-  }
-
-  .content-box {
-    min-width: var(--container-lg);
-  }
-
-  .content-box.register {
-    min-width: var(--container-wide);
-  }
+  .container { padding: 0 var(--spacing-64); }
+  .nav-con { padding: var(--spacing-16) 0; }
+  main.page-con { padding: var(--spacing-40) 0; }
+  
+  .content-box { min-width: var(--container-lg); }
+  .content-box.register { min-width: var(--container-wide); }
 }

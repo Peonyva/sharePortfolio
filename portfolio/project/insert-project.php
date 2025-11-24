@@ -24,7 +24,6 @@ if (!$userID || empty($projectTitle) || empty($keyPoint) || empty($myProjectSkil
 // 3. แปลง Skill เป็น Array (รองรับทั้ง JSON string, Array, หรือ Comma separated)
 if (!is_array($myProjectSkills)) {
     $decoded = json_decode($myProjectSkills, true);
-    // ถ้า decode ไม่ได้ ให้ลอง explode comma, ถ้าไม่ได้อีกให้จับใส่ array เลย
     $myProjectSkills = $decoded ?: (strpos($myProjectSkills, ',') !== false ? explode(',', $myProjectSkills) : [$myProjectSkills]);
 }
 
@@ -53,10 +52,11 @@ if (!in_array($mimeType, $allowedMimeTypes)) {
     exit;
 }
 
-// ตั้งชื่อไฟล์ (ใช้ uniqid กันซ้ำ)
+// ตั้งชื่อไฟล์
 $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-$newFileName = 'proj_' . $userID . '_' . uniqid() . '.' . $extension;
-$uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/projects/';
+$newFileName = 'project_' . $userID . '_' . uniqid() . '.' . $extension;
+
+$uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/uploads/$userID/";
 
 // สร้าง Folder ถ้าไม่มี
 if (!is_dir($uploadDir)) {
@@ -64,7 +64,9 @@ if (!is_dir($uploadDir)) {
 }
 
 $uploadPath = $uploadDir . $newFileName;
-$dbImagePath = '/uploads/projects/' . $newFileName;
+
+$dbImagePath = "/uploads/$userID/$newFileName";
+
 
 // เริ่มอัปโหลดไฟล์
 if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
@@ -86,14 +88,14 @@ try {
     $stmtProject->execute([
         ':userID' => $userID,
         ':projectTitle' => $projectTitle,
-        ':projectImage' => $dbImagePath,
+        ':projectImage' => $dbImagePath, 
         ':keyPoint' => $keyPoint,
         ':sortOrder' => $newSort
     ]);
 
     $projectID = $conn->lastInsertId();
 
-    // 7. Insert Project Skills (ถ้ามี Project ID แล้ว)
+    // 7. Insert Project Skills
     if ($projectID && !empty($myProjectSkills)) {
         $sqlSkill = "INSERT INTO projectSkill (projectID, skillsID) VALUES (:projectID, :skillsID)";
         $stmtSkill = $conn->prepare($sqlSkill);
@@ -116,7 +118,7 @@ try {
     ]);
 
 } catch (PDOException $e) {
-    // Error Handling: ถ้า Database พัง ให้ลบรูปที่เพิ่งอัปโหลดทิ้ง เพื่อไม่ให้รก Server
+    // Error Handling: ลบรูปทิ้งถ้า DB Error
     if (file_exists($uploadPath)) {
         @unlink($uploadPath);
     }

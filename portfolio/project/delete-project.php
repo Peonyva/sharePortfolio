@@ -51,7 +51,7 @@ try {
         if (!empty($project['projectImage'])) {
             // แปลง path ให้เป็น Absolute Path ของ Server
             $imagePath = realpath($_SERVER['DOCUMENT_ROOT'] . $project['projectImage']);
-            $uploadBase = realpath($_SERVER['DOCUMENT_ROOT'] . '/uploads/projects/');
+            $uploadBase = realpath($_SERVER['DOCUMENT_ROOT'] . '/uploads/');
 
             // Security Check: ป้องกันการลบไฟล์ผิดที่ หรือการยิง ../../
             if ($imagePath && $uploadBase && 

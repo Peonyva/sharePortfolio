@@ -24,7 +24,7 @@ try {
     }
 
     // หา record ที่ sortOrder = newSort
-    $stmt = $conn->prepare("SELECT id FROM project WHERE userID = :userID AND sortOrder = :newSort LIMIT 1");
+    $stmt = $conn->prepare("SELECT projectID  FROM project WHERE userID = :userID AND sortOrder = :newSort LIMIT 1");
     $stmt->execute([
         ':userID' => $userID,
         ':newSort' => $newSort
@@ -35,7 +35,7 @@ try {
         throw new Exception("Target position not found.");
     }
 
-    $swapId = intval($swapItem['id']);
+    $swapId = intval($swapItem['projectID']);
 
     if ($swapId === $currentId) {
         throw new Exception("Cannot swap with the same record.");
@@ -43,7 +43,7 @@ try {
 
     // 🔹 สลับ sortOrder ระหว่างสอง record
     // 1) ตั้งค่าของ record ปลายทางเป็น sort เดิมของ current
-    $stmt = $conn->prepare("UPDATE project SET sortOrder = :currentSort WHERE id = :swapId AND userID = :userID");
+    $stmt = $conn->prepare("UPDATE project SET sortOrder = :currentSort WHERE projectID = :swapId AND userID = :userID");
     $stmt->execute([
         ':currentSort' => $currentSort,
         ':swapId' => $swapId,
@@ -51,7 +51,7 @@ try {
     ]);
 
     // 2) ตั้งค่าของ record ปัจจุบันเป็น sort ใหม่
-    $stmt = $conn->prepare("UPDATE project SET sortOrder = :newSort WHERE id = :currentId AND userID = :userID");
+    $stmt = $conn->prepare("UPDATE project SET sortOrder = :newSort WHERE projectID = :currentId AND userID = :userID");
     $stmt->execute([
         ':newSort' => $newSort,
         ':currentId' => $currentId,

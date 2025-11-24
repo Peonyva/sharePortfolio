@@ -9,14 +9,13 @@ if ($userID <= 0) {
 }
 
 try {
-
     // Query 1: User
     $stmt = $conn->prepare("SELECT userID, firstname, lastname, birthdate, email FROM user WHERE userID = :userID");
     $stmt->execute(['userID' => $userID]);
     $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$userData) {
-        die("User not found."); // หยุดทำงานถ้าไม่เจอ User
+        die("User not found.");
     }
 
     // Query 2: Profile
@@ -26,19 +25,20 @@ try {
     $stmt->execute(['userID' => $userID]);
     $profileData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-
     // Merge user + profile
     $data = array_merge($userData, $profileData ?: []);
 
-    // Full path images (Profile)
+    // Full path images (Profile) -> ใช้ /upload/ ตามมาตรฐานใหม่
     foreach (['logoImage', 'profileImage', 'coverImage'] as $img) {
         if (!empty($data[$img])) {
-            $data[$img] = "/uploads/{$userID}/" . $data[$img];
+            $data[$img] = "/upload/{$userID}/" . $data[$img];
         }
     }
 
-    // Query 3: ProfileSkill
-    $stmt = $conn->prepare("SELECT s.skillsID, s.skillsName 
+    // ---------------------------------------------------------
+    // ✅ แก้ไข Query 3: เพิ่ม s.skillsUrl เพื่อดึง Class ไอคอน
+    // ---------------------------------------------------------
+    $stmt = $conn->prepare("SELECT s.skillsID, s.skillsName, s.skillsUrl 
         FROM profileskill ps
         INNER JOIN skills s ON s.skillsID = ps.skillsID
         WHERE ps.userID = :userID
@@ -56,9 +56,13 @@ try {
     $stmt->execute(['userID' => $userID]);
     $education = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Query 6: Project
+    // ---------------------------------------------------------
+    // ✅ แก้ไข Query 6: ใช้ JSON_OBJECT เพื่อเก็บทั้ง ชื่อ และ Url
+    // ---------------------------------------------------------
     $sql = "SELECT p.projectID, p.projectTitle, p.projectImage, p.keyPoint, p.sortOrder, 
-                   JSON_ARRAYAGG(s.skillsName) AS skills
+                   JSON_ARRAYAGG(
+                       JSON_OBJECT('name', s.skillsName, 'url', s.skillsUrl)
+                   ) AS skills
             FROM project AS p
             LEFT JOIN projectSkill ps ON p.projectID = ps.projectID
             LEFT JOIN skills s ON ps.skillsID = s.skillsID
@@ -68,28 +72,28 @@ try {
 
     $stmt = $conn->prepare($sql);
     $stmt->execute(['userID' => $userID]);
-    
-    // ✅ แก้ไข 1: เปลี่ยนชื่อตัวแปรเป็น $projects (มี s) เพื่อสื่อว่าเป็นอาเรย์หลายชิ้น
     $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Process Project Data
     foreach ($projects as &$item) {
-        // ✅ แก้ไข 2: ใส่ Path รูปภาพ
+        // ใส่ Path รูปภาพ -> ใช้ /upload/
         if (!empty($item['projectImage'])) {
-            $item['projectImage'] = "/uploads/{$userID}/" . $item['projectImage'];
+            $item['projectImage'] = "/upload/{$userID}/" . $item['projectImage'];
         }
 
-        // ✅ แก้ไข 3: แปลง JSON String จาก Database ให้เป็น Array ของ PHP
+        // ✅ แก้ไข: Decode JSON Object
         $item['skillsArray'] = [];
         if (!empty($item['skills'])) {
             $decoded = json_decode($item['skills'], true);
             if (is_array($decoded)) {
-                // กรองค่า null ออก (กรณี Left Join แล้วไม่เจอ skill มันอาจจะได้ [null])
-                $item['skillsArray'] = array_filter($decoded); 
+                // กรองค่าที่ name เป็น null ออก
+                $item['skillsArray'] = array_filter($decoded, function($k) {
+                    return !empty($k['name']);
+                });
             }
         }
     }
-    unset($item); // Break reference
+    unset($item);
 
     // Helper functions
     function formatLineBreaks($text) {
@@ -110,7 +114,6 @@ try {
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -118,7 +121,6 @@ try {
   <script src="https://kit.fontawesome.com/92f0aafca7.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="/styles/portfolio.css" />
 </head>
-
 <body>
   <header class="header">
     <div class="container">
@@ -144,6 +146,7 @@ try {
       </nav>
     </div>
   </header>
+
   <div class="container">
     <section class="hero" id="aboutme">
       <div class="cover-photo">
@@ -163,7 +166,9 @@ try {
             <h1><?= htmlspecialchars($data['firstname'] ?? '') . ' ' . htmlspecialchars($data['lastname'] ?? '') ?></h1>
             <p class="subtitle"><?= htmlspecialchars($data['professionalTitle'] ?? '') ?></p>
           </div>
+          
           <div class="divider"></div>
+          
           <div class="contact-info">
             <?php if (!empty($data['email'])): ?>
               <a href="mailto:<?= htmlspecialchars($data['email']); ?>" target="_blank" class="contact-item">
@@ -188,6 +193,7 @@ try {
         </div>
       </div>
     </section>
+
     <main>
       <section>
         <h2>Intro</h2>
@@ -204,23 +210,14 @@ try {
 
         <div class="skills-grid">
           <?php if (!empty($selectedSkills)): ?>
-            <?php
-            $skillIcons = [
-              'PHP' => '<i class="fab fa-php skill-icon icon-php"></i>',
-              'JavaScript' => '<i class="fab fa-js-square skill-icon icon-javascript"></i>',
-              'HTML' => '<i class="fab fa-html5 skill-icon icon-html"></i>',
-              'CSS' => '<i class="fab fa-css3-alt skill-icon icon-css"></i>',
-              'MySQL' => '<i class="fas fa-database skill-icon icon-mysql"></i>',
-              'Figma' => '<img src="image/figma.png" alt="Figma" style="width: 40px; height: 40px;">',
-            ];
-
-            foreach ($selectedSkills as $skill):
-              $skillName = htmlspecialchars($skill['skillsName']);
-              $icon = $skillIcons[$skillName] ?? '<i class="fas fa-code skill-icon"></i>';
+            <?php foreach ($selectedSkills as $skill): 
+                $skillName = htmlspecialchars($skill['skillsName']);
+                // ใช้ Class จาก DB ถ้าไม่มีให้ใช้ default
+                $iconClass = !empty($skill['skillsUrl']) ? htmlspecialchars($skill['skillsUrl']) : 'fas fa-code';
             ?>
               <div class="skill-item">
                 <div class="skill-icon">
-                  <?= $icon ?>
+                   <i class="<?= $iconClass ?>"></i>
                 </div>
                 <div class="skill-name"><?= $skillName ?></div>
               </div>
@@ -258,17 +255,12 @@ try {
 
                 <?php if (!empty($proj['skillsArray'])): ?>
                   <div class="tech-grid">
-                    <?php foreach ($proj['skillsArray'] as $skillName): ?>
-                      <span class="tech-item">
-                        <?php
-                        $trimmedSkill = trim($skillName);
-                        if ($trimmedSkill === 'PHP') echo '<i class="fab fa-php icon-php"></i>';
-                        elseif ($trimmedSkill === 'HTML') echo '<i class="fab fa-html5 icon-html"></i>';
-                        elseif ($trimmedSkill === 'CSS') echo '<i class="fab fa-css3-alt icon-css"></i>';
-                        elseif ($trimmedSkill === 'JavaScript') echo '<i class="fab fa-js-square icon-javascript"></i>';
-                        elseif ($trimmedSkill === 'MySQL') echo '<i class="fas fa-database icon-mysql"></i>';
-                        else echo '<i class="fas fa-code"></i>';
-                        ?>
+                    <?php foreach ($proj['skillsArray'] as $skillObj): 
+                        $sName = htmlspecialchars($skillObj['name']);
+                        $sUrl  = !empty($skillObj['url']) ? htmlspecialchars($skillObj['url']) : 'fas fa-code';
+                    ?>
+                      <span class="tech-item" title="<?= $sName ?>">
+                        <i class="<?= $sUrl ?>"></i>
                       </span>
                     <?php endforeach; ?>
                   </div>
@@ -283,7 +275,6 @@ try {
 
       <section class="experience" id="experience">
         <h2>Work Experience</h2>
-
         <?php if (!empty($workExperience)): ?>
           <?php foreach ($workExperience as $work): ?>
             <div class="timeline-card">
@@ -294,24 +285,16 @@ try {
                   · <?= htmlspecialchars($work['employeeType']) ?>
                 </div>
                 <ul>
-                  <li>Company: <?= htmlspecialchars($work['companyName']) ?></li>
-                  <li>Position: <?= htmlspecialchars($work['position']) ?></li>
-
+                  <li><strong>Company:</strong> <?= htmlspecialchars($work['companyName']) ?></li>
+                  <li><strong>Position:</strong> <?= htmlspecialchars($work['position']) ?></li>
                   <?php if (!empty($work['jobDescription'])): ?>
-                    <?php
-                    $descriptions = explode("\n", $work['jobDescription']);
-                    foreach ($descriptions as $desc):
-                      if (trim($desc)):
-                    ?>
+                    <?php foreach (explode("\n", $work['jobDescription']) as $desc): 
+                        if (trim($desc)): ?>
                         <li><?= htmlspecialchars(trim($desc)) ?></li>
-                    <?php
-                      endif;
-                    endforeach;
-                    ?>
+                    <?php endif; endforeach; ?>
                   <?php endif; ?>
-
                   <?php if (!empty($work['remark'])): ?>
-                    <li><?= htmlspecialchars($work['remark']) ?></li>
+                    <li><em><?= htmlspecialchars($work['remark']) ?></em></li>
                   <?php endif; ?>
                 </ul>
               </div>
@@ -324,7 +307,6 @@ try {
 
       <section class="education" id="education">
         <h2>Education</h2>
-
         <?php if (!empty($education)): ?>
           <?php foreach ($education as $edu): ?>
             <div class="timeline-card">
@@ -335,12 +317,11 @@ try {
                   · <?= htmlspecialchars($edu['degree']) ?>
                 </div>
                 <ul>
-                  <li><?= htmlspecialchars($edu['educationName']) ?></li>
+                  <li><strong><?= htmlspecialchars($edu['educationName']) ?></strong></li>
                   <li>Faculty: <?= htmlspecialchars($edu['facultyName']) ?></li>
                   <li>Major: <?= htmlspecialchars($edu['majorName']) ?></li>
-
                   <?php if (!empty($edu['remark'])): ?>
-                    <li><?= htmlspecialchars($edu['remark']) ?></li>
+                    <li><em><?= htmlspecialchars($edu['remark']) ?></em></li>
                   <?php endif; ?>
                 </ul>
               </div>
@@ -362,5 +343,4 @@ try {
 
   <script src="/portfolio/portfolio.js"></script>
 </body>
-
 </html>
